@@ -118,6 +118,8 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 1.5rem; }
 .stack li { font-size: .76rem; color: var(--faint); border: 1px solid var(--card-edge); border-radius: 6px; padding: .15rem .5rem; }
 
 .card-link { margin-top: auto; font-weight: 600; font-size: .92rem; }
+.card-links { margin-top: auto; display: flex; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 1.1rem; }
+.card-links .card-link { margin-top: 0; }
 .card-ghost { border-style: dashed; justify-content: center; }
 .card-ghost p { margin-bottom: .9rem; }
 
