@@ -81,9 +81,9 @@ export default function Home() {
       <main id="top" className="mx-auto w-full max-w-6xl px-6">
         {/* HERO */}
         <section className="pt-20 pb-16 md:pt-32 md:pb-24">
-          <p className="eyebrow text-accent">Behavioral science → AI systems · Behavioral finance</p>
+          <p className="eyebrow text-accent">Neuroscience → AI systems</p>
           <h1 className="mt-6 max-w-4xl font-display text-[2.6rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink md:text-7xl">
-            Behavioral scientist building AI systems that{" "}
+            I build AI systems that{" "}
             <span className="italic text-accent">think like teams, act like operators.</span>
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">

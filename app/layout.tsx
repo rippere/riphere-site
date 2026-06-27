@@ -25,15 +25,15 @@ const SITE = "https://www.riphere.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: "Ben Rippere — Behavioral scientist building AI systems",
+  title: "Ben Rippere — Building AI systems that think like teams, act like operators",
   description:
-    "Behavioral scientist building AI systems that think like teams and act like operators. Neuroscience-grounded AI: agentic decision intelligence, neural content scoring, and self-healing infrastructure.",
+    "I build AI systems that think like teams and act like operators — grounded in neuroscience: agentic decision intelligence, neural content scoring, and self-healing infrastructure.",
   authors: [{ name: "Ben Rippere" }],
   alternates: { canonical: SITE },
   openGraph: {
     type: "website",
     url: SITE,
-    title: "Ben Rippere — Behavioral scientist building AI systems",
+    title: "Ben Rippere — Building AI systems that think like teams, act like operators",
     description:
       "Neuroscience-grounded AI systems: agentic decision intelligence, neural content scoring, and self-healing infrastructure. Building in public.",
   },
