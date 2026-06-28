@@ -200,10 +200,17 @@ function ProjectFrame({ project }: { project: Project }) {
     return (
       <div className="dotgrid flex h-full w-full flex-col">
         <FrameChrome project={project} />
-        <div className="flex flex-1 flex-col justify-between gap-6 p-5 md:p-9">
-          <span className="eyebrow" style={{ color: project.accent }}>
-            {project.category}
-          </span>
+        <div className="flex flex-1 flex-col justify-between gap-5 p-5 md:p-9">
+          <div>
+            <span className="eyebrow" style={{ color: project.accent }}>
+              {project.category}
+            </span>
+            {f.headline ? (
+              <p className="mt-2 max-w-md font-display text-xl leading-snug text-ink md:text-2xl">
+                {f.headline}
+              </p>
+            ) : null}
+          </div>
           <div className="grid gap-6 sm:grid-cols-3 sm:gap-4">
             {f.stats.map((s) => (
               <div key={s.label}>
@@ -243,9 +250,16 @@ function ProjectFrame({ project }: { project: Project }) {
     <div className="dotgrid flex h-full w-full flex-col">
       <FrameChrome project={project} />
       <div className="flex flex-1 flex-col justify-center p-5 md:p-9">
-        <span className="eyebrow mb-5" style={{ color: project.accent }}>
+        <span className="eyebrow" style={{ color: project.accent }}>
           {project.category}
         </span>
+        {f.headline ? (
+          <p className="mb-5 mt-2 max-w-md font-display text-xl leading-snug text-ink md:text-2xl">
+            {f.headline}
+          </p>
+        ) : (
+          <div className="mb-5" />
+        )}
         {f.flow.map((n, i) => (
           <div key={n.label}>
             <div className="flex items-center gap-3 rounded-lg border border-line bg-paper-2 px-4 py-2.5 md:px-5 md:py-3">
@@ -290,7 +304,7 @@ export function ProjectShowcase({
           <p className="mx-auto mt-3 max-w-xl text-base text-muted md:text-lg">
             {project.tagline}
           </p>
-          <p className="mx-auto mt-2 hidden max-w-2xl text-[0.95rem] leading-relaxed text-faint md:block">
+          <p className="mx-auto mt-2 max-w-2xl text-[0.95rem] leading-relaxed text-muted">
             {project.blurb}
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

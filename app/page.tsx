@@ -1,5 +1,6 @@
 import { projects } from "@/lib/projects";
 import { ProjectShowcase, Reveal } from "@/components/showcase";
+import { buildInPublic } from "@/lib/buildInPublic";
 
 const navLinks = [
   { href: "#work", label: "Work" },
@@ -15,25 +16,17 @@ const connectLinks = [
   { href: "mailto:ben@riphere.com", label: "Email ↗" },
 ];
 
-const receipts = [
-  {
-    tag: "Incident",
-    text: "Caught a leaked DB credential in a freshly-public repo — rotated first, scrubbed history second, verified green by observation. Secret hygiene is a muscle worth building before you need it.",
-  },
-  {
-    tag: "Rigor",
-    text: "Pre-registered TRIBE v2’s validation protocol before the results — the goalposts live in git history with a timestamp, so future-me can’t move them.",
-  },
-  {
-    tag: "Systems",
-    text: "Gave my personal memory stack a 3-tier watchdog: detect → auto-heal → only then page me. The page is the last resort, not the first response.",
-  },
-];
+const receipts = buildInPublic
+  .filter((i) => i.publish)
+  .sort((a, b) =>
+    a.featured === b.featured ? b.date.localeCompare(a.date) : a.featured ? -1 : 1
+  );
 
 const creds = [
-  { k: "Domain", v: "Neuroscience & psychology — reward, motivation, decision-making" },
-  { k: "Builds", v: "Agentic AI · decision intelligence · neural content models · self-hosted infra" },
-  { k: "Direction", v: "AI product & management track" },
+  { k: "Domain", v: "Agentic AI systems, grounded in the neuroscience of decision-making" },
+  { k: "Builds", v: "NovaCRM · alfred-v2 · TRIBE v2 · Sector Flow · Executive Mind Matrix" },
+  { k: "Studies", v: "Psychology & Entrepreneurship · cognitive science w/ a computational-neuroscience grounding" },
+  { k: "Direction", v: "AI product / engineering at an early-stage team" },
 ];
 
 const year = new Date().getFullYear();
@@ -157,23 +150,34 @@ export default function Home() {
             <div className="mt-10 grid gap-10 md:grid-cols-[1.6fr_1fr]">
               <div className="space-y-5 text-lg leading-relaxed text-muted">
                 <p>
-                  I study how people make decisions at the neural level — reward systems,
-                  motivation, cognitive bias, impulsivity — then I build systems that account
-                  for those realities. My edge isn’t that I read{" "}
-                  <span className="text-ink">Thinking, Fast and Slow</span>; it’s that the
-                  dopamine circuits and risk-tolerance mechanisms behind trading psychology
-                  are literally what I study at the bench.
+                  I build agentic AI systems — software where autonomous agents read through
+                  messy human information, reason about it, and carry the work all the way to
+                  action. I come at it from an unusual angle: I study how people actually
+                  decide — reward, motivation, bias, at the neural level — and design systems
+                  with those realities built in. Builder first; the science is the lens I
+                  build through.
                 </p>
                 <p>
-                  That’s the through-line: adversarial agents that mirror how good investment
-                  committees structure disagreement; content scoring grounded in measured
-                  brain response; infrastructure designed to recover without a human in the
-                  loop. Syntax is a commodity in 2026 — systems thinking at this level is not.
+                  My main system, <span className="text-ink">NovaCRM</span>, is a live
+                  AI-native CRM where six specialized agents turn scattered email and Slack
+                  into a structured pipeline — each agent with one bounded, verifiable job,
+                  and a person kept in the loop for the moments that matter. It grew out of
+                  Executive Mind Matrix, where three agents with competing cognitive biases
+                  argue a decision before routing it. Around them I’ve built a knowledge
+                  system that self-heals before it pages me, a model that scores video by
+                  predicted brain response (success criteria committed to git{" "}
+                  <span className="text-ink">before</span> the results), and a
+                  behavioral-finance tool that catches institutional rotation in covariance
+                  before it shows up in price.
                 </p>
                 <p>
-                  I’m pursuing an AI product-management track and PMP because the biggest
-                  leverage point isn’t a better model — it’s a better system around people.
-                  Long term, I want to build and lead the teams doing that work.
+                  The thread through all of it: the bottleneck is rarely the model — it’s the
+                  system around it, and the people it’s for. I care about the gap between good
+                  thinking and executed action, because I’ve watched capable people drown in
+                  operational overhead while their best ideas never ship. So I’m putting real
+                  agentic systems into production and learning in the open — headed toward an
+                  early-stage team where building the system and understanding the people it
+                  serves are the same job.
                 </p>
               </div>
               <ul className="space-y-6 border-l border-line pl-6">
@@ -198,9 +202,21 @@ export default function Home() {
             />
             <div className="mt-10 divide-y divide-line/70 border-y border-line/70">
               {receipts.map((r) => (
-                <div key={r.tag} className="grid gap-3 py-6 md:grid-cols-[9rem_1fr] md:gap-8">
-                  <span className="eyebrow text-accent">{r.tag}</span>
-                  <p className="text-muted md:text-lg">{r.text}</p>
+                <div key={r.slug} className="grid gap-3 py-6 md:grid-cols-[9rem_1fr] md:gap-8">
+                  <span className="eyebrow text-accent">{r.lane}</span>
+                  <div>
+                    <p className="text-muted md:text-lg">{r.text}</p>
+                    {r.receipt ? (
+                      <a
+                        href={r.receipt}
+                        target="_blank"
+                        rel="noopener"
+                        className="link-anim mt-2 inline-block font-mono text-xs text-faint hover:text-accent"
+                      >
+                        receipt ↗
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
               ))}
             </div>
