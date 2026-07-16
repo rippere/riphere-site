@@ -38,7 +38,7 @@ export const projects: Project[] = [
     accent: "#6d3bd6",
     tagline: "Predicts how a video lands in the brain",
     blurb:
-      "It scores short-form video by predicted brain response — modeled from the video alone, no scanner — and commits its success criteria to git before the results, so the claim can be proven wrong.",
+      "It scores short-form video by predicted brain response, modeled from the video alone with no scanner, and commits its success criteria to git before the results, so the claim can be proven wrong.",
     stack: ["FastAPI", "Next.js", "RunPod / A100", "fMRI encoding"],
     links: [{ label: "View project ↗", href: "https://github.com/rippere/tribe-v2", primary: true }],
     terminal: "tribe-v2 · neural-scorer",
@@ -46,7 +46,7 @@ export const projects: Project[] = [
       kind: "image",
       src: "/showcase/tribe-scorecard.png",
       alt: "TRIBE v2 brain-encoding content scorecard: a per-region neural-attention radar, hook/mean/offset deltas by brain region, and a 0–100 neural score.",
-      caption: "Each bar is a brain region's predicted response (attention, social, valuation…) — the 89/100 is overall predicted engagement.",
+      caption: "Each bar is a brain region's predicted response (attention, social, valuation…). The 89/100 is overall predicted engagement.",
     },
   },
   {
@@ -56,13 +56,13 @@ export const projects: Project[] = [
     accent: "#1c8a5b",
     tagline: "Catches sector rotation before it hits price",
     blurb:
-      "It detects institutional money rotating between market sectors in the covariance structure — before the move shows up in price. Decision-support only.",
+      "It detects institutional money rotating between market sectors in the covariance structure before the move shows up in price. Decision-support only.",
     stack: ["Python", "WebSocket", "regime models", "e-ink hardware"],
     links: [{ label: "View project ↗", href: "https://github.com/rippere/sector-flow-analyzer", primary: true }],
     terminal: "sector-flow · regime-monitor",
     frame: {
       kind: "stats",
-      headline: "Spots regime shifts early — and it's been tested honestly.",
+      headline: "Spots regime shifts early, and it's been tested honestly.",
       stats: [
         { value: "p = 3.26e-20", label: "the signal is real, not random noise" },
         { value: "13 yr", label: "validated on unseen, out-of-sample data" },
@@ -106,7 +106,7 @@ export const projects: Project[] = [
     accent: "#2735e6",
     tagline: "Turns inbox chaos into a sales pipeline",
     blurb:
-      "A live AI-native CRM where six agents read scattered email and Slack and turn them into structured, prioritized deals — with a human in the loop for the calls that matter.",
+      "A live AI-native CRM where six agents read scattered email and Slack and turn them into structured, prioritized deals, with a human in the loop for the calls that matter.",
     stack: ["FastAPI", "Next.js", "Supabase", "Railway"],
     links: [
       { label: "Visit live app ↗", href: "https://app.riphere.com", primary: true },
@@ -117,7 +117,7 @@ export const projects: Project[] = [
       kind: "image",
       src: "/showcase/novacrm-pipeline.png",
       alt: "NovaCRM pipeline board — deals across stages with AI win-probability and deal-health scoring.",
-      caption: "The live pipeline — six agents sort email + Slack into prioritized deals, each with an AI-scored win probability.",
+      caption: "The live pipeline: six agents sort email + Slack into prioritized deals, each with an AI-scored win probability.",
     },
   },
 ];

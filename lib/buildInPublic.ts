@@ -32,7 +32,7 @@ export const buildInPublic: BuildInPublicItem[] = [
   {
     slug: "honest-landing-page",
     lane: "Rigor",
-    text: "Caught my own product's landing page overselling — ripped out fabricated ML claims, rewrote it to the real stack, and wrote an honest demo script. Credibility over hype, even on your own front door.",
+    text: "Caught my own product's landing page overselling. Ripped out fabricated ML claims, rewrote it to the real stack, and wrote an honest demo script. Credibility over hype, even on your own front door.",
     date: "2026-06-27",
     receipt: "https://github.com/rippere/crm-agentic",
     publish: true,
@@ -41,7 +41,7 @@ export const buildInPublic: BuildInPublicItem[] = [
   {
     slug: "self-healing-vector-store",
     lane: "Incident",
-    text: "My memory system's vector store corrupted under a bad write window. Instead of paging me, it now self-heals the corruption and shrinks the window that caused it — so the same failure fixes itself and gets rarer. Fix the condition, not the symptom.",
+    text: "My memory system's vector store corrupted under a bad write window. Instead of paging me, it now self-heals the corruption and shrinks the window that caused it, so the same failure fixes itself and gets rarer. Fix the condition, not the symptom.",
     date: "2026-06-02",
     receipt: "https://github.com/rippere/alfred-v2",
     publish: true,
@@ -49,14 +49,14 @@ export const buildInPublic: BuildInPublicItem[] = [
   {
     slug: "fail-loud-cockpit",
     lane: "Systems",
-    text: "Built a cross-venue financial hub edge-first: the signal is vendored so a dead disk mount can't silently kill it — it fails loud with EDGE-DOWN — and every recommendation is bound to a P&L trust gate. The dangerous failure is the silent one.",
+    text: "Built a cross-venue financial hub edge-first: the signal is vendored so a dead disk mount can't silently kill it. It fails loud with EDGE-DOWN, and every recommendation is bound to a P&L trust gate. The dangerous failure is the silent one.",
     date: "2026-06-15",
     publish: true,
   },
   {
     slug: "tribe-a100",
     lane: "Product",
-    text: "Got TRIBE's video scorer running end-to-end on a persistent A100 — including unwrapping a silently-failing nested output and validating each clip's size and length before paying for GPU time. Validate inputs before you spend on compute.",
+    text: "Got TRIBE's video scorer running end-to-end on a persistent A100, including unwrapping a silently-failing nested output and validating each clip's size and length before paying for GPU time. Validate inputs before you spend on compute.",
     date: "2026-06-10",
     receipt: "https://github.com/rippere/tribe-v2",
     publish: true,

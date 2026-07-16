@@ -150,18 +150,18 @@ export default function Home() {
             <div className="mt-10 grid gap-10 md:grid-cols-[1.6fr_1fr]">
               <div className="space-y-5 text-lg leading-relaxed text-muted">
                 <p>
-                  I build agentic AI systems — software where autonomous agents read through
+                  I build agentic AI systems: software where autonomous agents read through
                   messy human information, reason about it, and carry the work all the way to
-                  action. I come at it from an unusual angle: I study how people actually
-                  decide — reward, motivation, bias, at the neural level — and design systems
+                  action. I come at it from an unusual angle. I study how people actually
+                  decide (reward, motivation, bias, at the neural level) and design systems
                   with those realities built in. Builder first; the science is the lens I
                   build through.
                 </p>
                 <p>
                   My main system, <span className="text-ink">NovaCRM</span>, is a live
                   AI-native CRM where six specialized agents turn scattered email and Slack
-                  into a structured pipeline — each agent with one bounded, verifiable job,
-                  and a person kept in the loop for the moments that matter. It grew out of
+                  into a structured pipeline. Each agent has one bounded, verifiable job, and
+                  a person stays in the loop for the moments that matter. It grew out of
                   Executive Mind Matrix, where three agents with competing cognitive biases
                   argue a decision before routing it. Around them I’ve built a knowledge
                   system that self-heals before it pages me, a model that scores video by
@@ -171,11 +171,11 @@ export default function Home() {
                   before it shows up in price.
                 </p>
                 <p>
-                  The thread through all of it: the bottleneck is rarely the model — it’s the
+                  The thread through all of it: the bottleneck is rarely the model. It’s the
                   system around it, and the people it’s for. I care about the gap between good
                   thinking and executed action, because I’ve watched capable people drown in
                   operational overhead while their best ideas never ship. So I’m putting real
-                  agentic systems into production and learning in the open — headed toward an
+                  agentic systems into production and learning in the open, headed toward an
                   early-stage team where building the system and understanding the people it
                   serves are the same job.
                 </p>
