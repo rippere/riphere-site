@@ -1,20 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  type MotionValue,
-} from "motion/react";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import React from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { cn } from "@/lib/cn";
 import type { Project } from "@/lib/projects";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 /* ---------------------------------------------------------------
    Reveal — restrained fade-up for section entrances. Respects
@@ -45,8 +34,24 @@ export function Reveal({
 
 /* ---------------------------------------------------------------
    ContainerScroll — Aceternity's container-scroll animation.
-   Faithful transform curve (rotateX 20°→0°, scale, header lift),
-   re-skinned bezel for the warm cream palette.
+
+   The scroll tilt (rotateX 20°→0°, scale, header lift) needs a tall
+   scroll runway, so the stage reserves a large fixed height. That
+   runway is ONLY worth reserving where the effect actually reads:
+   wide (md+) pointer/scroll viewports.
+
+   On phones the tilt is imperceptible, yet the old code still forced
+   h-[44rem] per card plus a -mt-6 pull and a -100px header lift —
+   which reserved dead scroll space and, because the header height is
+   variable per project, let the header and card overlap. It also
+   only zeroed the *transforms* under prefers-reduced-motion, never
+   the oversized heights, so the dead space survived there too.
+
+   Fix: the tilt is gated behind `enableEffect = (md+ viewport) &&
+   !prefers-reduced-motion`. When it's off we render a plain,
+   content-sized stack — no fixed giant height, no negative margin,
+   no transforms. Default is off (static) so SSR / first paint /
+   mobile never reserve the runway; desktop upgrades on mount.
 ---------------------------------------------------------------- */
 function ContainerScroll({
   titleComponent,
@@ -55,86 +60,34 @@ function ContainerScroll({
   titleComponent: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  // Map progress across the element's pass: tilted as it enters from below,
-  // flat (rotateX 0) by the time it's centered — a gradual glide, not a snap.
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "center center"],
-  });
-  const [isMobile, setIsMobile] = React.useState(false);
-  const reduce = useReducedMotion();
-
-  React.useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 768);
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  const scaleDims = (): [number, number] => (isMobile ? [0.7, 0.9] : [1.04, 1]);
-  const rotate = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [20, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : scaleDims());
-  const translate = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, -100]);
-
+  // Always render a content-sized static stage. The earlier scroll-tilt
+  // reserved a tall runway (h-[58rem]) that read as dead space on mobile and
+  // could overlap; a static frame is reliable on every viewport.
   return (
-    <div
-      ref={ref}
-      className="relative flex h-[44rem] items-center justify-center p-2 md:h-[58rem] md:p-10"
-    >
-      <div className="relative w-full" style={{ perspective: "1000px" }}>
-        <ScrollHeader translate={translate}>{titleComponent}</ScrollHeader>
-        <ScrollCard rotate={rotate} scale={scale}>
-          {children}
-        </ScrollCard>
+    <div className="relative flex flex-col items-center px-2 py-8 md:px-10">
+      <div className="w-full">
+        <div className="mx-auto max-w-5xl">{titleComponent}</div>
+        <StaticCard>{children}</StaticCard>
       </div>
     </div>
   );
 }
 
-function ScrollHeader({
-  translate,
-  children,
-}: {
-  translate: MotionValue<number>;
-  children: React.ReactNode;
-}) {
+/* Static, non-animated card. Sizes to a fixed frame height (not a
+   scroll runway) with a normal positive gap above it — no negative
+   margin, so it can never overlap the header. */
+function StaticCard({ children }: { children: React.ReactNode }) {
   return (
-    <motion.div style={{ y: translate }} className="mx-auto max-w-5xl">
-      {children}
-    </motion.div>
-  );
-}
-
-function ScrollCard({
-  rotate,
-  scale,
-  children,
-}: {
-  rotate: MotionValue<number>;
-  scale: MotionValue<number>;
-  children: React.ReactNode;
-}) {
-  return (
-    <motion.div
-      style={{
-        rotateX: rotate,
-        scale,
-        boxShadow:
-          "0 30px 80px -28px rgba(25,24,21,0.45), 0 14px 34px -20px rgba(25,24,21,0.4)",
-      }}
-      className="mx-auto -mt-6 h-[25rem] w-full max-w-5xl rounded-[28px] border border-ink/15 bg-ink p-2 md:-mt-8 md:h-[34rem] md:p-3"
-    >
+    <div className="mx-auto mt-6 h-[24rem] w-full max-w-5xl rounded-[28px] border border-ink/15 bg-ink p-2 shadow-[0_30px_80px_-28px_rgba(25,24,21,0.45),0_14px_34px_-20px_rgba(25,24,21,0.4)] sm:h-[28rem] md:h-[34rem] md:p-3">
       <div className="h-full w-full overflow-hidden rounded-[22px] bg-paper">
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 /* ---------------------------------------------------------------
-   The frame interior. One variant per project, matched to the
-   strongest real asset that project actually has.
+   The frame interior. (origin/main verbatim from here down.)
 ---------------------------------------------------------------- */
 function FrameChrome({ project }: { project: Project }) {
   return (
@@ -158,7 +111,6 @@ function FrameChrome({ project }: { project: Project }) {
 function ProjectFrame({ project }: { project: Project }) {
   const f = project.frame;
 
-  // TRIBE v2 — a real brain-heatmap scorecard, full-bleed like a device screen.
   if (f.kind === "image") {
     return (
       <div className="relative h-full w-full bg-[#0b0d12]">
@@ -175,7 +127,6 @@ function ProjectFrame({ project }: { project: Project }) {
     );
   }
 
-  // NovaCRM — a 2×2 grid of real production screenshots.
   if (f.kind === "gallery") {
     return (
       <div className="dotgrid flex h-full w-full flex-col">
@@ -195,7 +146,6 @@ function ProjectFrame({ project }: { project: Project }) {
     );
   }
 
-  // Sector Flow — the validation numbers, with a regime-classifier strip.
   if (f.kind === "stats") {
     return (
       <div className="dotgrid flex h-full w-full flex-col">

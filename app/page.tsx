@@ -1,13 +1,9 @@
+import Link from "next/link";
 import { projects } from "@/lib/projects";
 import { ProjectShowcase, Reveal } from "@/components/showcase";
-import { buildInPublic } from "@/lib/buildInPublic";
-
-const navLinks = [
-  { href: "#work", label: "Work" },
-  { href: "#about", label: "About" },
-  { href: "#public", label: "In public" },
-  { href: "#connect", label: "Connect" },
-];
+import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { BlurText } from "@/components/ui/blur-text";
+import { SiteHeader, SiteFooter, SectionHead } from "@/components/site-chrome";
 
 const connectLinks = [
   { href: "https://github.com/rippere", label: "GitHub ↗", primary: true },
@@ -16,12 +12,6 @@ const connectLinks = [
   { href: "mailto:ben@riphere.com", label: "Email ↗" },
 ];
 
-const receipts = buildInPublic
-  .filter((i) => i.publish)
-  .sort((a, b) =>
-    a.featured === b.featured ? b.date.localeCompare(a.date) : a.featured ? -1 : 1
-  );
-
 const creds = [
   { k: "Domain", v: "Agentic AI systems, grounded in the neuroscience of decision-making" },
   { k: "Builds", v: "NovaCRM · alfred-v2 · TRIBE v2 · Sector Flow · Executive Mind Matrix" },
@@ -29,21 +19,29 @@ const creds = [
   { k: "Direction", v: "AI product / engineering at an early-stage team" },
 ];
 
-const year = new Date().getFullYear();
+// Consultancy offer — capability-framed, no clients, no metrics. Every claim
+// maps to work already shown on the site (NovaCRM live, six bounded agents,
+// self-healing infra, fail-loud systems).
+const services = [
+  {
+    title: "Agentic systems",
+    body: "Multi-agent pipelines where each agent has one bounded, verifiable job — not a single prompt hoping for the best.",
+  },
+  {
+    title: "Decision intelligence",
+    body: "Turning messy human information — email, docs, signals — into a prioritized, explainable next action.",
+  },
+  {
+    title: "Production hardening",
+    body: "Grounding, evals, and human-in-the-loop layers so a system fails loud, self-heals, and earns trust.",
+  },
+];
 
-function SectionHead({ num, title, sub }: { num: string; title: string; sub?: string }) {
-  return (
-    <>
-      <span className="eyebrow text-faint">
-        {num} <span className="text-line">—</span> {title}
-      </span>
-      <h2 className="mt-3 font-display text-3xl font-medium tracking-tight text-ink md:text-5xl">
-        {title}
-      </h2>
-      {sub ? <p className="mt-3 max-w-2xl text-muted md:text-lg">{sub}</p> : null}
-    </>
-  );
-}
+const audience = [
+  "Founders and teams with an AI demo that now has to become something operators rely on.",
+  "Operators drowning in manual triage that agents could be doing — correctly and verifiably.",
+  "Anyone who needs the system around the model built right, not just the model called.",
+];
 
 export default function Home() {
   return (
@@ -56,28 +54,19 @@ export default function Home() {
       </a>
 
       {/* NAV */}
-      <header className="sticky top-0 z-50 border-b border-line/60 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <a href="#top" className="font-display text-lg font-semibold tracking-tight text-ink">
-            Ben Rippere<span className="text-accent">.</span>
-          </a>
-          <nav className="hidden gap-7 font-mono text-[0.8rem] uppercase tracking-[0.12em] text-muted sm:flex">
-            {navLinks.map((l) => (
-              <a key={l.href} href={l.href} className="link-anim hover:text-ink">
-                {l.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main id="top" className="mx-auto w-full max-w-6xl px-6">
         {/* HERO */}
         <section className="pt-20 pb-16 md:pt-32 md:pb-24">
           <p className="eyebrow text-accent">Neuroscience → AI systems</p>
           <h1 className="mt-6 max-w-4xl font-display text-[2.6rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink md:text-7xl">
-            I build AI systems that{" "}
-            <span className="italic text-accent">think like teams, act like operators.</span>
+            <BlurText text="I build AI systems that" />{" "}
+            <BlurText
+              text="think like teams, act like operators."
+              className="italic text-accent"
+              delay={260}
+            />
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
             I study how people make decisions at the neural level — reward, motivation,
@@ -91,6 +80,12 @@ export default function Home() {
             >
               See the work
             </a>
+            <Link
+              href="/novacrm"
+              className="rounded-full border border-ink/20 px-6 py-3 font-mono text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+            >
+              Set up NovaCRM →
+            </Link>
             <a
               href="https://github.com/rippere"
               target="_blank"
@@ -108,7 +103,7 @@ export default function Home() {
               <span className="text-muted">builds</span> · agentic AI
             </span>
             <span>
-              <span className="text-muted">status</span> · building in public
+              <span className="text-muted">open to</span> · consulting &amp; build work
             </span>
           </div>
         </section>
@@ -130,7 +125,7 @@ export default function Home() {
           <Reveal className="mt-6 flex flex-col items-center gap-2 text-center">
             <p className="max-w-md font-mono text-sm text-muted">
               Sentiment models, automation infra, and the experiments that don’t make the
-              front page — the receipts are all public.
+              front page. It’s all on GitHub.
             </p>
             <a
               href="https://github.com/rippere?tab=repositories"
@@ -180,11 +175,13 @@ export default function Home() {
                   serves are the same job.
                 </p>
               </div>
-              <ul className="space-y-6 border-l border-line pl-6">
+              <ul className="space-y-4">
                 {creds.map((c) => (
                   <li key={c.k}>
-                    <span className="eyebrow text-accent">{c.k}</span>
-                    <p className="mt-1.5 text-ink-2">{c.v}</p>
+                    <SpotlightCard className="p-5">
+                      <span className="eyebrow text-accent">{c.k}</span>
+                      <p className="mt-1.5 text-ink-2">{c.v}</p>
+                    </SpotlightCard>
                   </li>
                 ))}
               </ul>
@@ -192,33 +189,76 @@ export default function Home() {
           </Reveal>
         </section>
 
-        {/* BUILDING IN PUBLIC */}
-        <section id="public" className="scroll-mt-20 border-t border-line/70 py-16 md:py-24">
+        {/* CONSULTING — replaces the removed Building-in-public section. */}
+        <section id="consulting" className="scroll-mt-20 border-t border-line/70 py-16 md:py-24">
           <Reveal>
             <SectionHead
               num="03"
-              title="Building in public"
-              sub="What I shipped, what broke, what I learned — with the diff attached."
+              title="Work with me"
+              sub="I help teams put agentic AI into production — the system around the model, built to ship and to hold up once real people depend on it."
             />
-            <div className="mt-10 divide-y divide-line/70 border-y border-line/70">
-              {receipts.map((r) => (
-                <div key={r.slug} className="grid gap-3 py-6 md:grid-cols-[9rem_1fr] md:gap-8">
-                  <span className="eyebrow text-accent">{r.lane}</span>
-                  <div>
-                    <p className="text-muted md:text-lg">{r.text}</p>
-                    {r.receipt ? (
-                      <a
-                        href={r.receipt}
-                        target="_blank"
-                        rel="noopener"
-                        className="link-anim mt-2 inline-block font-mono text-xs text-faint hover:text-accent"
-                      >
-                        receipt ↗
-                      </a>
-                    ) : null}
+
+            <div className="mt-10 grid gap-10 md:grid-cols-[1.6fr_1fr]">
+              {/* WHAT I DO */}
+              <div className="space-y-6">
+                <p className="text-lg leading-relaxed text-muted">
+                  Most AI projects stall in the gap between a promising demo and something an
+                  operator can trust on a Monday morning. That gap — ingestion, grounding,
+                  verification, a human in the loop for the calls that matter — is the work I do.
+                  I&apos;ve built it for my own systems; I build it with teams who need it for theirs.
+                </p>
+                <ul className="grid gap-4 sm:grid-cols-3">
+                  {services.map((s) => (
+                    <li key={s.title}>
+                      <SpotlightCard className="h-full p-5">
+                        <span className="eyebrow text-accent">{s.title}</span>
+                        <p className="mt-1.5 text-ink-2">{s.body}</p>
+                      </SpotlightCard>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* WHO IT'S FOR + SINGLE CLEAR CTA */}
+              <div className="flex flex-col gap-6">
+                <SpotlightCard className="p-6">
+                  <span className="eyebrow text-faint">Who it&apos;s for</span>
+                  <ul className="mt-3 space-y-3 text-ink-2">
+                    {audience.map((a) => (
+                      <li key={a} className="flex gap-3">
+                        <span className="mt-1 text-accent" aria-hidden>
+                          →
+                        </span>
+                        <span>{a}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </SpotlightCard>
+
+                <div className="rounded-2xl border border-line bg-paper-2 p-6">
+                  <p className="font-display text-2xl font-medium leading-snug tracking-tight text-ink">
+                    Have a system that needs to make it to production?
+                  </p>
+                  <p className="mt-2 text-muted">
+                    Tell me the problem in a paragraph. If it&apos;s a fit, we&apos;ll find a time to talk.
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    {/* Primary lead-gen CTA. Swap this mailto for a Cal.com/Calendly link once one exists. */}
+                    <a
+                      href="mailto:ben@riphere.com?subject=Consulting%20inquiry"
+                      className="rounded-full bg-accent px-6 py-3 font-mono text-sm font-semibold text-paper transition-transform hover:-translate-y-0.5"
+                    >
+                      Start a conversation
+                    </a>
+                    <Link
+                      href="/novacrm"
+                      className="rounded-full border border-ink/20 px-6 py-3 font-mono text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+                    >
+                      See a build in depth →
+                    </Link>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </Reveal>
         </section>
@@ -254,19 +294,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-line/70">
-        <div className="mx-auto max-w-6xl px-6 py-10 font-mono text-[0.78rem] text-faint">
-          © {year} Ben Rippere · Built in public ·{" "}
-          <a
-            href="https://github.com/rippere"
-            target="_blank"
-            rel="noopener"
-            className="link-anim text-muted"
-          >
-            github.com/rippere
-          </a>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

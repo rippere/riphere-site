@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     url: SITE,
     title: "Ben Rippere — Building AI systems that think like teams, act like operators",
     description:
-      "Neuroscience-grounded AI systems: agentic decision intelligence, neural content scoring, and self-healing infrastructure. Building in public.",
+      "Neuroscience-grounded AI systems: agentic decision intelligence, neural content scoring, and self-healing infrastructure.",
   },
   twitter: { card: "summary_large_image" },
 };

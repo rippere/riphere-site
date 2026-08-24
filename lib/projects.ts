@@ -30,7 +30,30 @@ export interface Project {
   frame: FrameVariant;
 }
 
+// NovaCRM leads the gallery — it's the flagship and the wedge the storefront
+// (/novacrm) sells. Everything after it is supporting proof.
 export const projects: Project[] = [
+  {
+    slug: "crm-agentic",
+    name: "NovaCRM",
+    category: "Agentic product",
+    accent: "#2735e6",
+    tagline: "Turns inbox chaos into a sales pipeline",
+    blurb:
+      "A live AI-native CRM where six agents read scattered email and Slack and turn them into structured, prioritized deals, with a human in the loop for the calls that matter.",
+    stack: ["FastAPI", "Next.js", "Supabase", "Railway"],
+    links: [
+      { label: "Visit live app ↗", href: "https://app.riphere.com", primary: true },
+      { label: "View project ↗", href: "https://github.com/rippere/crm-agentic" },
+    ],
+    terminal: "novacrm · pipeline",
+    frame: {
+      kind: "image",
+      src: "/showcase/novacrm-pipeline.png",
+      alt: "NovaCRM pipeline board — deals across stages with AI win-probability and deal-health scoring.",
+      caption: "The live pipeline: six agents sort email + Slack into prioritized deals, each with an AI-scored win probability.",
+    },
+  },
   {
     slug: "tribe-v2",
     name: "TRIBE v2",
@@ -97,27 +120,6 @@ export const projects: Project[] = [
         { label: "MCP query bridge", sub: "answers in under a second" },
         { label: "self-healing watchdog", sub: "detect → heal → page (last resort)" },
       ],
-    },
-  },
-  {
-    slug: "crm-agentic",
-    name: "NovaCRM",
-    category: "Agentic product",
-    accent: "#2735e6",
-    tagline: "Turns inbox chaos into a sales pipeline",
-    blurb:
-      "A live AI-native CRM where six agents read scattered email and Slack and turn them into structured, prioritized deals, with a human in the loop for the calls that matter.",
-    stack: ["FastAPI", "Next.js", "Supabase", "Railway"],
-    links: [
-      { label: "Visit live app ↗", href: "https://app.riphere.com", primary: true },
-      { label: "View project ↗", href: "https://github.com/rippere/crm-agentic" },
-    ],
-    terminal: "novacrm · pipeline",
-    frame: {
-      kind: "image",
-      src: "/showcase/novacrm-pipeline.png",
-      alt: "NovaCRM pipeline board — deals across stages with AI win-probability and deal-health scoring.",
-      caption: "The live pipeline: six agents sort email + Slack into prioritized deals, each with an AI-scored win probability.",
     },
   },
 ];
