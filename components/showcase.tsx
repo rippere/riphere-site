@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion, useReducedMotion } from "motion/react";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/cn";
 import type { Project } from "@/lib/projects";
 
@@ -60,28 +60,34 @@ function ContainerScroll({
   titleComponent: React.ReactNode;
   children: React.ReactNode;
 }) {
-  // Always render a content-sized static stage. The earlier scroll-tilt
-  // reserved a tall runway (h-[58rem]) that read as dead space on mobile and
-  // could overlap; a static frame is reliable on every viewport.
+  // Scroll-driven tilt on EVERY viewport (mobile included). The card sits in
+  // normal flow at its content height — no tall runway, no negative margin — so
+  // nothing reserves dead space and it can never overlap the header. As the card
+  // scrolls from entering the viewport toward centered, it rises out of a slight
+  // backward tilt up to full scale. prefers-reduced-motion flattens it to static.
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "center center"],
+  });
+  const rotate = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [16, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.92, 1]);
   return (
-    <div className="relative flex flex-col items-center px-2 py-8 md:px-10">
-      <div className="w-full">
-        <div className="mx-auto max-w-5xl">{titleComponent}</div>
-        <StaticCard>{children}</StaticCard>
-      </div>
-    </div>
-  );
-}
-
-/* Static, non-animated card. Sizes to a fixed frame height (not a
-   scroll runway) with a normal positive gap above it — no negative
-   margin, so it can never overlap the header. */
-function StaticCard({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mx-auto mt-6 h-[24rem] w-full max-w-5xl rounded-[28px] border border-ink/15 bg-ink p-2 shadow-[0_30px_80px_-28px_rgba(25,24,21,0.45),0_14px_34px_-20px_rgba(25,24,21,0.4)] sm:h-[28rem] md:h-[34rem] md:p-3">
-      <div className="h-full w-full overflow-hidden rounded-[22px] bg-paper">
-        {children}
-      </div>
+    <div
+      ref={ref}
+      className="relative flex flex-col items-center px-2 py-8 md:px-10"
+      style={{ perspective: "1200px" }}
+    >
+      <div className="mx-auto max-w-5xl">{titleComponent}</div>
+      <motion.div
+        style={{ rotateX: rotate, scale }}
+        className="mx-auto mt-6 h-[24rem] w-full max-w-5xl rounded-[28px] border border-ink/15 bg-ink p-2 shadow-[0_30px_80px_-28px_rgba(25,24,21,0.45),0_14px_34px_-20px_rgba(25,24,21,0.4)] sm:h-[28rem] md:h-[34rem] md:p-3"
+      >
+        <div className="h-full w-full overflow-hidden rounded-[22px] bg-paper">
+          {children}
+        </div>
+      </motion.div>
     </div>
   );
 }
