@@ -4,6 +4,7 @@ import { ProjectShowcase, Reveal } from "@/components/showcase";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { BlurText } from "@/components/ui/blur-text";
 import { SiteHeader, SiteFooter, SectionHead } from "@/components/site-chrome";
+import { ExitLink } from "@/components/analytics";
 
 const connectLinks = [
   { href: "https://github.com/rippere", label: "GitHub ↗", primary: true },
@@ -58,52 +59,58 @@ export default function Home() {
 
       <main id="top" className="mx-auto w-full max-w-6xl px-6">
         {/* HERO */}
-        <section className="pt-20 pb-16 md:pt-32 md:pb-24">
+        {/* HERO: DRAFT copy (2026-11 patch) built on the through-line
+            "Decisions get stuck. I build what unsticks them. The person still decides."
+            Pending Ben's approval; see the PR. */}
+        <section className="pt-12 pb-16 md:pt-28 md:pb-24">
           <p className="eyebrow text-accent">Neuroscience → AI systems</p>
-          <h1 className="mt-6 max-w-4xl font-display text-[2.6rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink md:text-7xl">
-            <BlurText text="I build AI systems that" />{" "}
+          <h1 className="mt-5 max-w-4xl font-display text-[2.4rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink md:mt-6 md:text-7xl">
+            <BlurText text="Decisions get stuck." />{" "}
             <BlurText
-              text="think like teams, act like operators."
+              text="I build what unsticks them."
               className="italic text-accent"
               delay={260}
             />
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
+          <p className="mt-4 font-display text-2xl font-medium tracking-tight text-ink-2 md:mt-5 md:text-3xl">
+            The person still decides.
+          </p>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted md:mt-7 md:text-xl">
             I study how people make decisions at the neural level — reward, motivation,
             cognitive bias, risk tolerance — then build systems that account for those
             realities. Production-deployed, not notebooks.
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <a
-              href="#work"
+          {/* The two exits: hiring first, the consulting company second and quieter. */}
+          <div className="mt-7 flex flex-wrap items-center gap-3 md:mt-9">
+            <ExitLink
+              exit="hire"
+              href="/hire"
+              props={{ placement: "hero" }}
               className="rounded-full bg-accent px-6 py-3 font-mono text-sm font-semibold text-paper transition-transform hover:-translate-y-0.5"
             >
-              See the work
-            </a>
-            <Link
-              href="/novacrm"
+              Hire me →
+            </ExitLink>
+            <ExitLink
+              exit="riphere_llc"
+              href="/riphere-llc"
+              props={{ placement: "hero" }}
               className="rounded-full border border-ink/20 px-6 py-3 font-mono text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
             >
-              Set up NovaCRM →
-            </Link>
-            <a
-              href="https://github.com/rippere"
-              target="_blank"
-              rel="me noopener"
-              className="rounded-full border border-ink/20 px-6 py-3 font-mono text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
-            >
-              GitHub ↗
+              Riphere LLC · on-prem AI →
+            </ExitLink>
+            <a href="#work" className="link-anim px-2 py-3 font-mono text-sm text-muted hover:text-ink">
+              or see the work ↓
             </a>
           </div>
-          <div className="mt-12 flex flex-wrap gap-x-8 gap-y-2 border-t border-line/70 pt-6 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-faint">
+          <div className="mt-10 flex flex-wrap gap-x-8 gap-y-2 border-t border-line/70 pt-6 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-faint md:mt-12">
             <span>
               <span className="text-muted">domain</span> · neuroscience
             </span>
             <span>
-              <span className="text-muted">builds</span> · agentic AI
+              <span className="text-muted">known for</span> · decision design
             </span>
             <span>
-              <span className="text-muted">open to</span> · consulting &amp; build work
+              <span className="text-muted">open to</span> · full-time AI roles
             </span>
           </div>
         </section>
@@ -244,12 +251,14 @@ export default function Home() {
                   </p>
                   <div className="mt-5 flex flex-wrap gap-3">
                     {/* Primary lead-gen CTA. Swap this mailto for a Cal.com/Calendly link once one exists. */}
-                    <a
+                    <ExitLink
+                      exit="contact"
                       href="mailto:ben@riphere.com?subject=Consulting%20inquiry"
+                      props={{ placement: "home_consulting" }}
                       className="rounded-full bg-accent px-6 py-3 font-mono text-sm font-semibold text-paper transition-transform hover:-translate-y-0.5"
                     >
                       Start a conversation
-                    </a>
+                    </ExitLink>
                     <Link
                       href="/novacrm"
                       className="rounded-full border border-ink/20 px-6 py-3 font-mono text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
@@ -274,7 +283,18 @@ export default function Home() {
               compare notes.
             </h2>
             <div className="mt-9 flex flex-wrap gap-3">
-              {connectLinks.map((l) => (
+              {connectLinks.map((l) =>
+                l.href.startsWith("mailto") ? (
+                  <ExitLink
+                    key={l.href}
+                    exit="contact"
+                    href={l.href}
+                    props={{ placement: "home_connect" }}
+                    className="rounded-full border border-ink/20 px-6 py-3 font-mono text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+                  >
+                    {l.label}
+                  </ExitLink>
+                ) : (
                 <a
                   key={l.href}
                   href={l.href}
@@ -288,7 +308,8 @@ export default function Home() {
                 >
                   {l.label}
                 </a>
-              ))}
+                ),
+              )}
             </div>
           </Reveal>
         </section>

@@ -14,7 +14,8 @@ import Link from "next/link";
 const navLinks = [
   { href: "/#work", label: "Work" },
   { href: "/#about", label: "About" },
-  { href: "/#consulting", label: "Consulting" },
+  { href: "/hire", label: "Hire me" },
+  { href: "/riphere-llc", label: "Riphere LLC" },
   { href: "/novacrm", label: "NovaCRM" },
   { href: "/#connect", label: "Connect" },
 ];

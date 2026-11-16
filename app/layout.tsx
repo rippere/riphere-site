@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AnalyticsInit } from "@/components/analytics";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -48,7 +49,10 @@ export default function RootLayout({
       lang="en"
       className={`${fraunces.variable} ${inter.variable} ${jbMono.variable}`}
     >
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <AnalyticsInit />
+        {children}
+      </body>
     </html>
   );
 }
