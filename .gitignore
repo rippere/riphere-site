@@ -1,41 +1,33 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# The tower (site/) is committed as exported: no build, no dependencies.
+# See DEPLOY.md and tools/export_tower.py.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# export staging dir (tools/export_tower.py removes it itself)
+/site.staging/
 
-# testing
-/coverage
+# python
+__pycache__/
+*.pyc
 
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# archived Next.js app
+/legacy-next/node_modules
+/legacy-next/.pnp
+/legacy-next/.pnp.*
+/legacy-next/.yarn/*
+/legacy-next/coverage
+/legacy-next/.next/
+/legacy-next/out/
+/legacy-next/build
+/legacy-next/.vercel
+/legacy-next/*.tsbuildinfo
+/legacy-next/next-env.d.ts
 
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts

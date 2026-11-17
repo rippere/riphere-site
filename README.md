@@ -1,40 +1,59 @@
-# riphere.com — personal portfolio
+# riphere.com
 
-Warm-editorial portfolio for Ben Rippere. **Next.js** (App Router) · **Tailwind v4** · **Motion**.
-Featured work is a sequence of per-project scroll "stages" built on the Aceternity
-**container-scroll animation** — each project tilts up into view in its own space.
+Ben Rippere's portfolio: the tower, a night building whose floors each carry one piece of work on a billboard.
+It is a static three.js page with no build step and no dependencies to install.
 
-## Develop
+## Layout
+
+```
+site/            the tower as served. Exported, never edited by hand.
+tools/           export_tower.py: copies the tower into site/ and checks it
+legacy-next/     the previous Next.js site, archived (rollback: see DEPLOY.md)
+DEPLOY.md        Cloudflare Pages settings, rollback, open TODOs
+```
+
+## Where the source lives
+
+The tower is developed in a private working tree. This repo only receives an export of it:
+`tools/export_tower.py` copies an allowlist of files into `site/` and refuses to finish if anything
+that should not be public is in the result.
+
 ```bash
+python3 tools/export_tower.py                 # export into site/ (cleans it first)
+python3 tools/export_tower.py --out /tmp/x    # dry run into a scratch dir
+python3 tools/export_tower.py --src <path>    # another copy of the source tree
+```
+
+What is copied: the page (`index.html`), `identity.css`, `identity.js`, `scene3d.js`, `analytics.js`,
+`demos/*.js`, `tex/**` and `assets/**`. Nothing else.
+
+The export fails (exit 1, `site/` left as it was) if:
+
+- any exported file other than `assets/resume.pdf` contains the employer's name,
+- any text file contains the string `PLACEHOLDER`,
+- a file outside the allowlist, a denylisted path or a symlink is in the output,
+- `index.html` points at a local file that was not exported.
+
+It prints a manifest with byte and gzip sizes on every run. To change the site, change the source,
+run the export, and commit `site/`.
+
+## Preview
+
+```bash
+python3 -m http.server 8000 --directory site    # http://localhost:8000
+```
+
+Analytics stay off on localhost unless the URL carries `?ph=1`.
+
+## The archived Next.js site
+
+`legacy-next/` holds the Next.js app that served riphere.com before the tower, unchanged apart from the move.
+It still builds on its own:
+
+```bash
+cd legacy-next
 npm install
-npm run dev        # http://localhost:3000
+npm run build      # static export to legacy-next/out
 ```
 
-## Build (static export → ./out)
-```bash
-npm run build      # emits a fully static site to ./out
-```
-
-## Deploy (Cloudflare Pages — recommended)
-- Framework preset: **Next.js (Static HTML Export)** (or "None")
-- Build command: `npm run build`
-- Output dir: `out`
-
-Also works on Netlify / GitHub Pages — static, output = `out/`.
-
-## Structure
-```
-app/         layout.tsx (fonts + metadata) · page.tsx (all sections) · globals.css (theme tokens) · icon.svg
-components/   showcase.tsx — ContainerScroll + ProjectFrame + Reveal (the scroll stages)
-lib/          projects.ts — featured-work content (edit here to add/edit projects)
-legacy/       the previous zero-build static site (index.html + styles.css), archived
-```
-
-## Editing featured work
-Everything for the work section lives in `lib/projects.ts`: name, category, accent
-hue, tagline, headline metric, architecture rows, stack chips, links. Add an object
-to the array and a new scroll stage appears automatically.
-
-## Design direction
-Cream canvas · navy-ink **Fraunces** display · **JetBrains Mono** technical labels ·
-one electric-cobalt accent. Research behind it: `DESIGN_REFERENCES.md`.
+`legacy-next/legacy/` is the zero-build site that came before that one.
