@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="en">
+<title>Ben Rippere, AI Solutions Developer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="I design around how decisions actually get made, by people and by models. Work of Ben Rippere: Floor tool, NovaCRM, prepost and Riphere LLC.">
+<link rel="canonical" href="https://www.riphere.com/">
+<meta name="theme-color" content="#05060a">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="riphere.com">
+<meta property="og:url" content="https://www.riphere.com/">
+<meta property="og:title" content="Ben Rippere, AI Solutions Developer">
+<meta property="og:description" content="I design around how decisions actually get made, by people and by models. Work of Ben Rippere: Floor tool, NovaCRM, prepost and Riphere LLC.">
+<meta property="og:image" content="https://www.riphere.com/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The riphere.com tower at night: Ben Rippere's founder billboard, I design around how decisions actually get made, by people and by models.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ben Rippere, AI Solutions Developer">
+<meta name="twitter:description" content="I design around how decisions actually get made, by people and by models. Work of Ben Rippere: Floor tool, NovaCRM, prepost and Riphere LLC.">
+<meta name="twitter:image" content="https://www.riphere.com/assets/og.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "@id": "https://www.riphere.com/#person", "name": "Ben Rippere", "url": "https://www.riphere.com/", "jobTitle": "AI Solutions Developer", "email": "ben@riphere.com", "image": "https://www.riphere.com/assets/ben-headshot.jpg", "sameAs": ["https://github.com/rippere", "https://www.linkedin.com/in/benjamin-rippere/", "https://x.com/rrippere"]}</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><g fill='%23e9e6df' stroke='%2305060a' stroke-width='1.5' stroke-linejoin='round'><path d='M3 4H10.2L20.7 28H3Z'/><path d='M13.2 6H29.5V30H23.7Z'/></g></svg>"> 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/ben-headshot-phone.jpg" media="(max-width: 699px)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/ben-headshot.jpg" media="(min-width: 700px)" fetchpriority="high">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+:root {
+  --night: #05060a; --ink: #e9e6df; --ink-2: #8d8f96; --line: #2a2d35; --signal: #ff4b3a; --panel: #0b0d12f0;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --grot: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --saas: "Inter", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { background: var(--night); color: var(--ink); }
+body { margin: 0; font-family: var(--mono); overflow-x: hidden; }
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .45s; } 
+#scene.in { opacity: 1; }
+@keyframes sceneIn { to { opacity: 1; } }
+#scene { animation: sceneIn .45s 5s forwards; } 
+body { background: linear-gradient(90deg, #1b1714 72%, var(--night) 0) fixed; } 
+@media (max-width: 699px) { body { background: #1b1714; } }
+#world { position: fixed; left: 0; top: 0; width: 100%; height: 0; will-change: transform; }
+#spacer { width: 1px; }
+.film { position: fixed; inset: 0; pointer-events: none; z-index: 15; }
+#desat { background: #7d7973; mix-blend-mode: saturation; opacity: .5; }
+#matte { background: #1d1b18; mix-blend-mode: screen; opacity: .5; }
+#grainw { mix-blend-mode: overlay; opacity: .26; overflow: hidden; } 
+header#tb { padding-left: 10px; } 
+#grain { position: absolute; inset: -260px; background-size: 448px 448px; will-change: transform; }
+
+.board { position: absolute; z-index: 1; --bw: 600px; --tab: max(88px, calc(var(--bw) * .11)); } 
+.board.tearing { z-index: 10; }
+.panel { position: absolute; inset: 0; background: #000; box-shadow: 0 0 0 6px #17191e, 0 0 0 8px #2a2c31, 0 24px 50px #000c; }
+.panel::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(60% 70% at 18% -12%, #fff1d62a, transparent 70%), radial-gradient(60% 70% at 50% -12%, #fff1d62a, transparent 70%), radial-gradient(60% 70% at 82% -12%, #fff1d62a, transparent 70%); }
+.board.top .panel::after { display: none; }
+.lamps { position: absolute; left: 6%; right: 6%; top: -30px; height: 30px; display: flex; justify-content: space-between; pointer-events: none; }
+.lamps i { width: 2px; height: 22px; background: #2e3138; position: relative; }
+.lamps i::after { content: ""; position: absolute; left: -7px; bottom: -6px; width: 16px; height: 6px; background: #3a3d44; border-radius: 0 0 3px 3px; box-shadow: 0 6px 18px 4px #ffe6b833; }
+.catwalk { position: absolute; left: -10px; right: -10px; bottom: -16px; height: 7px; border-top: 2px solid #34373e;
+  background: repeating-linear-gradient(90deg, #2a2c31 0 2px, transparent 2px 11px); }
+.under { position: absolute; inset: 0; z-index: 1; overflow: hidden; background-color: #0b0d11; filter: brightness(.18) saturate(0);
+  background-image: linear-gradient(#ffffff09 1px, transparent 1px), linear-gradient(90deg, #ffffff09 1px, transparent 1px);
+  background-size: calc(var(--bw) / 24) calc(var(--bw) / 24);
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 4px; padding: calc(var(--bw) * .03); box-sizing: border-box; }
+.tubes { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; mix-blend-mode: screen; display: flex; flex-direction: column; justify-content: space-around; padding: 4% 2.5%; box-sizing: border-box; }
+.tubes i { display: block; height: max(3px, calc(var(--bw) * .007)); border-radius: 4px; background: linear-gradient(90deg, #7fa9e8, #eef7ff 3%, #fff 50%, #eef7ff 97%, #7fa9e8);
+  box-shadow: 0 0 calc(var(--bw) * .025) calc(var(--bw) * .006) #9cc8ffa0, 0 0 calc(var(--bw) * .09) calc(var(--bw) * .02) #6fa8ff40; }
+.pieces, .residue { position: absolute; inset: 0; z-index: 2; perspective: 1400px; pointer-events: none; }
+.debris { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.debris i { position: absolute; left: 0; top: 0; visibility: hidden; }
+.tabhost { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.piece { position: absolute; inset: 0; }
+.board.tearing .piece { will-change: transform; }
+.pc { position: absolute; inset: 0; }
+.piece.mod .pc { overflow: hidden; }
+.mface { position: absolute; }
+.dead { position: absolute; inset: 0; opacity: 0; background: radial-gradient(circle, #000 0 52%, #000000d0 58%) 0 0 / 5px 5px; }
+.pback { position: absolute; inset: 0; background: linear-gradient(172deg, #f1ece0, #e8e2d4 45%, #d6cdbb); }
+.fiber { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.face { position: absolute; inset: 0; overflow: hidden; background-color: #000; background-size: contain; background-repeat: no-repeat; background-position: center; }
+.face.led { background-image: var(--led); }
+.leaf, .sg, .bd { position: absolute; inset: 0; }
+.piece.p3, .sg, .bd { transform-style: preserve-3d; }
+.pc.core { background: #efe9dc; visibility: hidden; }
+.shd { position: absolute; inset: 0; opacity: 0; filter: blur(5px); pointer-events: none; }
+.shd > div { position: absolute; inset: 0; background: #000; }
+.wht { position: absolute; left: 0; top: 0; overflow: visible; opacity: 0; filter: blur(2.5px); pointer-events: none; }
+.under { padding-left: calc(var(--remL, 0%) + var(--bw) * .02); }
+@media (max-width: 699px) { .under { padding: 8px; padding-left: calc(var(--remL, 0%) + 8px); } } 
+.vig { position: absolute; left: 0; top: 0; z-index: 9; pointer-events: none; opacity: 0; background: radial-gradient(ellipse 62% 58% at 50% 48%, #0007 30%, #000 85%); }
+
+.paper { font-family: var(--saas); color: #fff; padding: calc(var(--bw) * .05); box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: calc(var(--bw) * .016); }
+.face.paper::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), #00000024 calc(25% - 1px) 25%, #ffffff0d 25% calc(25% + 1px), transparent calc(25% + 1px) calc(25% + 2px)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .96 0 0 0 0 .9 0 0 0 1.4 -.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E"),
+    linear-gradient(#0000 0%, #0000 18%, #00000073 100%); }
+.face.paper::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(34% 62% at 18% -8%, #ffe2b366, transparent 72%), radial-gradient(34% 62% at 50% -8%, #ffe2b366, transparent 72%), radial-gradient(34% 62% at 82% -8%, #ffe2b366, transparent 72%); }
+.paper .top-row { display: flex; gap: 10px; align-items: center; font-size: max(10px, calc(var(--bw) * .02)); font-weight: 700; }
+.paper .badge { font-weight: 600; padding: .25em .8em; border-radius: 999px; background: #ffffff26; border: 1px solid #ffffff40; }
+.paper h3 { margin: 0; font-size: calc(var(--bw) * .064); font-weight: 800; letter-spacing: -.035em; line-height: 1.02; max-width: 82%; }
+.paper p { margin: 0; font-size: max(11px, calc(var(--bw) * .024)); line-height: 1.4; opacity: .85; max-width: 62%; }
+.paper .cta { align-self: flex-start; font-size: max(10px, calc(var(--bw) * .022)); font-weight: 600; padding: .65em 1.3em; border-radius: 999px; background: #fff; color: #3b1d8f; box-shadow: 0 8px 30px #7c3aed66; }
+.g0 { background: radial-gradient(at 18% 22%, #7c3aed, transparent 52%), radial-gradient(at 82% 28%, #2563eb, transparent 50%), radial-gradient(at 55% 95%, #db2777, transparent 55%), #1e1b4b; }
+.g1 { background: radial-gradient(at 80% 15%, #14b8a6, transparent 50%), radial-gradient(at 15% 85%, #6366f1, transparent 55%), #0f172a; }
+.g2 { background: radial-gradient(at 25% 30%, #f97316, transparent 50%), radial-gradient(at 85% 70%, #ec4899, transparent 55%), #3b0764; }
+.g3 { background: radial-gradient(at 50% 120%, #a855f7aa, transparent 60%), linear-gradient(#ffffff0d 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, #ffffff0d 1px, transparent 1px) 0 0 / 28px 28px, #09090b; }
+.perf { display: none; }
+.seam { position: absolute; right: 0; height: 3px; pointer-events: none; background: linear-gradient(#0000008f, #0000); box-shadow: 0 -1px 0 #ffffff1f; z-index: 1; }
+.curl { position: absolute; right: 0; pointer-events: none; z-index: 1; background: linear-gradient(225deg, #0b0d11 0 47%, #b9b09d 49%, #efe9dc 72%, #d6cdbb); filter: drop-shadow(-2px 3px 2px #000a); }
+.riptab { position: absolute; width: var(--tab); height: var(--tab); pointer-events: auto; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+  --g: 225deg; --rot: 45deg; --tx: -.16; --ty: .16; filter: drop-shadow(-3px 4px 4px #000b); }
+.riptab::before { content: ""; position: absolute; inset: 0; background: linear-gradient(var(--g), #0b0d11 0 47%, #b9b09d 49%, #f1ece0 70%, #d9d1bf); }
+.riptab span { position: absolute; left: 50%; top: 50%; white-space: nowrap; font: 700 max(13px, calc(var(--tab) * .15)) / 1 var(--mono); letter-spacing: .06em; color: #b3261e;
+  transform: translate(-50%, -50%) translate(calc(var(--tab) * var(--tx)), calc(var(--tab) * var(--ty))) rotate(var(--rot)); }
+.riptab.held { cursor: grabbing; }
+.riptab:focus-visible { outline: 2px solid #b3261e; outline-offset: 2px; }
+.rm-cover { z-index: 3; transition: opacity .3s linear; }
+.riptab[data-pos="tr"] { top: 0; right: 0; }
+.riptab[data-pos="tl"] { top: 0; left: 0; --g: 135deg; --rot: -45deg; --tx: .16; }
+.riptab[data-pos="br"] { bottom: 0; right: 0; --g: 315deg; --rot: -45deg; --ty: -.16; }
+.riptab[data-pos="r"] { right: 0; width: calc(var(--tab) * 1.5); height: calc(var(--tab) * .62); --rot: 0deg; --tx: 0; --ty: 0; }
+.riptab[data-pos="r"]::before, .riptab[data-pos="tc"]::before { background: linear-gradient(170deg, #f1ece0, #ddd5c3); clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%); }
+.riptab[data-pos="tc"] { top: 0; left: calc(50% - var(--tab) * .62); width: calc(var(--tab) * 1.24); height: calc(var(--tab) * .9); --rot: 0deg; --tx: 0; --ty: .08; }
+.riptab[data-pos="tc"]::before { clip-path: polygon(0 0, 100% 0, 100% 72%, 50% 100%, 0 72%); }
+
+.board.top { z-index: 2; }
+.board.top .housing { position: absolute; inset: -13px; border-radius: 2px; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, #6a6d76 0 1.7px, #1a1b20 2.3px, transparent 3px) 10px 0 / 54px 13px repeat-x,
+    radial-gradient(circle at 50% 50%, #555861 0 1.6px, #15161a 2.2px, transparent 2.9px) 10px 100% / 54px 13px repeat-x,
+    radial-gradient(circle at 50% 50%, #555861 0 1.6px, #15161a 2.2px, transparent 2.9px) 0 20px / 13px 48px repeat-y,
+    radial-gradient(circle at 50% 50%, #555861 0 1.6px, #15161a 2.2px, transparent 2.9px) 100% 20px / 13px 48px repeat-y,
+    linear-gradient(#2b2d33, #121317 2px, #0a0b0e 40%, #060709);
+  box-shadow: inset 0 1px 0 #ffffff30, inset 0 -2px 0 #000, inset 1px 0 0 #ffffff0f, inset -1px 0 0 #000, 0 0 0 1px #000, 0 34px 70px #000e, 0 12px 24px #000a; }
+.board.top .panel { background: #030304; box-shadow: inset 0 0 0 1px #000, inset 0 3px 8px #000, 0 0 0 1px #24262c; }
+.board.top .catwalk { bottom: -26px; }
+.board.top .rail { position: absolute; left: 2%; right: 2%; bottom: -25px; height: 4px; display: flex; justify-content: space-between; pointer-events: none; }
+.board.top .rail i { position: relative; width: 6px; height: 4px; border-radius: 1px; background: #ffe2b0; box-shadow: 0 0 6px 2px #ffd59a88; }
+.board.top .rail i::after { content: ""; position: absolute; left: -26px; top: 4px; width: 58px; height: 64px; pointer-events: none;
+  background: linear-gradient(#ffd8a038, #ffd8a000 90%); clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%); }
+
+
+.under .art { position: relative; min-height: 0; overflow: hidden; }
+
+.paper .top-row .mark { display: inline-flex; gap: .4em; align-items: center; }
+.paper .top-row .ann { font-weight: 600; opacity: .8; font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.paper .ctas { display: flex; gap: calc(var(--bw) * .018); align-items: center; flex-wrap: wrap; }
+.paper .ctas .cta { align-self: auto; }
+.paper .ghost { font-size: max(10px, calc(var(--bw) * .022)); font-weight: 600; padding: .6em 1.2em; border-radius: 999px; border: 1px solid #ffffff59; color: #fff; background: #ffffff10; }
+.paper .trust { display: flex; align-items: center; gap: calc(var(--bw) * .012); font-size: max(9px, calc(var(--bw) * .016)); font-weight: 600; opacity: .7; flex-wrap: nowrap; overflow: hidden; }
+.paper .trust span { white-space: nowrap; margin-right: .4em; }
+.paper .trust i { flex: none; width: calc(var(--bw) * .075); height: max(8px, calc(var(--bw) * .02)); border-radius: 999px; background: #ffffff38; }
+.paper.compact { gap: calc(var(--bw) * .011); padding-top: calc(var(--bw) * .03); padding-bottom: calc(var(--bw) * .03); }
+.paper.compact p { display: none; }
+.paper.compact h3 { font-size: calc(var(--bw) * .056); }
+
+.final { position: absolute; background: #05060a; box-shadow: 0 0 0 1px #15161b, 0 0 0 4px #05060a; }
+.final canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.final .mail { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: transparent; text-decoration: none; white-space: nowrap; overflow: hidden;
+  font: 600 12px / 1 var(--mono); user-select: text; -webkit-user-select: text; cursor: text; }
+.final .mail::selection { background: #ff4b3a66; color: transparent; }
+
+#hint { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; font-size: 11px; letter-spacing: .3em; color: var(--ink); pointer-events: none; }
+#ctl { position: fixed; z-index: 30; right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--panel); border: 1px solid var(--line); font-size: 11px; color: var(--ink); max-width: calc(100vw - 24px); }
+#ctl summary { cursor: pointer; padding: 8px 12px; letter-spacing: .14em; text-transform: uppercase; }
+#ctl .body { display: grid; gap: 10px; padding: 0 12px 12px; }
+.grp { display: grid; gap: 4px; }
+.grp > span { color: var(--ink-2); letter-spacing: .1em; text-transform: uppercase; font-size: 10px; }
+.seg { display: flex; border: 1px solid var(--line); }
+.seg button, #replay { background: transparent; border: 0; border-right: 1px solid var(--line); color: var(--ink-2); padding: 7px 10px; font: inherit; cursor: pointer; flex: 1; white-space: nowrap; }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--night); }
+#replay { border: 1px solid var(--line); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+#lift { position: fixed; z-index: 21; top: calc(14px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); min-width: 172px;
+  font: 600 10px / 1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2);
+  background: linear-gradient(100deg, #1c1d21, #121316 40%, #18191d); border: 1px solid #2c2e34; box-shadow: inset 0 1px 0 #ffffff14, 0 12px 30px #000b; padding: 9px 10px 10px; }
+#lift .ind { all: unset; box-sizing: border-box; display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 8px; margin-bottom: 9px;
+  background: #040405; box-shadow: inset 0 0 0 1px #000, inset 0 2px 6px #000; color: var(--signal); font: 700 14px / 1 var(--mono); letter-spacing: .12em; text-shadow: 0 0 6px #ff4b3a99; cursor: default; }
+#lift .ind small { font-size: 9px; color: #ff4b3a99; letter-spacing: .1em; }
+#lift ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+#lift ol a { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; }
+#lift .lb { text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#lift .bt { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); font-size: 9px; letter-spacing: .02em;
+  background: radial-gradient(circle at 40% 35%, #44464d, #18191d 72%); box-shadow: 0 0 0 2px #2a2c31, 0 0 0 3px #08080a, 0 2px 4px #000; }
+#lift ol a:hover .lb, #lift ol a:focus-visible .lb { color: var(--ink); }
+#lift ol a[aria-current="true"] .bt { box-shadow: 0 0 0 2px var(--signal), 0 0 12px 2px #ff4b3a66, 0 2px 4px #000; color: #ffe1dc; }
+#lift ol a[aria-current="true"] .lb { color: var(--ink); }
+.felt { position: absolute; z-index: 1; box-sizing: border-box; padding: calc(var(--fr) * .5) calc(var(--fr) * .6);
+  background: repeating-linear-gradient(#171717 0 calc(var(--fr) - 2px), #080808 calc(var(--fr) - 2px) var(--fr)) 0 calc(var(--fr) * .5), #141414;
+  box-shadow: 0 0 0 5px #3b3024, 0 0 0 6px #110d09, 0 16px 34px #000d, inset 0 0 24px #000;
+  font: 700 var(--fs) / var(--fr) var(--grot); font-stretch: 68%; text-transform: uppercase; letter-spacing: .09em; color: #ebe6dc; }
+.felt::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(90% 60% at 50% -10%, #ffd9aa22, transparent 70%); }
+.felt h4 { margin: 0; font: inherit; text-align: center; letter-spacing: .32em; }
+.felt a { all: unset; box-sizing: border-box; display: flex; align-items: baseline; width: 100%; cursor: pointer; line-height: var(--fr); transform: translateY(var(--o)) rotate(var(--r)); }
+.felt a:hover, .felt a:focus-visible { color: #fff; text-shadow: 0 0 8px #ffffff80; }
+.felt .ld { flex: 1; min-width: .6em; margin: 0 .35em; border-bottom: 2px dotted #ebe6dc40; transform: translateY(-.28em); }
+@media (max-width: 699px) { #lift { min-width: 0; padding: 6px; } #lift .ind { margin: 0; cursor: pointer; } #lift ol { display: none; margin-top: 8px; } #lift.open ol { display: grid; } }
+@media (max-width: 699px) {
+  #ctl { font-size: 10px; }
+  #ctl summary { padding: 6px 10px; }
+  #ctl .body { gap: 6px; padding: 0 8px 8px; }
+  .seg button, #replay { padding: 6px 6px; }
+}
+</style>
+<link rel="stylesheet" href="identity.css">
+
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script src="analytics.js" defer></script> 
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="world"></div>
+<div id="spacer"></div>
+<div class="film" id="desat"></div><div class="film" id="matte"></div><div class="film" id="grainw"><div id="grain"></div></div>
+<header id="tb"><p class="tb-name"><span class="tb-r">AI SOLUTIONS DEVELOPER</span></p></header>
+<section id="ph-plate" class="ph-plate" hidden aria-labelledby="ph-h" tabindex="-1">
+  <div class="ph-sheet ph-cover">
+    <div class="ph-tb"><h2 class="ph-h" id="ph-h"><span class="ph-k">PH</span> <span class="ph-k">B. RIPPERE</span></h2><span class="ph-v">THE DESK</span></div>
+    <p class="ph-cred">B.S. Psychology · Minor in Entrepreneurship · graduating May 2027</p>
+    <button type="button" class="ph-x">close</button>
+  </div>
+  <div class="ph-sheets">
+    <article class="ph-sheet"><div class="ph-tb"><h3 class="ph-k">BIAS PROFILES</h3><span class="ph-v">A</span></div><p class="ph-b">Agents argue in character (optimism, loss aversion, downside anchoring) before a decision is routed.</p><p class="ph-src">Executive Mind Matrix</p></article>
+    <article class="ph-sheet"><div class="ph-tb"><h3 class="ph-k">CLARITY RUBRIC</h3><span class="ph-v">B</span></div><p class="ph-b">Messages get a clarity score from 0 to 100: specific and actionable, or vague.</p><p class="ph-src">NovaCRM</p></article>
+    <article class="ph-sheet"><div class="ph-tb"><h3 class="ph-k">CRITERIA FIRST</h3><span class="ph-v">C</span></div><p class="ph-b">Success criteria committed to git three days before the results. The pilot missed the main bar: composite r = 0.25 against a pre-set 0.4.</p><p class="ph-src">prepost, built on Meta FAIR’s TRIBE v2 </p></article>
+  </div>
+</section>
+<section id="fl07" class="fl07" hidden aria-labelledby="fl07-h">
+  <div class="f7-tb"><h2 class="f7-h" id="fl07-h"><span class="f7-k">07</span> <span class="f7-k">CONSULTING</span></h2></div>
+  <p class="f7-co">Riphere LLC</p>
+  <p class="f7-go"><a href="?case=riphere-llc" data-href="/work/riphere-llc">Read the Riphere LLC case on FL 08</a></p>
+  <p class="f7-ml">Contact: <a href="mailto:ben@riphere.com?subject=Project%20%C2%B7%20from%20FL%2007">ben@riphere.com</a></p>
+</section>
+<nav id="lift" aria-label="Floors"></nav>
+<div id="hint">SCROLL</div>
+<details id="ctl" open hidden>
+  <summary>Dev</summary>
+  <div class="body">
+    <div class="grp"><span>Tear</span><div class="seg" data-k="tear"><button type="button" data-v="seq">Sequence</button><button type="button" data-v="peel">Peel</button><button type="button" data-v="strip">Strip</button><button type="button" data-v="glitch">Glitch</button><button type="button" data-v="shred">Shred</button></div></div>
+    <div class="grp"><span>Boards</span><div class="seg" data-k="boards"><button type="button" data-v="mixed">LED + paper</button><button type="button" data-v="led">All LED</button></div></div>
+    <div class="grp"><span>Timing</span><div class="seg" data-k="timing"><button type="button" data-v="once">Once at center</button><button type="button" data-v="scrub">Scrub</button><button type="button" data-v="drag">Drag</button></div></div>
+    <button type="button" id="replay">Re-hang the ads</button>
+  </div>
+</details>
+
+<script>window.CASES = {};</script> 
+<script src="identity.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const cv = $('#scene');
+const world = $('#world'), spacer = $('#spacer');
+const DPR = Math.min(2, window.devicePixelRatio || 1);
+let W = 0, VH = 0, WH = 0, facadeW = 0, STREET_Y = 0, FINAL_Y = 0, camY = 0, lastT = 0, laidOutWidth = 0;
+const state = { tear: 'seq', boards: 'mixed', timing: 'once' };
+function parseHash() {
+  const p = location.hash.slice(1).split('-');
+  if (['seq', 'peel', 'strip', 'glitch', 'shred'].includes(p[0])) state.tear = p[0];
+  if (['mixed', 'led'].includes(p[1])) state.boards = p[1];
+  if (['once', 'scrub', 'drag'].includes(p[2])) state.timing = p[2];
+}
+parseHash();
+addEventListener('hashchange', () => { const was = JSON.stringify(state); parseHash(); if (JSON.stringify(state) !== was && boards[0] && boards[0].el) applyVariant(); });
+
+const TOP_MSGS = {
+  main: { lines: ['I DESIGN AROUND HOW', 'DECISIONS ACTUALLY', 'GET MADE', 'BY PEOPLE AND BY MODELS'], phone: ['I DESIGN AROUND', 'HOW DECISIONS', 'ACTUALLY GET MADE', 'BY PEOPLE AND', 'BY MODELS'] },
+  rip: { lines: ['RIP HERE'], scale: 2 },
+};
+const CONTACT = { name: 'BEN RIPPERE', mail: 'BEN@RIPHERE.COM', href: 'mailto:ben@riphere.com' };
+const PROJECTS = [
+  { id: 'floortool', slug: 'floor-tool', code: '36', name: 'Floor tool', art: { kind: 'case', prov: 'Floor tool \u00b7 operator floor-planning tool' } },
+  { id: 'novacrm', slug: 'novacrm', code: '26', name: 'NovaCRM', art: { kind: 'case', prov: 'NovaCRM \u00b7 own project' } },
+  { id: 'prepost', slug: 'prepost', code: '18', name: 'prepost', art: { kind: 'case', prov: 'prepost \u00b7 research' } },
+  { id: 'riphere', slug: 'riphere-llc', code: '08', name: 'Riphere LLC', art: { kind: 'case', prov: 'Riphere LLC \u00b7 formed Oct 2026, no signed clients yet' } },
+];
+const boards = PROJECTS.map((p, i) => ({ ...p, i, x: 0, y: 0, w: 0, h: 0, el: null, anims: [], torn: false, dur: 0 }));
+const TOP = { x: 0, y: 0, w: 0, h: 0, el: null, cv: null, ctx: null, lit: 1, dimCv: null, litCv: null };
+
+function hash(a, b) { let x = (Math.imul(a, 374761393) + Math.imul(b, 668265263)) | 0; x = Math.imul(x ^ (x >>> 13), 1274126177); x ^= x >>> 16; return (x >>> 0) / 4294967296; }
+function rng(seed) { return () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const poly = pts => 'polygon(' + pts.map(([x, y]) => x.toFixed(2) + '% ' + y.toFixed(2) + '%').join(',') + ')';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const FONT = {
+  A: '01110 10001 10001 11111 10001 10001 10001', B: '11110 10001 10001 11110 10001 10001 11110', C: '01110 10001 10000 10000 10000 10001 01110',
+  D: '11110 10001 10001 10001 10001 10001 11110', E: '11111 10000 10000 11110 10000 10000 11111', F: '11111 10000 10000 11110 10000 10000 10000',
+  G: '01110 10001 10000 10111 10001 10001 01111', H: '10001 10001 10001 11111 10001 10001 10001', I: '01110 00100 00100 00100 00100 00100 01110',
+  J: '00111 00010 00010 00010 00010 10010 01100', K: '10001 10010 10100 11000 10100 10010 10001', L: '10000 10000 10000 10000 10000 10000 11111',
+  M: '10001 11011 10101 10101 10001 10001 10001', N: '10001 10001 11001 10101 10011 10001 10001', O: '01110 10001 10001 10001 10001 10001 01110',
+  P: '11110 10001 10001 11110 10000 10000 10000', Q: '01110 10001 10001 10001 10101 10010 01101', R: '11110 10001 10001 11110 10100 10010 10001',
+  S: '01111 10000 10000 01110 00001 00001 11110', T: '11111 00100 00100 00100 00100 00100 00100', U: '10001 10001 10001 10001 10001 10001 01110',
+  V: '10001 10001 10001 10001 10001 01010 00100', W: '10001 10001 10001 10101 10101 10101 01010', X: '10001 10001 01010 00100 01010 10001 10001',
+  Y: '10001 10001 10001 01010 00100 00100 00100', Z: '11111 00001 00010 00100 01000 10000 11111',
+  0: '01110 10001 10011 10101 11001 10001 01110', 1: '00100 01100 00100 00100 00100 00100 01110', 2: '01110 10001 00001 00010 00100 01000 11111',
+  3: '11111 00010 00100 00010 00001 10001 01110', 4: '00010 00110 01010 10010 11111 00010 00010', 5: '11111 10000 11110 00001 00001 10001 01110',
+  6: '00110 01000 10000 11110 10001 10001 01110', 7: '11111 00001 00010 00100 01000 01000 01000', 8: '01110 10001 10001 01110 10001 10001 01110',
+  9: '01110 10001 10001 01111 00001 00010 01100',
+  '.': '00000 00000 00000 00000 00000 01100 01100', ',': '00000 00000 00000 00000 01100 00100 01000', "'": '01100 00100 01000 00000 00000 00000 00000',
+  '-': '00000 00000 00000 11111 00000 00000 00000', ':': '00000 01100 01100 00000 01100 01100 00000', ';': '00000 01100 01100 00000 01100 00100 01000',
+  '/': '00000 00001 00010 00100 01000 10000 00000', '?': '01110 10001 00001 00010 00100 00000 00100', '!': '00100 00100 00100 00100 00100 00000 00100',
+  '>': '01000 00100 00010 00001 00010 00100 01000', '@': '01110 10001 00001 01101 10101 10101 01110', '\u00b7': '00000 00000 00000 00100 00000 00000 00000',
+};
+const NARROW = new Set(['.', ',', "'", ':', ';', '!', '\u00b7']);
+function glyphRows(ch) {
+  if (ch === ' ') return ['000', '000', '000', '000', '000', '000', '000'];
+  const g = (FONT[ch] || FONT['?']).split(' ');
+  if (!NARROW.has(ch)) return g;
+  let a = 5, z = -1; for (const r of g) for (let x = 0; x < 5; x++) if (r[x] === '1') { a = Math.min(a, x); z = Math.max(z, x); }
+  return g.map(r => r.slice(a, z + 1));
+}
+function textGrid(lines, sc = 1, lg = 2) {
+  const L = lines.map(s => { const rows = ['', '', '', '', '', '', '']; [...String(s).toUpperCase()].forEach((ch, k) => { const g = glyphRows(ch); for (let y = 0; y < 7; y++) rows[y] += (k ? '0' : '') + g[y]; }); return rows; });
+  const bc = Math.max(...L.map(r => r[0].length)), br = L.length * 7 + (L.length - 1) * lg, cols = bc * sc, rows = br * sc, lit = new Uint8Array(cols * rows);
+  let n = 0;
+  L.forEach((r, li) => { const ox = Math.floor((bc - r[0].length) / 2), oy = li * (7 + lg);
+    for (let y = 0; y < 7; y++) for (let x = 0; x < r[y].length; x++) if (r[y][x] === '1')
+      for (let sy = 0; sy < sc; sy++) for (let sx = 0; sx < sc; sx++) { lit[((oy + y) * sc + sy) * cols + (ox + x) * sc + sx] = 1; n++; } });
+  return { cols, rows, lit, n };
+}
+const ledGeo = (w, h, pitch) => { const PC = Math.floor(w / pitch), PR = Math.floor(h / pitch); return { PC, PR, pitch, ox: (w - PC * pitch) / 2 + pitch / 2, oy: (h - PR * pitch) / 2 + pitch / 2 }; };
+const LAMP = {}, LAMP_PAL = { white: ['#fffaf0', '#ffd9a0', [255, 214, 160]], red: ['#ffd6cc', '#ff4b3a', [255, 75, 58]], amber: ['#fff0c8', '#ffb347', [255, 150, 40]] };
+function lampSprite(kind, r, pal) {
+  const key = kind + pal + r.toFixed(2); if (LAMP[key]) return LAMP[key];
+  const [core, rim, gl] = LAMP_PAL[pal], R = Math.ceil(kind === 'glow' ? r * 3.2 : r + 1), c = mkCv(R * 2, R * 2), o = c.getContext('2d');
+  if (kind === 'glow') { const g = o.createRadialGradient(R, R, r * .5, R, R, R); g.addColorStop(0, rgbaS(gl, .30)); g.addColorStop(.35, rgbaS(gl, .09)); g.addColorStop(1, rgbaS(gl, 0)); o.fillStyle = g; o.fillRect(0, 0, R * 2, R * 2); }
+  else if (kind === 'dot') { const g = o.createRadialGradient(R, R, 0, R, R, r); g.addColorStop(0, core); g.addColorStop(.45, core); g.addColorStop(.6, rim); g.addColorStop(.9, rim); g.addColorStop(1, rgbaS(hexRGB(rim), 0)); o.fillStyle = g; o.beginPath(); o.arc(R, R, r, 0, 6.2832); o.fill(); }
+  else { o.fillStyle = 'rgba(255,240,220,.04)'; o.beginPath(); o.arc(R, R, r, 0, 6.2832); o.fill(); o.fillStyle = 'rgba(255,248,236,.11)'; o.beginPath(); o.arc(R - r * .32, R - r * .34, Math.max(.45, r * .2), 0, 6.2832); o.fill(); }
+  return (LAMP[key] = { cv: c, R });
+}
+function bakeDim(w, h, G, S, bg) {
+  const c = mkCv(w * S, h * S), o = c.getContext('2d'), sp = lampSprite('off', G.pitch * .36 * S, 'white');
+  o.fillStyle = bg; o.fillRect(0, 0, c.width, c.height);
+  for (let y = 0; y < G.PR; y++) for (let x = 0; x < G.PC; x++) o.drawImage(sp.cv, (G.ox + x * G.pitch) * S - sp.R, (G.oy + y * G.pitch) * S - sp.R);
+  return c;
+}
+function bakeLit(w, h, G, S, grid, pal, dead = .015) {
+  const c = mkCv(w * S, h * S), o = c.getContext('2d'), r = G.pitch * .36 * S, pts = [];
+  const c0 = Math.floor((G.PC - grid.cols) / 2), r0 = Math.floor((G.PR - grid.rows) / 2);
+  for (let y = 0; y < grid.rows; y++) for (let x = 0; x < grid.cols; x++) if (grid.lit[y * grid.cols + x]) {
+    const X = x + c0, Y = y + r0, dd = hash(X * 13 + 5, Y * 7 + 3) < dead;
+    pts.push((G.ox + X * G.pitch) * S, (G.oy + Y * G.pitch) * S, dd ? .22 : .85 + .15 * hash(X + 11, Y + 7));
+  }
+  const gl = lampSprite('glow', r, pal), dt = lampSprite('dot', r, pal);
+  o.globalCompositeOperation = 'lighter';
+  for (let k = 0; k < pts.length; k += 3) { o.globalAlpha = pts[k + 2] * .9; o.drawImage(gl.cv, pts[k] - gl.R, pts[k + 1] - gl.R); }
+  o.globalCompositeOperation = 'source-over';
+  for (let k = 0; k < pts.length; k += 3) { o.globalAlpha = pts[k + 2]; o.drawImage(dt.cv, pts[k] - dt.R, pts[k + 1] - dt.R); }
+  o.globalAlpha = 1; c.n = 0; for (let k = 2; k < pts.length; k += 3) if (pts[k] > .5) c.n++; return c;
+}
+function bakeBits(w, h, G, S, grid, col) {
+  const c = mkCv(w * S, h * S), o = c.getContext('2d'), r = G.pitch * .4 * S;
+  const c0 = Math.floor((G.PC - grid.cols) / 2), r0 = Math.floor((G.PR - grid.rows) / 2);
+  o.fillStyle = col; o.beginPath();
+  for (let y = 0; y < grid.rows; y++) for (let x = 0; x < grid.cols; x++) if (grid.lit[y * grid.cols + x]) {
+    const px = (G.ox + (x + c0) * G.pitch) * S, py = (G.oy + (y + r0) * G.pitch) * S; o.moveTo(px + r, py); o.arc(px, py, r, 0, 6.2832);
+  }
+  o.fill(); return c;
+}
+function bakeField(w, h, S, n) {
+  const c = mkCv(w * S, h * S), o = c.getContext('2d'), g = o.createLinearGradient(0, 0, 0, c.height);
+  g.addColorStop(0, '#5a0103'); g.addColorStop(.55, '#5e0204'); g.addColorStop(1, '#6c0307'); o.fillStyle = g; o.fillRect(0, 0, c.width, c.height);
+  c.n = Math.max(1, n); return c;
+}
+const ledCache = {};
+function ledImage(lines, onBlob) {
+  const key = lines.join('|'); let e = ledCache[key];
+  if (!e) {
+    const g = textGrid(lines), w = 1100, h = Math.round(1100 / 2.3), G = ledGeo(w, h, Math.min(w / (g.cols + 8), h / (g.rows + 6)));
+    const oc = mkCv(w, h), o = oc.getContext('2d');
+    o.drawImage(bakeDim(w, h, G, 1, '#040404'), 0, 0); o.drawImage(bakeLit(w, h, G, 1, g, 'amber', .01), 0, 0);
+    e = ledCache[key] = { url: '', blob: false, cbs: [], oc };
+    try { oc.toBlob(bl => { if (!bl) return; e.url = URL.createObjectURL(bl); e.blob = true; e.oc = null; e.cbs.splice(0).forEach(f => { try { f(e.url); } catch {} }); }, 'image/png'); } catch {}
+  }
+  if (!e.blob) { if (onBlob) e.cbs.push(onBlob); if (!e.url && e.oc) e.url = e.oc.toDataURL('image/png'); }
+  return e.url;
+}
+let topPitch = 8;
+const TS = { start: performance.now(), ripAt: -1e9, key: '', G: null, maxLit: 1 };
+function bakeTop(phone) {
+  const pick = m => (phone && m.phone) || m.lines;
+  const grids = { main: textGrid(pick(TOP_MSGS.main)), rip: textGrid(TOP_MSGS.rip.lines, TOP_MSGS.rip.scale) };
+  const gs = Object.values(grids), maxC = Math.max(...gs.map(g => g.cols)), maxR = Math.max(...gs.map(g => g.rows));
+  topPitch = Math.min(TOP.w / (maxC + (phone ? 4 : 6)), TOP.h / (maxR + (phone ? 3 : 4)));
+  const G = TS.G = ledGeo(TOP.w, TOP.h, topPitch), S = DPR;
+  TOP.dimCv = bakeDim(TOP.w, TOP.h, G, S, '#030304');
+  const rip = bakeLit(TOP.w, TOP.h, G, S, grids.rip, 'red', .008);
+  TOP.litCv = { main: bakeField(TOP.w, TOP.h, S, rip.n), rip };
+  TS.maxLit = Math.max(1, ...Object.values(TOP.litCv).map(c => c.n)); TS.key = '';
+}
+
+function layout() {
+  W = innerWidth; VH = innerHeight; laidOutWidth = W;
+  const phone = W < 700;
+  facadeW = phone ? W : Math.round(W * .72);
+  TOP.w = phone ? Math.min(780, facadeW - 32) : Math.min(1060, Math.round(facadeW * .86)); TOP.h = Math.round(phone ? TOP.w * .74 : TOP.w / 2.3); TOP.x = Math.round((facadeW - TOP.w) / 2); TOP.y = Math.round(phone ? Math.max(VH * .12, 132) : VH * .14);
+  const base = phone ? W - 16 : facadeW - 24, capH = VH * .72, gut = phone ? 8 : 12;
+  const ph = w => (w - 16) * 9 / 16 + 330;
+  const dims = phone ? [[base, ph(base)], [base, ph(base)], [base, ph(base)], [base, ph(base) + 16]]
+    : [[base, base / 2.16], [base * .95, base * .95 / 2.1], [base, base / 2.16], [base, Math.min(VH * .66, base / 2.02)]];
+  const gaps = [1, .85, 1.1], stag = phone ? [0, 0, 0, 0] : [-.7, 1, -.45, 0];
+  let by = Math.max(TOP.y + TOP.h + (phone ? 84 : 110), VH * (phone ? .6 : .78));
+  boards.forEach((b, i) => { let [w, h] = dims[i % 4]; if (h > capH) { w *= capH / h; h = capH; } b.w = Math.round(w); b.h = Math.round(h);
+    b.x = Math.round(clampN((facadeW - b.w) / 2 + stag[i % 4] * facadeW * .1, gut, Math.max(gut, facadeW - b.w - gut))); b.y = Math.round(by); by += b.h + VH * (gaps[i] || 0); });
+  const lastB = boards[boards.length - 1];
+  FINAL_Y = Math.round(lastB.y + lastB.h + VH * .22);
+  const F0 = FINAL_Y + Math.round(VH * (phone ? .1 : .14)), P = phone ? { s: [.1, .24], c: [.3, .355], g: .78 } : { s: [.075, .27], c: [.335, .425], g: .8 };
+  WH = F0 + VH; STREET_Y = F0 + Math.round(VH * P.g);
+  Object.assign(BASE, { F0, canopyTop: F0 + Math.round(VH * P.c[0]), canopyBot: F0 + Math.round(VH * P.c[1]), groundY: STREET_Y, n: BASE.n + 1 });
+  const sw = phone ? Math.round(W * .86) : Math.min(600, Math.round(facadeW * .6));
+  STREET_CALM = { x: Math.round(facadeW / 2 - sw / 2), y: F0 + Math.round(VH * P.s[0]), w: sw, h: Math.round(VH * (P.s[1] - P.s[0])) };
+  spacer.style.height = WH + 'px';
+  cornerX = phone ? Math.round(W * .92) : facadeW;
+  bakeTop(phone);
+}
+
+function underlay(b, cw, ch) {
+  const fs = W < 700 ? 13.5 : +clampN(Math.min(cw / 60, ch / 26), 13, 16).toFixed(1);
+  return IDL.caseHTML(b, cw, ch, fs);
+}
+
+function build() {
+  world.innerHTML = '';
+  const top = document.createElement('div'); top.className = 'board top';
+  top.style.cssText = `left:${TOP.x}px;top:${TOP.y}px;width:${TOP.w}px;height:${TOP.h}px`;
+  top.innerHTML = '<div class="housing"></div><div class="panel"><canvas style="width:100%;height:100%;display:block"></canvas></div><div class="catwalk"></div><div class="rail">' + '<i></i>'.repeat(W < 700 ? 4 : 7) + '</div>';
+  world.appendChild(top); TOP.el = top; TOP.cv = top.querySelector('canvas');
+  IDL.decorateTop(top, { x: TOP.x, y: TOP.y, w: TOP.w, h: TOP.h, phone: W < 700 });
+  TOP.cv.width = Math.round(TOP.w * DPR); TOP.cv.height = Math.round(TOP.h * DPR); TOP.ctx = TOP.cv.getContext('2d'); TS.key = '';
+  const vig = document.createElement('div'); vig.className = 'vig'; vig.style.cssText = `width:${W}px;height:${Math.round(VH * 1.3)}px;display:none`;
+  world.appendChild(vig); CFX.vig = vig; CFX.vo = '';
+  for (const b of boards) {
+    const el = document.createElement('div'); el.className = 'board';
+    el.style.cssText = `left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;--bw:${b.w}px;--ufs:${clampN(b.w / 60, 13, 16).toFixed(1)}px`;
+    el.innerHTML = `<div class="lamps"><i></i><i></i><i></i></div><div class="panel"><div class="under u-${b.art.kind}"><div class="art"></div></div><div class="pieces"></div></div><div class="catwalk"></div>`;
+    world.appendChild(el); b.el = el;
+    fillArt(b);
+  }
+  const fin = document.createElement('div'); fin.className = 'final';
+  fin.innerHTML = `<canvas aria-hidden="true"></canvas><a class="mail" href="${CONTACT.href}">${esc(CONTACT.name)} &middot; ${esc(CONTACT.mail)}</a>`;
+  world.appendChild(fin); TK.el = fin;
+  const lanes = document.createElement('nav'); lanes.className = 'lanes'; lanes.setAttribute('aria-label', 'Contact lanes'); lanes.innerHTML = IDL.lanesHTML();
+  world.appendChild(lanes); TK.lanes = lanes; TK.cv = fin.querySelector('canvas'); TK.ctx = TK.cv.getContext('2d'); TK.key = ''; TK.lastCol = null;
+  placeTicker();
+  buildLift(); placeFelt();
+}
+let FLOORS = [];
+const LIFT = { cur: -1, fl: '', ride: null };
+['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { LIFT.ride = null; }, { passive: true }));
+function liftGo(k) {
+  const F = FLOORS[k]; if (!F || F.y == null) return;
+  let smooth = true; try { smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches; } catch {}
+  LIFT.ride = { y: F.y, until: performance.now() + 4000 }; CFX.off = 0;
+  scrollTo({ top: F.y, behavior: smooth ? 'smooth' : 'auto' });
+  $('#lift')?.classList.remove('open');
+}
+const goLink = (a, k) => a.addEventListener('click', e => { if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); liftGo(k); });
+function buildLift() {
+  const max = Math.max(0, WH - VH), tgt = b => clampN(b.y + b.h / 2 - VH * .48, 0, max), b3 = boards[3];
+  FLOORS = IDL.FLOORS.map(F => ({ ...F, y: F.inert || F.ext ? null : F.board != null && boards[F.board] ? tgt(boards[F.board]) : F.code === 'PH' ? 0 : F.code === '07' && b3 ? clampN(Math.round((b3.y + b3.h + BASE.F0) / 2 - VH * .5), 0, max) : max }));
+  const nav = $('#lift'); if (!nav) return;
+  nav.innerHTML = `<button type="button" class="ind" aria-expanded="false" aria-label="Current floor; show floors"><span class="fl">${esc(LIFT.fl || 'PH')}</span><small>▼</small></button><ol>`
+    + FLOORS.map((F, k) => `<li>${IDL.rowOpen(F, k)}<span class="lb">${IDL.rowLabel(F)}</span><span class="bt">${esc(F.code)}</span></a></li>`).join('') + '</ol>';
+  nav.querySelector('.ind').onclick = () => { if (innerWidth >= 700) return; const o = nav.classList.toggle('open'); nav.querySelector('.ind').setAttribute('aria-expanded', String(o)); };
+  nav.querySelectorAll('ol a[href]:not([data-ext])').forEach(a => goLink(a, +a.dataset.k));
+  LIFT.cur = -1;
+  buildShaft();
+}
+function liftTick(fl) {
+  const nav = $('#lift'); if (!nav || !FLOORS.length) return;
+  let best = 0, bd = 1e9; FLOORS.forEach((F, k) => { if (F.y == null) return; const d = Math.abs(F.y - camY); if (d <= bd) { bd = d; best = k; } });
+  const code = bd < VH * .2 ? FLOORS[best].code : IDL.floorNum(FLOORS, camY);
+  if (code !== LIFT.fl) { LIFT.fl = code; const el = nav.querySelector('.ind .fl'); if (el) el.textContent = code; }
+  const pk = bd < VH * .2 ? FLOORS[best].code : '';
+  if (pk !== LIFT.pk) { const via = LIFT.pk === undefined ? 'load' : LIFT.ride && performance.now() < LIFT.ride.until ? 'nav' : 'scroll'; LIFT.pk = pk;
+    try { dispatchEvent(new CustomEvent(pk ? 'floor-parked' : 'floor-left', { detail: { code: pk, label: pk ? FLOORS[best].label : '', via } })); } catch {} }
+  if (best !== LIFT.cur) { LIFT.cur = best; nav.querySelectorAll('ol a').forEach(a => a.setAttribute('aria-current', String(+a.dataset.k === best))); }
+  shaftTick();
+}
+const SHAFT = { map: [], H: 0, car: null, mcar: null, nm: '' };
+const shaftAt = (map, y) => {
+  if (!map.length) return 0; if (y <= map[0][0]) return map[0][1];
+  for (let k = 0; k < map.length - 1; k++) { const [a, pa] = map[k], [b, pb] = map[k + 1]; if (y <= b) return b > a ? pa + (pb - pa) * (y - a) / (b - a) : pb; }
+  return map[map.length - 1][1];
+};
+function shaftPos(H, gap) {
+  const max = Math.max(1, WH - VH), ys = FLOORS.map(F => F.y);
+  ys.forEach((y, k) => { if (y == null) ys[k] = ys[k - 1] != null ? ys[k - 1] : 0; });
+  const pos = ys.map(y => y / max * H);
+  for (let k = 1; k < pos.length; k++) pos[k] = Math.max(pos[k], pos[k - 1] + gap);
+  if (pos[pos.length - 1] > H) { pos[pos.length - 1] = H; for (let k = pos.length - 2; k >= 0; k--) pos[k] = Math.min(pos[k], pos[k + 1] - gap); }
+  const map = []; FLOORS.forEach((F, k) => { if (!F.inert && F.y != null) map.push([F.y, pos[k]]); });
+  return { pos, map };
+}
+function buildShaft() {
+  const S = SHAFT, nav = $('#lift'); if (!nav) return;
+  const ind = nav.querySelector('.ind'), ol = nav.querySelector('ol');
+  if (ind && !ind.querySelector('.lv-nm')) ind.querySelector('.fl').insertAdjacentHTML('afterend', '<span class="lv-nm"></span>');
+  S.nm = '';
+  const phone = innerWidth < 700;
+  if (!phone && ol) {
+    S.H = Math.max(220, Math.min(620, innerHeight - 395));
+    const { pos, map } = shaftPos(S.H, 30); S.map = map;
+    ol.style.setProperty('--sh', S.H + 'px');
+    [...ol.children].forEach((li, k) => li.style.setProperty('--y', pos[k].toFixed(1) + 'px'));
+    ol.insertAdjacentHTML('afterbegin', '<i class="lv-shaft" aria-hidden="true"></i><i class="lv-car" aria-hidden="true"></i>');
+    S.car = ol.querySelector('.lv-car');
+  } else S.car = null;
+  document.querySelectorAll('.lv-gutter').forEach(n => n.remove()); S.mcar = null;
+  if (phone) {
+    const g = document.createElement('div'); g.className = 'lv-gutter'; g.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(g); const H = g.clientHeight || innerHeight * .6;
+    const { pos, map } = shaftPos(H, 10); S.map = map;
+    g.innerHTML = '<i class="lv-gs"></i>' + FLOORS.map((F, k) => `<b class="${F.inert ? 'in' : F.board != null ? 'cs' : ''}" style="top:${pos[k].toFixed(1)}px"></b>`).join('') + '<i class="lv-gc"></i>';
+    S.mcar = g.querySelector('.lv-gc');
+  }
+}
+function shaftTick() {
+  const S = SHAFT, F = FLOORS[LIFT.cur], nm = F ? F.label : '';
+  if (nm !== S.nm) { S.nm = nm; const el = $('#lift .lv-nm'); if (el) el.textContent = nm; }
+  const p = shaftAt(S.map, camY).toFixed(1);
+  if (S.car && S.car.__p !== p) { S.car.__p = p; S.car.style.transform = `translateY(${p}px)`; }
+  if (S.mcar && S.mcar.__p !== p) { S.mcar.__p = p; S.mcar.style.transform = `translateY(${p}px)`; }
+}
+function placeFelt() {
+  const phone = W < 700, lt = BASE.canopyBot, gh = BASE.groundY - lt;
+  const w = phone ? Math.round(Math.min(320, W * .8)) : Math.round(clampN(facadeW * .36, 300, 380)), h = Math.round(gh * (phone ? .64 : .66));
+  const rows = FLOORS.length + 2, fs = Math.max(16, Math.round(Math.floor((h - 8) / (rows + .5)) * .64)), fr = Math.max(Math.round(fs * 1.5), Math.floor((h - 8) / (rows + .5)));
+  const top = Math.round(lt + Math.max(8, Math.min(gh * .18, gh - (rows + 1) * fr - 14)));
+  const el = document.createElement('div'); el.className = 'felt'; el.setAttribute('role', 'navigation'); el.setAttribute('aria-label', 'Lobby directory');
+  el.style.cssText = `left:${Math.round(phone ? (W - w) / 2 : facadeW * .09)}px;top:${top}px;width:${w}px;--fr:${fr}px;--fs:${fs}px`;
+  const r = rng(4242);
+  el.innerHTML = IDL.feltHead + FLOORS.map((F, k) =>
+    `${IDL.rowOpen(F, k, `--r:${((r() - .5) * 1.2).toFixed(2)}deg;--o:${((r() - .5) * 1.6).toFixed(1)}px`)}<span>${IDL.rowLabel(F)}</span><span class="ld"></span><span>${esc(F.code)}</span></a>`).join('');
+  el.querySelectorAll('a[href]:not([data-ext])').forEach(a => goLink(a, +a.dataset.k));
+  world.appendChild(el);
+}
+function fillArt(b) {
+  IDL.unmount(b);
+  const art = b.el.querySelector('.art'), r = art.getBoundingClientRect(); art.innerHTML = underlay(b, Math.max(60, Math.round(r.width)), Math.max(40, Math.round(r.height)));
+  IDL.fitCase(b, art);
+}
+
+function faceHTML(b) {
+  if (state.boards === 'led') return `<div class="face led">${state.tear === 'strip' ? perf() : ''}</div>`;
+  return IDL.flyerHTML(b);
+}
+const perf = () => '<div class="perf" style="top:15%"><span>RIP HERE</span></div>';
+
+const PAPER_BACK = '#e8e2d4', FIBER = '#efe9dc', GRAV = 'cubic-bezier(.55,0,1,.45)';
+const LAMP_DIM = '0 6px 18px 4px #ffe6b833', LAMP_ON = '0 14px 30px 8px #ffe6b888';
+const FACE_COLS = [['#7c3aed', '#2563eb', '#db2777'], ['#14b8a6', '#6366f1', '#a5b4fc'], ['#f97316', '#ec4899', '#fdba74'], ['#a855f7', '#3f3f46', '#e4e4e7']];
+const SEQ_KINDS = ['peel', 'zip', 'rip', 'curtain'];
+const NS = 40;
+const CFX = { b: null, t0: -1e9, from: 0, to: 0, off: 0, rem: 0, rel: 0, envRel: 0, env: 0, shakeT: -1e9, syncUntil: 0, vig: null, vo: '' };
+let lastScrollT = 0, camHand = false;
+addEventListener('scroll', () => { const n = performance.now(); if (n > CFX.syncUntil) lastScrollT = n; }, { passive: true });
+
+function tearKind(b) {
+  if (state.boards === 'led') return 'modules';
+  if (state.tear === 'seq') return 'rip';
+  return { peel: 'peel', strip: 'zip', glitch: 'shred', shred: 'shred' }[state.tear] || 'peel';
+}
+const atS = (arr, y) => { const f = clampN(y, 0, 100) / 100 * NS, k = Math.min(NS - 1, Math.floor(f)); return arr[k] + (arr[k + 1] - arr[k]) * (f - k); };
+function side(arr, y0, y1, dx = 0) {
+  const st = 100 / NS, out = [[atS(arr, y0) + dx, y0]];
+  if (y1 > y0) for (let k = Math.floor(y0 / st) + 1; k * st < y1; k++) out.push([arr[k] + dx, k * st]);
+  else for (let k = Math.ceil(y0 / st) - 1; k * st > y1; k--) out.push([arr[k] + dx, k * st]);
+  out.push([atS(arr, y1) + dx, y1]); return out;
+}
+const band = (E, y0, y1) => [...side(E.L, y1, y0), ...side(E.R, y0, y1)];
+const mirrorY = pts => pts.map(([x, y]) => [x, 100 - y]);
+const polyPx = (pts, dx) => 'polygon(' + pts.map(([x, y]) => `calc(${x.toFixed(2)}% + ${dx}px) ${y.toFixed(2)}%`).join(',') + ')';
+const TT = (x, y, a, rx = 0, ry = 0) => `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${a.toFixed(2)}deg) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg)`;
+const RX = a => ({ transform: `rotateX(${a.toFixed(2)}deg)` });
+const flipB = h => ` translateY(${h / 2}px) rotateX(180deg) translateY(${-h / 2}px)`;
+const sway = (t0, d, a, cup = true) => { const f = [], n = Math.max(4, Math.round(d / 40));
+  for (let k = 0; k <= n; k++) { const tt = k / n * d, x = a * Math.sin(tt / d * Math.PI * 3) * (1 - .7 * k / n), c = cup && tt <= 500 ? 1 - .04 * (1 - Math.cos(2 * Math.PI * 4 * tt / 1000)) : 1;
+    f.push([t0 + tt, { transform: `translateX(${x.toFixed(2)}px) scaleY(${c.toFixed(4)})` }]); } return f; };
+const osc = (t0, t1, A, hz, ph) => { const f = [[t0, RX(0)]]; for (let t = t0 + 50; t <= t1; t += 50) f.push([t, RX(A * Math.sin(2 * Math.PI * hz * (t - t0) / 1000 + ph) * Math.min(1, (t - t0) / 200))]); return f; };
+const bursts = (t0, n, burst, hold, from = 1) => { const f = [[t0, from]]; let t = t0; for (let k = 1; k <= n; k++) { t += burst; f.push([t, from * (1 - k / n)]); if (k < n) { t += hold; f.push([t, from * (1 - k / n)]); } } return f; };
+function cubicBez(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  return x => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+    for (let i = 0; i < 8; i++) { const X = ((ax * t + bx) * t + cx) * t - x, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(X) < 1e-5 || Math.abs(d) < 1e-6) break; t = Math.min(1, Math.max(0, t - X / d)); }
+    return ((ay * t + by) * t + cy) * t; };
+}
+const CATCH_E = cubicBez(.2, .7, .2, 1);
+
+function kfa(b, el, frames, o = {}) {
+  if (!el || frames.length < 2) return null;
+  const t0 = frames[0][0], d = Math.max(1, frames[frames.length - 1][0] - t0);
+  const kf = frames.map(([t, p, e]) => Object.assign({}, p, { offset: clampN((t - t0) / d, 0, 1) }, e ? { easing: e } : {}));
+  const opt = { duration: d, delay: t0, fill: o.fill || 'both', easing: 'linear' }; if (o.pseudo) opt.pseudoElement = o.pseudo;
+  let a; try { a = el.animate(kf, opt); } catch (err) { console.warn('tear anim', err); return null; }
+  a.pause(); a.currentTime = 0; b.anims.push(a); return a;
+}
+
+function wordCut(el, px, cap) {
+  const tx = el && [...el.childNodes].find(n => n.nodeType === 3 && n.data.trim()); if (!tx) return null;
+  const s = tx.data.search(/\S/), re = /\S+/g; re.lastIndex = s; let m, best = null, top0 = null;
+  while ((m = re.exec(tx.data))) {
+    const rg = document.createRange(); rg.setStart(tx, s); rg.setEnd(tx, m.index + m[0].length);
+    const rs = rg.getClientRects(), q = rs[rs.length - 1]; if (!q) break;
+    if (top0 === null) top0 = q.top; if (Math.abs(q.top - top0) > 2) break;
+    const x = px(q.right); if (x + 1.2 > cap) break; best = { x, top: q.top, bottom: q.bottom, end: m.index + m[0].length };
+  }
+  if (best) { const m2 = /\S/.exec(tx.data.slice(best.end)); let nx = best.x + 1.2;
+    if (m2) { const rg = document.createRange(), k = best.end + m2.index; rg.setStart(tx, k); rg.setEnd(tx, k + 1); const q = rg.getClientRects()[0]; if (q && Math.abs(q.top - best.top) < 2) nx = px(q.left); }
+    best.cut = Math.min(cap, (best.x + nx) / 2); }
+  return best;
+}
+function edgesFor(b, r, faceEl) {
+  const L = [], R = [], bul = [];
+  if (faceEl && faceEl.classList.contains('paper')) {
+    const fr = faceEl.getBoundingClientRect(), px = x => (x - fr.left) / fr.width * 100, py = y => (y - fr.top) / fr.height * 100;
+    if (fr.width > 0 && fr.height > 0) {
+      const h3 = faceEl.querySelector('h3'), cta = faceEl.querySelector('.cta');
+      try { const q = wordCut(h3, px, 18); if (q) { const lh = q.bottom - q.top; bul.push([py(q.top + lh * .12), py(q.bottom - lh * .08), q.cut - .8]); } } catch {}
+      try { const q = wordCut(cta, px, 22), c = cta && cta.getBoundingClientRect(); if (q && c && c.width) bul.push([py(c.top) - 1, py(c.bottom) + 1, q.cut - .8]); } catch {}
+    }
+  }
+  let base = 0; const plain = [];
+  for (let k = 0; k <= NS; k++) {
+    const y = k * 100 / NS; let x = Math.min(14, 1.8 + r() * 2.6); base = Math.max(base, x); plain.push(x);
+    for (const [y0, y1, bx] of bul) if (y >= y0 + .4 && y <= y1 - .4) x = Math.max(x, bx + (r() - .5) * .3);
+    L.push(x);
+  }
+  const cw = 4 + r() * 3, ch = Math.min(15, cw * b.w / b.h * (.85 + r() * .3));
+  for (let k = 0; k <= NS; k++) { const y = k * 100 / NS; R.push(y > 100 - ch ? 100 - cw * (y - (100 - ch)) / ch + (k < NS ? (r() - .5) * 1 : 0) : 100); }
+  return { L, R, cw, ch, bulges: bul.length, bul, base, plain };
+}
+const flatEdges = () => ({ L: new Array(NS + 1).fill(0), R: new Array(NS + 1).fill(100), cw: 0, ch: 0, bul: [], base: 0 });
+const shdHTML = (pts, dx, dy) => `<div class="shd"><div style="clip-path:${poly(pts)};transform:translate(${dx}px,${dy}px)"></div></div>`;
+const whtSVG = (b, pts) => `<svg class="wht" width="${b.w}" height="${b.h}" viewBox="0 0 ${b.w} ${b.h}" aria-hidden="true"><polyline points="${pts.map(([x, y]) => (x * b.w / 100).toFixed(1) + ',' + (y * b.h / 100).toFixed(1)).join(' ')}" fill="none" stroke="#fffaf0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function tearPeel(r, b, E, fallY) {
+  const w = b.w, h = b.h, earH = Math.min(12 * w / h, 26), earW = earH * h / w, G = 700;
+  const yR = Math.max(earH + 7, 30 + r() * 8);
+  let yL = 56, best = 1e9; for (let y = 47.5; y <= 65; y += 2.5) { const v = atS(E.L, y) + r() * .8; if (v < best) { best = v; yL = y; } }
+  const xL = atS(E.L, yL), n = 22, line = [];
+  for (let k = 0; k <= n; k++) { const f = k / n, y = yR + (yL - yR) * f + (k && k < n ? (r() - .5) * 4.4 : 0); line.push([k === 0 ? 100 : k === n ? xL : Math.max(100 + (xL - 100) * f, atS(E.L, y) + .7), y]); }
+  const flapP = [...side(E.L, yL, 0), [100 - earW, 0], [100, earH], ...line.slice(0, n)];
+  const lowP = [...line.slice(0, n).map(([x, y]) => [x, y - 1.2]), ...side(E.L, yL - 1.2, 100), ...side(E.R, 100, yR - 1.2)];
+  const earP = [[100 - earW, 0], [100, 0], [100, earH]];
+  const ox = w * (1 - earW / 200), oy = h * earH / 200;
+  const EAR = ph => `translate(${ox.toFixed(1)}px,${oy.toFixed(1)}px) rotate3d(1,1,0,${ph.toFixed(2)}deg) translate(${(-ox).toFixed(1)}px,${(-oy).toFixed(1)}px)`;
+  const earPh = [[0, 0, 'cubic-bezier(.2,.8,.3,1)'], [180, -35]];
+  for (let t = 208, s = 1; t < G; t += 28, s = -s) earPh.push([t, -35 - 6 * (t - 180) / 520 + 2 * s]);
+  earPh.push([G, -41, 'cubic-bezier(.3,0,.2,1)'], [950, -150]);
+  const earF = back => earPh.map(([t, a, e]) => [t, { transform: EAR(a) + back }, e]);
+  const c1 = .08 + r() * .04, c2 = c1 + .08 + r() * .04, c3 = c2 + .08 + r() * .04;
+  const fib = { pts: line, frames: [[180, 1], [230, 1 - c1], [320, 1 - c1], [370, 1 - c2], [460, 1 - c2], [510, 1 - c3], [G, 1 - c3, 'cubic-bezier(.7,0,.9,.4)'], [950, 0]] };
+  const Ym = Math.min(96, yL + 1), cutsF = []; for (let j = 0; j < 8; j++) cutsF.push(Ym * j / 8); cutsF.push(100);
+  const jointsF = [[[0, RX(0)], [230, RX(-.4)], [370, RX(-.8)], [510, RX(-1.2)], [G, RX(-1.4), 'cubic-bezier(.3,0,.3,1)'], [950, RX(-6), 'cubic-bezier(.3,.1,.3,1)'], [1500, RX(-40)], [2050, RX(-58)]]];
+  for (let j = 1; j < 8; j++) { const f = (j / 7) ** 1.5; jointsF.push([[950, RX(0), 'cubic-bezier(.3,0,.4,1)'], [1500, RX(-14 * f)], [2050, RX(-14 * f - 3)]]); }
+  const cutsL = [0, Math.min(92, yL + 4)]; cutsL.push((cutsL[1] + 100) / 2, 100);
+  const parts = [
+    { host: 'p', html: shdHTML(flapP, 4, 10), sub: [['.shd', [[950, { opacity: 0 }], [1350, { opacity: .55 }], [1700, { opacity: .25 }], [2050, { opacity: 0 }]]]] },
+    { host: 'p', clip: poly(lowP), pts: lowP, origin: '35% 72%', fiber: fib, inner: sway(1100, 800, 18),
+      segs: { cuts: cutsL, joints: [null, osc(1100, 1900, 4 + r() * 6, 2.2, 0), osc(1100, 1900, 4 + r() * 6, 2.6, 1.3)] },
+      frames: [[G, { transform: TT(0, 0, 0) }, 'ease-out'], [G + 120, { transform: TT(0, 3, .6) }], [1100, { transform: TT(0, 3, .6) }, GRAV], [1900, { transform: TT(w * .06, fallY, 14, 35, (r() - .5) * 24) }]] },
+    { host: 'p', clip: poly(flapP), pts: flapP, back: true, origin: '50% 0', fiber: fib,
+      segs: { cuts: cutsF, joints: jointsF, attach: [{ seg: 0, clip: earP, frames: earF }] },
+      frames: [[0, { transform: TT(0, 0, 0) }], [1350, { transform: TT(0, 0, 0) }, GRAV], [2050, { transform: TT(w * .04, fallY, -6, -10, 8) }]] },
+    { host: 'p', html: whtSVG(b, line), sub: [['svg', [[180, { opacity: 0 }], [G, { opacity: .35 }], [760, { opacity: .22 }], [950, { opacity: 0 }]]]] }];
+  return { relT: G, revealT: 690, tab: { pos: 'tr' }, shake: [G, 140, 3, .4], path: line, nfl: 10 + Math.floor(r() * 6), speed: [180, 40, 80], parts };
+}
+
+function tearZip(r, b, E, fallY) {
+  const w = b.w, h = b.h, sy = 40 + r() * 12, bt = sy - Math.max(9, h * .045) / h * 100, sb = sy + .6;
+  const xl = Math.max(atS(E.L, bt), atS(E.L, sb)), N = 12, relT = 760, z0 = 200, step = (relT - 40 - z0) / N;
+  const cpx = Math.round(Math.max(10, w * .035));
+  const seamPts = []; for (let k = 0; k <= 16; k++) seamPts.push([100 - (100 - xl) * k / 16, sy + (k && k < 16 ? (r() - .5) * .8 : 0)]);
+  const decor = `<div class="seam" style="left:${xl.toFixed(2)}%;top:${sy.toFixed(2)}%"></div>`;
+  const curl = `<div class="curl" style="top:calc(${sy.toFixed(2)}% - ${cpx}px);width:${cpx}px;height:${cpx}px"></div>`;
+  const lowPts = [...side(E.L, bt, 100), ...side(E.R, 100, bt)];
+  const parts = [
+    { host: 'p', clip: poly(lowPts), pts: lowPts, origin: '50% 60%', inner: sway(relT + 110, 710, 10),
+      frames: [[relT, { transform: TT(0, 0, 0) }], [relT + 110, { transform: TT(0, 4, .4) }, GRAV], [relT + 820, { transform: TT(-30, fallY, -12, 25 + r() * 35, (r() - .5) * 40) }]],
+      fiber: { pts: seamPts, frames: [[z0, 1], [relT - 40, 0]] } },
+    { host: 'p', html: decor, sub: [['.seam', [[z0, { clipPath: 'inset(0 0% 0 0)' }], [relT - 40, { clipPath: 'inset(0 100% 0 0)' }]]]] }];
+  for (let j = 0; j < N; j++) {
+    const x1 = 100 - j * (100 - xl) / N, x0 = 100 - (j + 1) * (100 - xl) / N, s = z0 + j * step;
+    const clip = j === N - 1 ? poly([...side(E.L, sb, bt), [x1, bt], [x1, sb]]) : poly([[x0, bt], [x1, bt], [x1, sb], [x0, sb]]);
+    const fr = [[s, { transform: TT(0, 0, 0) }, 'cubic-bezier(.2,.7,.3,1)'], [s + 70, { transform: TT(6, -8, -14) }, GRAV], [s + 700, { transform: TT(w * .22 + r() * 40, fallY, -60 - r() * 50, 25 + r() * 35, (r() - .5) * 40) }]];
+    if (j === 0) fr.unshift([0, { transform: TT(0, 0, 0) }, 'ease-out'], [120, { transform: TT(1, -3, -5) }], [z0 - 1, { transform: TT(0, 0, 0) }]);
+    parts.push({ host: 'p', clip, origin: `${x0.toFixed(2)}% ${sy.toFixed(2)}%`, frames: fr, extra: j === 0 ? curl : '' });
+  }
+  const upP = [...side(E.L, bt + .5, 0), ...side(E.R, 0, bt + .5)], hingeE = 'cubic-bezier(.35,0,.2,1)', F = relT + 520;
+  const upF = back => [[relT, { transform: 'rotateX(0deg)' + back }, hingeE], [F, { transform: 'rotateX(-118deg)' + back }]];
+  parts.push({ host: 'r', clip: poly(mirrorY(upP)), back: true, bf: true, origin: '0 0', frames: upF(flipB(h)), fold: F });
+  parts.push({ host: 'r', clip: poly(upP), pts: upP, bf: true, origin: '0 0', frames: upF(''), fold: F, shd: { dx: 3, dy: 9, frames: [[relT, 0], [relT + 260, .5], [F, .2]] } });
+  return { relT, tab: { pos: 'r', y: sy }, decor: decor + curl, shake: [0, 100, 1.5, .3], path: seamPts, nfl: 9 + Math.floor(r() * 5), speed: [220, 50, 90], parts };
+}
+
+function tearRip(r, b, E, fallY) {
+  const w = b.w, h = b.h, xt = 36 + r() * 8, xb = 58 + r() * 8, D = [];
+  for (let k = 0; k <= 32; k++) { const y = k * 100 / 32; D.push([clampN(xt + (xb - xt) * k / 32 + (k && k < 32 ? (r() - .5) * 2.4 : 0), 2, 98), y]); }
+  const relT = 300, fib = { pts: D, frames: [[150, 1], [300, .7], [380, 0]] }, IN = 'cubic-bezier(.55,0,.8,.2)', SNAP = 'cubic-bezier(.3,0,.2,1)';
+  const Rp = [...D.map(([x, y]) => [x - .6, y]), [100, 100], [100, 0]], Lp = [...D, [0, 100], [0, 0]];
+  return { relT, crisp: true, revealT: relT + 40, tab: { pos: 'tl' }, shake: [relT, 80, 1.6, .25], path: D, nfl: 0, speed: [520, 120, 300], parts: [
+    { host: 'p', clip: poly(Rp), pts: Rp, origin: '100% 100%', fiber: fib,
+      frames: [[0, { transform: TT(0, 0, 0) }], [150, { transform: TT(1, 0, .25) }, SNAP], [relT, { transform: TT(4, 0, 1.6) }, IN], [relT + 520, { transform: TT(w * .75, h * .18, 16, 0, 28) }]] },
+    { host: 'p', clip: poly(Lp), pts: Lp, origin: '0% 100%', fiber: fib,
+      frames: [[0, { transform: TT(0, 0, 0) }], [150, { transform: TT(-1, 0, -.25) }, SNAP], [relT + 40, { transform: TT(-3, 0, -1.2) }, IN], [relT + 580, { transform: TT(-w * .75, h * .22, -14, 0, -26) }]] }] };
+}
+
+function tearCurtain(r, b, E) {
+  const w = b.w, h = b.h, S = [], relT = 1100;
+  for (let k = 0; k <= 20; k++) S.push([50 + (k && k < 20 ? (r() - .5) * 3.2 : 0), k * 5]);
+  const fib = { pts: S, frames: bursts(300, 4, 120, 80).concat([[relT, 0]]) };
+  const half = (s, pts, origin) => {
+    const th = 9 + r() * 5, m = s > 0 ? Math.max(0, Math.min(b.x, w * .06)) : Math.max(0, Math.min(cornerX - (b.x + w), w * .06));
+    const dx = Math.max(0, h * Math.sin(th * Math.PI / 180) - m);
+    const P = (ph, f) => ({ transform: `translateX(${(s * dx * f).toFixed(1)}px) rotate(${(s * th * f).toFixed(2)}deg) rotateY(${(-s * ph).toFixed(2)}deg)` });
+    const frames = [[0, P(0, 0)], [300, P(1, 0)], [420, P(1.8, 0)], [500, P(1.8, 0)], [620, P(2.6, 0)], [700, P(2.6, 0)], [820, P(3.4, 0)], [900, P(3.4, 0)], [1020, P(4.2, 0)],
+      [relT, P(4.2, 0), 'cubic-bezier(.3,0,.25,1)'], [relT + 420, P(30, 1.22), 'ease-in-out'], [relT + 760, P(18, .9), 'ease-in-out'], [relT + 1060, P(22, 1.04), 'ease-in-out'], [relT + 1360, P(21, 1)]];
+    return { host: 'r', clip: poly(pts), pts, origin, fiber: fib, frames, shd: { dx: 5 * s, dy: 9, frames: [[relT, 0], [relT + 420, .45], [relT + 1360, .32]] } };
+  };
+  const leftP = [...S, ...side(E.L, 100, 0)], rightP = [...S.map(([x, y]) => [x - 1, y]), ...side(E.R, 100, 0)];
+  return { relT, variant: 'curtain', tab: { pos: 'tc' }, shake: [0, 140, 2, .3], path: S, nfl: 12, speed: [200, 40, 90], persp: 3000,
+    parts: [half(-1, rightP, '100% 0'), half(1, leftP, '0 0')] };
+}
+
+function tearShred(r, b, E, fallY) {
+  const w = b.w, n = 6 + Math.floor(r() * 3), xl = E.L.reduce((a, v) => a + v, 0) / E.L.length, B = [E.L], parts = [], T0 = 90, TD = 240, st = 70;
+  for (let k = 1; k < n; k++) { const xm = xl + (100 - xl) * k / n, sd = 1 + Math.floor(r() * 1e6), arr = []; for (let j = 0; j <= NS; j++) arr.push(xm + (vnoise(sd, j * .35) - .5) * 3.2 + (r() - .5) * .6); B.push(arr); }
+  B.push(E.R);
+  const cuts = [0, 100 / 3, 200 / 3, 100];
+  for (let k = 0; k < n; k++) {
+    const pts = [...side(B[k], 0, 100), ...side(B[k + 1], 100, 0, k < n - 1 ? .25 : 0)], s = T0 + (n - 1 - k) * st, sep = s + TD;
+    const fpts = B[k].map((x, j) => [x, j * 100 / NS]), cx = ((B[k][NS / 2] + B[k + 1][NS / 2]) / 2).toFixed(1), sg = r() < .5 ? -1 : 1;
+    parts.push({ host: 'p', clip: poly(pts), pts, origin: `${cx}% 100%`, inner: sway(sep, 700, 6),
+      fiber: { pts: fpts, frames: [[s, 1], [sep, 0, 'cubic-bezier(.5,0,.7,1)']] },
+      segs: { cuts, joints: [null, [[sep, RX(0)], [sep + 500, RX(-(16 + r() * 12))], [sep + 900, RX(-(24 + r() * 14))]], [[sep, RX(0)], [sep + 450, RX(-(18 + r() * 12))], [sep + 900, RX(-(28 + r() * 14))]]] },
+      frames: [[0, { transform: TT(0, 0, 0) }], [s, { transform: TT(0, 0, 0) }, 'cubic-bezier(.3,0,.3,1)'], [sep, { transform: TT(0, 6, sg * (1 + r() * 2), -10, 0) }, GRAV],
+        [sep + 760 + r() * 120, { transform: TT((r() - .5) * w * .12, fallY, sg * (5 + r() * 12), 25 + r() * 35, sg * (10 + r() * 15)) }]] });
+  }
+  const path = []; for (let k = 0; k <= 10; k++) path.push([xl + (98 - xl) * k / 10, 2 + r() * 10]);
+  return { relT: T0 + TD, tab: { pos: 'br' }, shake: [T0 + TD, 120, 2, .3], path, nfl: 14, flT: (n - 1) * st + 120, speed: [160, 60, 80], parts };
+}
+
+function tearModules(r, b, fallY) {
+  const C = 8, Rw = 4, cw = b.w / C, ch = b.h / Rw, sc = Math.floor(r() * C), sr = Math.floor(r() * Rw), parts = [];
+  const dist = (c, q) => Math.hypot(c - sc, (q - sr) * 1.3);
+  let dmax = 0; for (let c = 0; c < C; c++) for (let q = 0; q < Rw; q++) dmax = Math.max(dmax, dist(c, q));
+  const far = sc < C / 2 ? C - 1 : 0, hang = new Set([`${far},1`, `${far === 0 ? 1 : C - 2},2`]);
+  const rowDx = Array.from({ length: Rw }, () => (r() - .5) * cw * .6), relT = 640, st = 'steps(1,end)';
+  for (let q = 0; q < Rw; q++) for (let c = 0; c < C; c++) {
+    const d = dist(c, q), ds = 120 + d / dmax * 560, fs = relT + d * 45 + r() * 30, dx = rowDx[q], hg = hang.has(`${c},${q}`), sg = c < C / 2 ? -1 : 1;
+    const pre = [[0, { transform: TT(0, 0, 0) }, st], [40, { transform: TT(dx, 0, 0) }, st], [80, { transform: TT(-dx * .6, 0, 0) }, st], [120, { transform: TT(0, 0, 0) }], [fs, { transform: TT(0, 0, 0) }, 'steps(1,start)']];
+    const drop = Math.max(fs + 640, 2400 + r() * 200);
+    const tail = hg ? [[fs + 80, { transform: TT(0, 4, 0) }, 'cubic-bezier(.3,1.5,.5,1)'], [fs + 460, { transform: TT(0, 10, sg * 9) }], [drop, { transform: TT(0, 10, sg * 9) }, GRAV], [drop + 820, { transform: TT((r() - .5) * 40, fallY, sg * 24, 30 + r() * 30, sg * (10 + r() * 15)) }]]
+      : [[fs + 80, { transform: TT(0, 4, 0) }, GRAV], [fs + 840, { transform: TT((r() - .5) * 40, fallY, (r() - .5) * 16, 25 + r() * 35, (r() - .5) * 50) }]];
+    parts.push({ host: hg ? 'r' : 'p', cls: 'mod', origin: hg ? (c < C / 2 ? '100% 0' : '0 0') : '50% 50%', fold: hg ? drop + 820 : null, inner: sway(hg ? drop : fs + 80, 600, 0),
+      style: `inset:auto;left:${(c * cw).toFixed(2)}px;top:${(q * ch).toFixed(2)}px;width:${cw.toFixed(2)}px;height:${ch.toFixed(2)}px`,
+      html: `<div class="mface" style="left:${(-c * cw).toFixed(2)}px;top:${(-q * ch).toFixed(2)}px;width:${b.w}px;height:${b.h}px">${'\u0000'}</div><div class="dead"></div>`,
+      frames: [...pre, ...tail], sub: [['.dead', [[ds, { opacity: 0 }, 'steps(3,end)'], [ds + 170, { opacity: .94 }]]]] });
+  }
+  const cx = (sc + .5) * 100 / C, cy = (sr + .5) * 100 / Rw;
+  return { relT, tab: { pos: 'br' }, shake: null, path: [[cx - 6, cy], [cx, cy], [cx + 6, cy]], nfl: 6, speed: [160, 60, 60], dark: true, parts };
+}
+
+let fibN = 0;
+function inPoly(Q, x, y) { let c = false; for (let i = 0, j = Q.length - 1; i < Q.length; j = i++) { const [xi, yi] = Q[i], [xj, yj] = Q[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; }
+function sideSign(b, pts, path) {
+  if (!pts) return 1;
+  const Q = pts.map(([x, y]) => [x * b.w / 100, y * b.h / 100]), m = Math.floor((path.length - 1) / 2), a = path[m], c = path[Math.min(path.length - 1, m + 1)];
+  const dx = (c[0] - a[0]) * b.w / 100, dy = (c[1] - a[1]) * b.h / 100, l = Math.hypot(dx, dy) || 1, mx = (a[0] + c[0]) / 2 * b.w / 100, my = (a[1] + c[1]) / 2 * b.h / 100;
+  return inPoly(Q, mx - dy / l * 8, my + dx / l * 8) ? 1 : inPoly(Q, mx + dy / l * 8, my - dx / l * 8) ? -1 : 1;
+}
+function fiberSVG(b, pts, sgn, seed, masked) {
+  const P = pts.map(([x, y]) => [x * b.w / 100, y * b.h / 100]), S = [];
+  for (let i = 0; i < P.length - 1; i++) { const [x0, y0] = P[i], [x1, y1] = P[i + 1], n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 3)); for (let k = 0; k < n; k++) S.push([x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n]); }
+  S.push(P[P.length - 1]);
+  const out = [], hl = [], sh = []; let s = 0, x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (let i = 0; i < S.length; i++) {
+    const a = S[Math.max(0, i - 1)], c = S[Math.min(S.length - 1, i + 1)], dx = c[0] - a[0], dy = c[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * sgn, ny = dx / l * sgn;
+    if (i) s += Math.hypot(S[i][0] - S[i - 1][0], S[i][1] - S[i - 1][1]);
+    const wv = 1.5 + 5 * clampN(vnoise(seed, s / 13) * .7 + vnoise(seed + 17, s / 3.6) * .3, 0, 1), [x, y] = S[i];
+    out.push([x + nx * wv, y + ny * wv]); hl.push([x + nx * .6, y + ny * .6]); sh.push([x - nx * .8, y - ny * .8]);
+    x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+  }
+  const D = a => a.map(([x, y], k) => (k ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join('');
+  const rib = D(S) + D(out.reverse()).replace('M', 'L') + 'Z', id = 'fm' + (++fibN), pad = 14;
+  const mask = masked ? `<defs><mask id="${id}" maskUnits="userSpaceOnUse" x="${(x0 - pad).toFixed(0)}" y="${(y0 - pad).toFixed(0)}" width="${(x1 - x0 + pad * 2).toFixed(0)}" height="${(y1 - y0 + pad * 2).toFixed(0)}"><path class="fm" d="${D(S)}" fill="none" stroke="#fff" stroke-width="22" pathLength="1" stroke-dasharray="1 2" stroke-dashoffset="1"/></mask></defs>` : '';
+  return `<svg class="fiber" width="${b.w}" height="${b.h}" viewBox="0 0 ${b.w} ${b.h}" aria-hidden="true">${mask}<g${masked ? ` mask="url(#${id})"` : ''}><path d="${D(sh)}" fill="none" stroke="#0008" stroke-width="1"/><path d="${rib}" fill="${FIBER}" fill-opacity=".9"/><path d="${D(hl)}" fill="none" stroke="#fffaf0" stroke-width="1"/></g></svg>`;
+}
+function addFiber(b, host, P, sgn) {
+  host.insertAdjacentHTML('beforeend', fiberSVG(b, P.fiber.pts, sgn, b.i * 31 + 7, !!P.fiber.frames));
+  const svg = host.lastElementChild;
+  if (P.fiber.frames) kfa(b, svg.querySelector('.fm'), P.fiber.frames.map(([t, v, e]) => [t, { strokeDashoffset: String(v) }, e]));
+}
+function leafEl(b, bandClip, clip, html, back, bf) {
+  const l = document.createElement('div'); l.className = 'leaf';
+  if (bandClip) l.style.clipPath = bandClip; if (bf) l.style.backfaceVisibility = 'hidden'; if (back) l.style.transform = flipB(b.h).trim();
+  const c = document.createElement('div'); c.className = 'pc'; if (clip) c.style.clipPath = clip; c.innerHTML = html; l.appendChild(c); return l;
+}
+const bandPoly = (y0, y1) => `polygon(-20% ${y0.toFixed(2)}%, 120% ${y0.toFixed(2)}%, 120% ${y1.toFixed(2)}%, -20% ${y1.toFixed(2)}%)`;
+function clipBand(pts, y0, y1) {
+  const cut = (P, inside, ix) => { const o = []; for (let i = 0; i < P.length; i++) { const a = P[i], b = P[(i + 1) % P.length], ia = inside(a), ib = inside(b); if (ia) o.push(a); if (ia !== ib) o.push(ix(a, b)); } return o; };
+  const at = yy => (a, b) => [a[0] + (b[0] - a[0]) * (yy - a[1]) / ((b[1] - a[1]) || 1e-9), yy];
+  return cut(cut(pts, p => p[1] >= y0, at(y0)), p => p[1] <= y1, at(y1));
+}
+function mkPart(b, P, H, face, k) {
+  const w = document.createElement('div'); w.className = 'piece' + (P.cls ? ' ' + P.cls : '');
+  if (P.style) w.style.cssText = P.style;
+  w.style.transformOrigin = P.origin || '50% 50%';
+  const sgn = P.fiber ? sideSign(b, P.pts, P.fiber.pts) : 1, back = '<div class="pback"></div>';
+  if (P.segs) {
+    w.classList.add('p3');
+    const body = document.createElement('div'); body.className = 'bd'; w.appendChild(body);
+    const cuts = P.segs.cuts, segs = [], fy = P.fiber ? P.fiber.pts.map(p => p[1]) : [], fy0 = Math.min(...fy) - 3, fy1 = Math.max(...fy) + 3;
+    let cur = body;
+    for (let j = 0; j < cuts.length - 1; j++) {
+      const s = document.createElement('div'); s.className = 'sg'; s.style.transformOrigin = `0 ${cuts[j].toFixed(2)}%`; cur.appendChild(s); segs.push(s);
+      const y0 = Math.max(0, cuts[j] - .2), y1 = Math.min(100, cuts[j + 1] + .2);
+      const bp = clipBand(P.pts, j ? y0 : -1, j < cuts.length - 2 ? y1 : 101), f = leafEl(b, '', poly(bp), face, false, P.back);
+      if (P.fiber && fy1 >= cuts[j] && fy0 <= cuts[j + 1]) { const fc = document.createElement('div'); fc.className = 'leaf'; fc.style.clipPath = bandPoly(j ? y0 : -20, j < cuts.length - 2 ? y1 : 120); f.appendChild(fc); addFiber(b, fc, P, sgn); }
+      s.appendChild(f);
+      if (P.back) s.appendChild(leafEl(b, '', poly(mirrorY(bp)), back, true, true));
+      const jf = P.segs.joints[j]; if (jf) kfa(b, s, jf);
+      cur = s;
+    }
+    for (const A of P.segs.attach || []) {
+      const f = leafEl(b, '', poly(A.clip), face, false, true); f.style.transformOrigin = '0 0'; segs[A.seg].appendChild(f); kfa(b, f, A.frames(''));
+      if (P.back) { const bk = leafEl(b, '', poly(mirrorY(A.clip)), back, false, true); bk.style.transformOrigin = '0 0'; segs[A.seg].appendChild(bk); kfa(b, bk, A.frames(flipB(b.h))); }
+    }
+    if (P.inner) kfa(b, body, P.inner);
+  } else {
+    if (P.bf) w.style.backfaceVisibility = 'hidden';
+    if (P.shd) { w.insertAdjacentHTML('beforeend', shdHTML(P.pts || [[0, 0], [100, 0], [100, 100], [0, 100]], P.shd.dx, P.shd.dy)); kfa(b, w.lastElementChild, P.shd.frames.map(([t, o]) => [t, { opacity: o }])); }
+    const c = document.createElement('div'); c.className = 'pc'; if (P.clip) c.style.clipPath = P.clip;
+    c.innerHTML = P.html != null ? P.html.replace('\u0000', () => face) : P.back ? back : face;
+    w.appendChild(c);
+    if (P.fiber) addFiber(b, w, P, sgn);
+    if (P.extra) w.insertAdjacentHTML('beforeend', P.extra);
+    if (P.inner) kfa(b, c, P.inner);
+  }
+  H[P.host || 'p'].appendChild(w);
+  if (P.frames) kfa(b, w, P.frames);
+  if (P.fold != null) kfa(b, w, [[0, { visibility: 'visible' }], [P.fold, { visibility: 'visible' }, 'steps(1,end)'], [P.fold + 1, { visibility: 'hidden' }]]);
+  if (P.sub) for (const [sel, fr] of P.sub) kfa(b, w.querySelector(sel), fr);
+  return w;
+}
+function shakeHosts(b, H, [t0, d, amp, deg]) {
+  const fr = []; for (let k = 0; k <= 6; k++) { const e = k === 0 || k === 6, s = k % 2 ? 1 : -1, a = e ? 0 : amp * s * (1 - k / 12);
+    fr.push([t0 + d * k / 6, { transform: `translate(${a.toFixed(2)}px,${e ? 0 : (amp * .4 * (k % 3 - 1)).toFixed(2)}px) skewX(${e ? 0 : (deg * s).toFixed(2)}deg)` }]); }
+  kfa(b, H.p, fr); kfa(b, H.r, fr);
+}
+function flecks(b, r, H, v, fallY) {
+  const fc = FACE_COLS[b.i % FACE_COLS.length], P = v.path, T = v.relT, spread = v.flT || 120, [vxs, vy0, vy1] = v.speed, dt = 1 / 60;
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - r() * .999)) * Math.cos(6.2832 * r());
+  const at = () => { const f = r() * (P.length - 1), j = Math.min(P.length - 2, Math.floor(f)), u = f - j; return [(P[j][0] + (P[j + 1][0] - P[j][0]) * u) * b.w / 100, (P[j][1] + (P[j + 1][1] - P[j][1]) * u) * b.h / 100]; };
+  const back = v.dark ? '#0b0b0d' : PAPER_BACK;
+  for (let k = 0; k < v.nfl; k++) {
+    const q = r(), col = v.dark ? ['#151515', '#2a2a2a', '#3a3a3a'][k % 3] : q < .65 ? (r() < .5 ? '#efe9dc' : '#e8e2d4') : q < .9 ? fc[Math.floor(r() * fc.length)] : '#0b0b0d';
+    const sz = clampN(4 * Math.exp(.55 * gauss()), 1.6, 14); let [x, y] = at();
+    let vx = (r() - .5) * 2 * vxs, vy = -(vy0 + r() * vy1), a = r() * 360; const spin = (r() - .5) * 1080, ts = 4 + r() * 10, t0 = T + r() * spread;
+    const el = document.createElement('i'); el.style.cssText = `width:${sz.toFixed(1)}px;height:${(sz * (.6 + r() * .6)).toFixed(1)}px;background:${col};clip-path:polygon(${(r() * 40).toFixed(0)}% 0,100% ${(r() * 60).toFixed(0)}%,${(r() * 70).toFixed(0)}% 100%)`;
+    H.d.appendChild(el);
+    const fr = [], N = 24;
+    for (let s = 0; s <= N; s++) {
+      if (s) for (let qq = 0; qq < 3; qq++) { vx *= .985; vy = vy * .985 + 1800 * dt; x += vx * dt; y += vy * dt; }
+      if (s) a += spin * .05; const cs = Math.cos(ts * s * .05);
+      fr.push([t0 + s * 50, { transform: `${TT(x, y, a)} scaleY(${Math.max(.06, Math.abs(cs)).toFixed(3)})`, backgroundColor: cs < 0 ? back : col, visibility: s === N ? 'hidden' : 'visible' }]);
+    }
+    kfa(b, el, fr, { fill: 'forwards' });
+  }
+  const nd = 20 + Math.floor(r() * 11);
+  for (let k = 0; k < nd; k++) {
+    let [x, y] = at(), vx = (r() - .5) * 240, vy = -(30 + r() * 140); const t0 = T + r() * spread * 1.4, sz = 1 + r() * 1.3;
+    const el = document.createElement('i'); el.style.cssText = `width:${sz.toFixed(1)}px;height:${sz.toFixed(1)}px;border-radius:50%;opacity:.8;background:${v.dark ? '#3a3a3a' : r() < .6 ? '#efe9dc' : '#cfc7b6'}`;
+    H.d.appendChild(el);
+    const fr = [], N = 32;
+    for (let s = 0; s <= N; s++) { if (s) for (let qq = 0; qq < 3; qq++) { vx *= .94; vy += (1800 - 4.3 * vy) * dt; x += vx * dt; y += vy * dt; }
+      fr.push([t0 + s * 50, { transform: `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`, visibility: s === N ? 'hidden' : 'visible' }]); }
+    kfa(b, el, fr, { fill: 'forwards' });
+  }
+}
+function hairs(b, r, H, v) {
+  if (v.dark) return;
+  const P = v.path, T = v.relT, n = 6 + Math.floor(r() * 7);
+  for (let k = 0; k < n; k++) {
+    const f = r() * (P.length - 1), j = Math.min(P.length - 2, Math.floor(f)), u = f - j, A = P[j], B = P[j + 1];
+    const x = (A[0] + (B[0] - A[0]) * u) * b.w / 100, y = (A[1] + (B[1] - A[1]) * u) * b.h / 100, ang = Math.atan2((B[0] - A[0]) * b.w, -(B[1] - A[1]) * b.h) * 180 / Math.PI;
+    const L = 3 + r() * 6, sn = r() * 60, base = `translate(${(x - L / 2).toFixed(1)}px,${(y - .3).toFixed(1)}px) rotate(${ang.toFixed(1)}deg)`;
+    const el = document.createElement('i'); el.className = 'hair'; el.style.cssText = `width:${L.toFixed(1)}px;height:.6px;background:${FIBER}`;
+    H.d.appendChild(el);
+    kfa(b, el, [[T, { transform: base + ' scaleX(.6)', visibility: 'visible' }], [T + 150 + sn, { transform: base + ' scaleX(1.5)', visibility: 'visible' }, 'steps(1,end)'],
+      [T + 151 + sn, { transform: base + ' scaleX(1.5)', visibility: 'visible' }, 'cubic-bezier(.6,0,1,1)'], [T + 185 + sn, { transform: base + ' scaleX(0)', visibility: 'hidden' }]], { fill: 'forwards' });
+  }
+}
+function reveal(b, T, H) {
+  const under = b.el.querySelector('.under');
+  kfa(b, H.tubes, [[T, { opacity: 0 }, 'steps(1,end)'], [T + 40, { opacity: 1 }, 'steps(1,end)'], [T + 90, { opacity: .15 }, 'steps(1,end)'], [T + 130, { opacity: .95 }], [T + 320, { opacity: .5 }], [T + 760, { opacity: 0 }]]);
+  kfa(b, under, [[T + 120, { filter: 'brightness(.18) saturate(0)' }, 'cubic-bezier(.2,.7,.2,1)'], [T + 570, { filter: 'brightness(1) saturate(1)' }]]);
+  let on = [...under.querySelectorAll('[data-on]')], draw = [...under.querySelectorAll('[data-draw]')];
+  if (!on.length && !draw.length) { on = [...under.querySelectorAll('svg rect')]; draw = [...under.querySelectorAll('svg line')]; }
+  on.forEach((el, k) => { const s = T + 200 + k * 90; kfa(b, el, [[s, { opacity: 0 }], [s + 66, { opacity: 1 }], [s + 99, { opacity: .35 }], [s + 220, { opacity: 1 }]]); });
+  draw.forEach((el, k) => { let L = 0; try { L = el.getTotalLength(); } catch {} if (!(L > 0)) L = 300; const s = T + 260 + k * 110, da = `${L.toFixed(1)} ${L.toFixed(1)}`;
+    kfa(b, el, [[s, { strokeDasharray: da, strokeDashoffset: L.toFixed(1) }], [s + 200, { strokeDasharray: da, strokeDashoffset: '0' }]]); });
+  b.el.querySelectorAll('.lamps i').forEach(el => kfa(b, el, [[T + 40, { boxShadow: LAMP_DIM }, 'steps(1,end)'], [T + 100, { boxShadow: LAMP_ON }, 'steps(1,end)'], [T + 150, { boxShadow: LAMP_DIM }, 'steps(1,end)'], [T + 230, { boxShadow: LAMP_ON }], [T + 231, { boxShadow: LAMP_ON }]], { pseudo: '::after' }));
+}
+function mkTab(b, tab) {
+  const t = document.createElement('div'); t.className = 'riptab'; t.dataset.pos = tab.pos; t.setAttribute('role', 'button'); t.setAttribute('aria-label', 'Rip this flyer off');
+  if (tab.pos === 'r') t.style.top = `calc(${tab.y.toFixed(2)}% - var(--tab) / 2)`;
+  t.innerHTML = '<span>RIP HERE</span>'; t.tabIndex = 0;
+  if (b.rm) {
+    t.style.touchAction = 'manipulation'; t.style.cursor = 'pointer';
+    t.addEventListener('click', e => { e.preventDefault(); rmTear(b); });
+    t.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); rmTear(b); } });
+    return t;
+  }
+  t.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !b.torn && !b.frozen) { e.preventDefault(); commitTear(b); } });
+  t.addEventListener('pointerdown', e => { if (b.torn || b.frozen) return; e.preventDefault(); try { t.setPointerCapture(e.pointerId); } catch {} b.drag = { x: e.clientX, y: e.clientY, t: performance.now(), q: 0, d: 0 }; t.classList.add('held'); });
+  t.addEventListener('pointermove', e => { const g = b.drag; if (!g) return; const d = Math.hypot(e.clientX - g.x, e.clientY - g.y); g.d = Math.max(g.d, d); g.q = Math.min(1, d * .35 / (b.w * .5)); });
+  const end = commitOk => e => { const g = b.drag; if (!g) return; b.drag = null; t.classList.remove('held');
+    if (commitOk && ((g.d < 6 && performance.now() - g.t < 450) || g.q >= .35)) commitTear(b); };
+  t.addEventListener('pointerup', end(true)); t.addEventListener('pointercancel', end(false)); t.addEventListener('lostpointercapture', end(true));
+  return t;
+}
+
+function rigBoard(b) {
+  b.anims.forEach(a => a.cancel()); b.anims = [];
+  Object.assign(b, { torn: false, phase: 'idle', done: false, dwell: 0, t: 0, v: 0, lastT: 0, evt: false, frozen: false, drag: null, peak: 0, hs: 0 });
+  b.tabbed = state.tear === 'seq' && b.i === 3;
+  b.el.classList.remove('tearing', 'torn'); b.el.style.zIndex = '';
+  if (state.boards === 'led') { const set = u => { if (u) b.el.style.setProperty('--led', `url("${u}")`); }; set(ledImage(IDL.ledLines(b), set)); }
+  const panel = b.el.querySelector('.panel'); panel.querySelectorAll('.rig').forEach(n => n.remove());
+  const host = panel.querySelector('.pieces'); host.innerHTML = ''; host.style.visibility = ''; b.host = host;
+  const mk = (cls, before) => { const d = document.createElement('div'); d.className = cls + ' rig'; before ? panel.insertBefore(d, before) : panel.appendChild(d); return d; };
+  const H = { p: host, tubes: mk('tubes', host), r: mk('residue'), d: mk('debris'), tabs: mk('tabhost') };
+  H.tubes.innerHTML = '<i></i><i></i><i></i><i></i>';
+  const r = rng(1013 + b.i * 97 + (state.tear.length * 31) + (state.boards === 'led' ? 7 : 0));
+  const kind = b.kind = tearKind(b), fallY = Math.round(VH * 1.1 + b.h);
+  let face = faceHTML(b); const intact = document.createElement('div'); intact.className = 'piece intact'; intact.innerHTML = face; host.appendChild(intact);
+  const E = kind === 'modules' ? flatEdges() : edgesFor(b, r, intact.querySelector('.face'));
+  const crisp = kind === 'rip', under = b.el.querySelector('.under'); under.style.setProperty('--remL', crisp ? '0%' : (E.base + 1.5).toFixed(2) + '%'); fillArt(b);
+  if (E.plain && E.bul.length) {
+    const pr = b.el.querySelector('.panel').getBoundingClientRect();
+    for (const el of under.querySelectorAll('.lab, .ph')) { const q = el.getBoundingClientRect(); if (!pr.height) break;
+      const y0 = (q.top - pr.top) / pr.height * 100 - 3, y1 = (q.bottom - pr.top) / pr.height * 100 + 3;
+      for (let k = 0; k <= NS; k++) { const y = k * 100 / NS; if (y >= y0 && y <= y1) E.L[k] = E.plain[k]; } }
+  }
+  const v = kind === 'peel' ? tearPeel(r, b, E, fallY) : kind === 'zip' ? tearZip(r, b, E, fallY) : kind === 'rip' ? tearRip(r, b, E, fallY)
+    : kind === 'curtain' ? tearCurtain(r, b, E) : kind === 'shred' ? tearShred(r, b, E, fallY) : tearModules(r, b, fallY);
+  if (v.decor) intact.querySelector('.face')?.insertAdjacentHTML('beforeend', v.decor);
+  face = IDL.fitFace(intact.querySelector('.face')) || face;
+  host.style.perspective = H.r.style.perspective = v.persp ? v.persp + 'px' : '';
+  b.relT = v.relT; b.variant = v.variant || kind;
+  if (kind !== 'modules' && !v.crisp) {
+    const rem = [[[[0, 0], ...side(E.L, 0, 100, .8), [0, 100]], 2, '0 0'], [[[100, 100 - E.ch - 1.5], ...side(E.R, 100 - E.ch - 1.5, 100, -.8), [100, 100]], -2, '100% 100%']];
+    for (const [pts, dx, o] of rem) { const d = document.createElement('div'); d.className = 'piece remnant'; d.style.transformOrigin = o;
+      d.innerHTML = `<div class="pc core" style="clip-path:${polyPx(pts, dx)}"></div><div class="pc" style="clip-path:${poly(pts)}">${face}</div>`; H.r.appendChild(d);
+      kfa(b, d, [[v.relT, { transform: 'rotate(0deg) translateY(0px)' }, 'cubic-bezier(.2,.7,.3,1)'], [v.relT + 220, { transform: 'rotate(.5deg) translateY(2px)' }]]);
+      kfa(b, d.firstChild, [[v.relT - 1, { visibility: 'hidden' }], [v.relT, { visibility: 'visible' }]]); }
+  }
+  kfa(b, intact, [[0, { visibility: 'visible' }], [1, { visibility: 'hidden' }]]);
+  v.parts.forEach((P, k) => mkPart(b, P, H, face, k));
+  if (v.shake) shakeHosts(b, H, v.shake);
+  if (!v.crisp) { flecks(b, r, H, v, fallY); hairs(b, r, H, v); }
+  reveal(b, v.revealT ?? v.relT, H);
+  b.dur = Math.ceil(Math.max(0, ...b.anims.map(a => { const t = a.effect.getTiming(); return (+t.delay || 0) + (+t.duration || 0); })));
+  const clock = host.animate([{ outlineOffset: '0px' }, { outlineOffset: '1px' }], { duration: b.dur, fill: 'both', easing: 'linear' }); clock.pause(); clock.currentTime = 0;
+  b.anims.unshift(clock);
+  b.rm = IDL.reduced();
+  if (state.timing === 'drag' || b.tabbed || b.rm) H.tabs.appendChild(mkTab(b, v.tab));
+}
+
+function applyVariant() {
+  camReset();
+  for (const b of boards) rigBoard(b);
+  document.querySelectorAll('.seg').forEach(seg => seg.querySelectorAll('button').forEach(btn => btn.setAttribute('aria-pressed', String(state[seg.dataset.k] === btn.dataset.v))));
+  const rp = $('#replay'); if (rp) rp.hidden = state.timing === 'scrub';
+  try { history.replaceState(history.state, '', location.pathname + location.search + '#' + state.tear + '-' + state.boards + '-' + state.timing); } catch {}
+}
+
+function seekTear(b, t) {
+  if (Math.abs(t - b.lastT) <= 1e-4) return;
+  b.lastT = t; for (const a of b.anims) a.currentTime = t;
+  b.el.classList.toggle('tearing', t > .5);
+}
+function commitTear(b, cam = true) {
+  b.hand = true;
+  if (b.phase === 'play' || b.done) return;
+  b.torn = true; b.phase = 'play'; b.drag = null; b.host.style.visibility = ''; b.hs = b.t >= b.relT ? -1 : 0;
+  b.el.classList.add('tearing'); const tab = b.el.querySelector('.riptab'); if (tab) tab.style.visibility = 'hidden';
+  for (const a of b.anims) { a.currentTime = b.t; a.play(); }
+  if (cam) camCommit(b);
+}
+function finishTear(b) {
+  b.phase = 'done'; b.done = true; b.torn = true; b.t = b.lastT = b.dur;
+  for (const a of b.anims) { a.pause(); a.currentTime = b.dur; }
+  b.el.classList.remove('tearing'); b.el.classList.add('torn'); b.host.style.visibility = 'hidden';
+}
+function fireTorn(b) { if (b.evt) return; b.evt = true; try { window.dispatchEvent(new CustomEvent('board-torn', { detail: { i: b.i, variant: b.variant } })); } catch {} }
+
+function camCommit(b) {
+  camHand = true;
+  const now = performance.now(), max = Math.max(0, WH - VH);
+  const to = clampN(b.y + b.h / 2 - VH * .48, 0, max), sy = Math.min(Math.max(scrollY, 0), max);
+  if (Math.abs(to - sy) > VH * .45) return;
+  const R = LIFT.ride; if (R && now < R.until && Math.abs(scrollY - R.y) > 2 && Math.abs(to - R.y) > 2) return;
+  if (CFX.b && CFX.b !== b) CFX.b.el.style.zIndex = '';
+  Object.assign(CFX, { b, t0: now, from: camY, to, off: R && now < R.until && Math.abs(to - R.y) <= 2 ? 0 : to - sy,  rem: Math.max(600, b.dur - b.t), rel: 0, envRel: 0 });
+  b.el.style.zIndex = '10';
+}
+function camReset() {
+  if (CFX.b && CFX.b.el) CFX.b.el.style.zIndex = '';
+  Object.assign(CFX, { b: null, off: 0, env: 0, rel: 0, t0: -1e9, shakeT: -1e9 }); camRate = 1;
+  if (CFX.vig) { CFX.vig.style.opacity = '0'; CFX.vig.style.display = 'none'; } CFX.vo = '';
+  try { cv.style.transform = ''; world.style.transformOrigin = ''; } catch {}
+}
+function camFxHand(now, dt) {
+  const max = Math.max(0, WH - VH), e = now - CFX.t0; let catchY = null;
+  if (CFX.b && e < 450) catchY = CFX.from + (CFX.to - CFX.from) * CATCH_E(e / 450);
+  else if (Math.abs(CFX.off) > .5) {
+    if (now - lastScrollT > 400) { CFX.syncUntil = now + 150; scrollTo(0, clampN(Math.min(Math.max(scrollY, 0), max) + CFX.off, 0, max)); CFX.off = 0; }
+    else if (e > 2950) CFX.off *= Math.exp(-dt / .5);
+  } else CFX.off = 0;
+  camRate = e < 2950 ? .35 : 1;
+  let env = 0;
+  if (CFX.b) {
+    if (!CFX.rel && (e >= CFX.rem || (e > 450 && Math.abs(camY - CFX.to) > VH * .5))) { CFX.rel = now; CFX.envRel = CFX.env; }
+    env = CFX.rel ? CFX.envRel * (1 - smooth01((now - CFX.rel) / 800)) : 1 - (1 - Math.min(1, e / 600)) ** 3;
+    if (CFX.rel && now - CFX.rel >= 800 && e >= 2950) { CFX.b.el.style.zIndex = ''; CFX.b = null; env = 0; }
+  }
+  CFX.env = env;
+  return { catchY, target: clampN(Math.min(Math.max(scrollY, 0), max) + CFX.off, 0, max) };
+}
+function camFx(now, dt) {
+  if (camHand) { const r = camFxHand(now, dt); if (!CFX.b && Math.abs(CFX.off) <= .5) camHand = false; return r; }
+  let best = null, be = 0; for (const b of boards) if ((b.envS || 0) > be) { be = b.envS; best = b; }
+  if (CFX.b && CFX.b !== best) CFX.b.el.style.zIndex = '';
+  CFX.b = best; CFX.env = be; CFX.off = 0;
+  const max = Math.max(0, WH - VH);
+  return { catchY: null, target: clampN(Math.min(Math.max(scrollY, 0), max), 0, max) };
+}
+const PUSH_M = 12, PUSH_MV = 40;
+const pushSlide = (lo0, sz, s, lim, m) => {
+  const c = lo0 + sz / 2, lo = c - sz / 2 * s, hi = c + sz / 2 * s, a = Math.min(m, lo0), z = Math.max(lim - m, lo0 + sz);
+  return lo < a ? a - lo : hi > z ? z - hi : 0;
+};
+function camApply(now) {
+  const se = now - CFX.shakeT, b = CFX.b; let sx = 0, sy = 0, s = 1 + .08 * CFX.env;
+  if (se >= 0 && se < 140) { const u = se / 140; sx = 4 * (1 - u) * Math.sin(u * 37.7); sy = 2 * (1 - u) * Math.cos(u * 31.4); }
+  if (b && s > 1.0005) s = Math.max(1, Math.min(s, Math.max(W - 2 * PUSH_M, b.w) / b.w, Math.max(VH - 2 * PUSH_MV, b.h) / b.h));
+  if (b && s > 1.0005) {
+    const ox = b.x + b.w / 2, oy = b.y + b.h / 2;
+    sx += pushSlide(b.x, b.w, s, W, PUSH_M); sy += pushSlide(b.y - camY, b.h, s, VH, PUSH_MV);
+    world.style.transformOrigin = `${ox}px ${oy}px`; world.style.transform = `translate3d(${sx.toFixed(2)}px,${(-camY + sy).toFixed(2)}px,0) scale(${s.toFixed(4)})`;
+    cv.style.transformOrigin = `${ox}px ${(oy - camY).toFixed(1)}px`; cv.style.transform = `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px) scale(${s.toFixed(4)})`;
+  } else {
+    world.style.transform = `translate3d(${sx.toFixed(2)}px,${(-camY + sy).toFixed(2)}px,0)`;
+    const ct = sx || sy ? `translate(${sx.toFixed(2)}px,${sy.toFixed(2)}px)` : ''; if (cv.style.transform !== ct) cv.style.transform = ct;
+  }
+  if (CFX.vig) { const o = (.35 * CFX.env).toFixed(3); if (o !== CFX.vo) { CFX.vo = o; CFX.vig.style.opacity = o; CFX.vig.style.display = CFX.env > 0 ? '' : 'none'; } if (CFX.env > 0) CFX.vig.style.transform = `translate3d(0,${(camY - VH * .15).toFixed(1)}px,0)`; }
+}
+
+const TEAR_REL = 800;
+function tearProgress(b) {
+  const cy = b.y - camY + b.h / 2;
+  const c0 = Math.min(VH - b.h * .45, b.y + b.h / 2), c1 = Math.min(VH * .48, c0 - VH * .2);
+  return clampN((c0 - cy) / Math.max(1, c0 - c1), 0, 1);
+}
+function tearClock(b, p) {
+  const tp = Math.min(b.dur, (b.relT || 0) + 580), K = [[0, 0], [.15, Math.min(150, tp)], [.6, tp], [.85, b.dur], [1, b.dur + TEAR_REL]];
+  for (let k = 1; k < K.length; k++) if (p <= K[k][0]) { const [p0, t0] = K[k - 1], [p1, t1] = K[k]; return t0 + (t1 - t0) * (p - p0) / (p1 - p0); }
+  return b.dur + TEAR_REL;
+}
+function tearEnv(T, dur) {
+  if (T <= 0) return 0;
+  const rise = 1 - (1 - Math.min(1, T / 600)) ** 3, fall = T > dur ? smooth01((T - dur) / TEAR_REL) : 0;
+  return rise * (1 - fall);
+}
+function updateBoards() {
+  const now = performance.now();
+  for (const b of boards) {
+    b.envS = 0;
+    if (!b.el || b.frozen || b.done || b.rm || !b.anims.length) continue;
+    if (b.phase === 'play') {
+      if (b.hs > 0 && now - b.hs >= 60) { b.hs = -1; for (const a of b.anims) a.play(); }
+      const t = +b.anims[0].currentTime || 0;
+      if (b.hs === 0 && t >= b.relT) { b.hs = now; for (const a of b.anims) a.pause(); if (CFX.b === b) CFX.shakeT = now; }
+      if (t >= b.relT) fireTorn(b);
+      if (t >= b.dur - .5 || b.anims[0].playState === 'finished') { fireTorn(b); finishTear(b); }
+      continue;
+    }
+    const T = tearClock(b, tearProgress(b));
+    let t = Math.min(T, b.dur); if (b.drag) t = Math.max(t, b.drag.q * b.relT);
+    const prev = b.t; b.t = t; b.v = 0; b.phase = t > 0 ? 'scrub' : 'idle';
+    seekTear(b, t);
+    const end = t >= b.dur - .5;
+    b.torn = t >= b.relT;
+    b.host.style.visibility = end ? 'hidden' : '';
+    b.el.classList.toggle('torn', end); if (end) b.el.classList.remove('tearing');
+    if (b.torn) fireTorn(b);
+    if (prev < b.relT && t >= b.relT && !b.drag) CFX.shakeT = now;
+    const tab = b.el.querySelector('.riptab'); if (tab) tab.style.visibility = t > .5 && !b.drag ? 'hidden' : '';
+    b.envS = b.drag ? 0 : tearEnv(T, b.dur);
+  }
+}
+window.__tearAt = (i, ms) => {
+  const b = boards[i]; if (!b) return 0;
+  const t = clampN(+ms || 0, 0, b.dur);
+  if (CFX.b === b) camReset();
+  b.frozen = true; b.phase = 'seek'; b.drag = null; b.torn = t >= b.relT; b.t = b.lastT = t; b.hs = -1;
+  b.host.style.visibility = t >= b.dur ? 'hidden' : ''; b.el.classList.add('tearing');
+  for (const a of b.anims) { a.pause(); a.currentTime = t; }
+  return b.dur;
+};
+function rmTear(b) {
+  if (!b || b.done) return;
+  const it = b.host && b.host.querySelector('.piece.intact'), cover = document.createElement('div');
+  cover.className = 'pieces rig rm-cover';
+  if (it) { const c = it.cloneNode(true); c.style.visibility = 'visible'; cover.appendChild(c); }
+  b.host.after(cover);
+  b.hand = true; restoreTorn(b);
+  requestAnimationFrame(() => requestAnimationFrame(() => { cover.style.opacity = '0'; }));
+  setTimeout(() => cover.remove(), 450);
+  const u = b.el.querySelector('.case a, .case [tabindex]'); if (u && document.activeElement && document.activeElement.classList.contains('riptab')) u.focus({ preventScroll: true });
+}
+function restoreTorn(b) {
+  if (!b || !(b.hand || b.rm)) return;
+  b.t = b.dur; finishTear(b); if (!b.evt && b.dur >= b.relT) fireTorn(b); const tab = b.el.querySelector('.riptab'); if (tab) tab.style.visibility = 'hidden'; }
+
+let camRate = 1;
+let scrollVel = 0;
+let cornerX = 0;
+let STREET_CALM = { x: 0, y: 0, w: 0, h: 0 };
+const BASE = { F0: 0, canopyTop: 0, canopyBot: 0, groundY: 0, n: 0 };
+if (TOP.lit === undefined) TOP.lit = 1;
+
+const mkCv = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; };
+const clampN = (x, a, b) => x < a ? a : x > b ? b : x;
+const smooth01 = x => { x = clampN(x, 0, 1); return x * x * (3 - 2 * x); };
+const hexRGB = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const rgbaS = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${clampN(+a, 0, 1).toFixed(3)})`;
+const vnoise = (seed, x) => { const i = Math.floor(x), a = hash(seed, i); return a + (hash(seed, i + 1) - a) * smooth01(x - i); };
+window.BB = {
+  canvas: cv, TOP, TS, TK: null, boards, CFX, BASE,
+  get W() { return W; }, get VH() { return VH; }, get WH() { return WH; }, get camY() { return camY; }, get facadeW() { return facadeW; },
+  get FINAL_Y() { return FINAL_Y; }, get STREET_Y() { return STREET_Y; }, get scrollVel() { return scrollVel; }, get DPR() { return DPR; },
+  get STREET_CALM() { return STREET_CALM; },
+};
+
+function drawTop(t) {
+  drawChrome();
+  if (!TOP.litCv || !TOP.ctx) return;
+  const pn = performance.now(), L = TOP.litCv;
+  const mode = 'main';
+  TOP.lit = 1;
+  if (TOP.y + TOP.h - camY < -40 || TS.key === mode) return; TS.key = mode;
+  const c = TOP.ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+  c.drawImage(TOP.dimCv, 0, 0); if (mode !== 'off') c.drawImage(L[mode], 0, 0);
+}
+
+const CH = { fl: '', seam: -1, seamEl: null };
+function drawChrome() {
+  const ref = camY + VH * .7, f = Math.ceil(41 * (STREET_Y - ref) / Math.max(1, STREET_Y - VH * .7));
+  const s = f >= 1 ? 'FL ' + String(Math.min(41, f)).padStart(2, '0') : 'STREET';
+  if (s !== CH.fl) { CH.fl = s; const el = document.getElementById('fl'); if (el) el.textContent = s; }
+  liftTick(s);
+  if (CH.seamEl) { const o = Math.round((1 - clampN(camY / (VH * .1), 0, 1)) * 30) / 100; if (o !== CH.seam) { CH.seam = o; CH.seamEl.style.opacity = String(o); } }
+  drawTicker();
+}
+
+const TK = { el: null, cv: null, ctx: null, key: '', rect: null, G: null, dim: null, txt: null, cols: 0, t0: 0, speed: 90, lastCol: null };
+window.BB.TK = TK;
+function placeTicker() {
+  const z = STREET_CALM, phone = false, key = [z.x, z.y, z.w, z.h, W, DPR].join('|');
+  if (!TK.el || !(z.w > 0) || key === TK.key) return; TK.key = key; TK.lastCol = null;
+  const g = textGrid(phone ? [CONTACT.name + ' \u00b7 ' + CONTACT.mail] : [CONTACT.name, CONTACT.mail], 1, 2);
+  const padX = phone ? 12 : 16, aw = z.w - padX * 2, ah = phone ? z.h - 6 : Math.min(z.h - 28, 120);
+  const pitch = Math.min(aw / (g.cols + 4), ah / (g.rows + 3), 5), w = Math.round(aw), h = Math.round((g.rows + 3) * pitch);
+  const x = Math.round(z.x + padX), y = Math.round(z.y + (phone ? (z.h - h) / 2 : Math.max(10, (z.h - h) * .45)));
+  TK.rect = { x, y, w, h }; TK.el.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
+  if (TK.lanes) TK.lanes.style.cssText = `left:${x}px;top:${y + h + 10}px;width:${w}px`;
+  TK.cv.width = Math.round(w * DPR); TK.cv.height = Math.round(h * DPR);
+  const G = TK.G = ledGeo(w, h, pitch); TK.cols = g.cols;
+  TK.dim = mkCv(w * DPR, h * DPR); const o = TK.dim.getContext('2d'); o.fillStyle = '#05060a'; o.fillRect(0, 0, TK.dim.width, TK.dim.height);
+  o.fillStyle = 'rgba(233,230,223,.06)'; o.beginPath(); const r = pitch * .4 * DPR;
+  for (let yy = 0; yy < G.PR; yy++) for (let xx = 0; xx < G.PC; xx++) { const px = (G.ox + xx * pitch) * DPR, py = (G.oy + yy * pitch) * DPR; o.moveTo(px + r, py); o.arc(px, py, r, 0, 6.2832); }
+  o.fill();
+  TK.txt = bakeBits(w, h, G, DPR, g, '#e9e6df');
+  TK.speed = Math.max(60, (G.PC - Math.floor((G.PC - g.cols) / 2)) / .65);
+}
+function drawTicker() {
+  placeTicker(); if (!TK.G || !TK.ctx) return;
+  const top = TK.rect.y - camY, vis = top < VH * .96 && top + TK.rect.h > 0, pn = performance.now();
+  if (!TK.t0 && vis) TK.t0 = pn;
+  const G = TK.G, home = Math.floor((G.PC - TK.cols) / 2);
+  const col = TK.t0 ? Math.max(home, G.PC - Math.floor((pn - TK.t0) / 1000 * TK.speed)) : G.PC;
+  if (col === TK.lastCol || (!vis && TK.lastCol !== null)) return; TK.lastCol = col;
+  const c = TK.ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TK.dim, 0, 0);
+  if (col < G.PC) c.drawImage(TK.txt, Math.round((col - home) * G.pitch * DPR), 0);
+}
+
+const GR = { el: null, t: 0, k: 0 };
+function bakeGrain() {
+  const n = 256, c = mkCv(n, n), o = c.getContext('2d'), id = o.createImageData(n, n), d = id.data, r = rng(4242);
+  for (let i = 0; i < n * n; i++) { const v = clampN(128 + (r() + r() + r() + r() - 2) * 120, 0, 255); d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = v; d[i * 4 + 3] = 255; }
+  o.putImageData(id, 0, 0); GR.el = $('#grain'); if (GR.el) GR.el.style.backgroundImage = `url(${c.toDataURL()})`;
+}
+const GH = { img: null, w: null, k: '' };
+function grainHole() {
+  if (!GH.w) GH.w = $('#grainw'); if (!GH.img || !GH.img.isConnected) GH.img = document.querySelector('.fb-ph img'); if (!GH.w) return;
+  const r = GH.img && GH.img.getBoundingClientRect(), on = r && r.bottom > 0 && r.top < innerHeight && r.width > 0;
+  const k = on ? [r.left + r.width * .5, r.top + r.height * .42, r.width * .62, r.height * .6].map(Math.round).join(' ') : '';
+  if (k === GH.k) return; GH.k = k;
+  const [x, y, rx, ry] = k.split(' '), m = on ? `radial-gradient(${rx}px ${ry}px at ${x}px ${y}px, #0000004d 62%, #000 100%)` : 'none';
+  GH.w.style.webkitMaskImage = m; GH.w.style.maskImage = m;
+}
+function grainTick(now) {
+  if (!GR.el || now - GR.t < 41) return; GR.t = now; GR.k++;
+  GR.el.style.transform = `translate3d(${(hash(GR.k, 91) * 256) | 0}px,${(hash(GR.k, 92) * 256) | 0}px,0)`;
+}
+
+function frame(now) {
+  const t = now / 1000, dt = Math.min(.05, lastT ? t - lastT : .016); lastT = t;
+  const F = camFx(now, dt), target = F.target;
+  const prevCam = camY;
+  if (F.catchY != null) camY = F.catchY;
+  else { camY += (target - camY) * (1 - Math.exp(-dt * 7 * camRate)); if (Math.abs(target - camY) < .3) camY = target; }
+  scrollVel += ((camY - prevCam) / Math.max(dt, .001) - scrollVel) * (1 - Math.exp(-dt * 10));
+  camApply(now);
+  drawTop(t); updateBoards(); if (window.SCENE3D) window.SCENE3D.frame(now, dt); grainTick(now); grainHole();
+  $('#hint').style.opacity = String(Math.max(0, 1 - camY / (VH * .2)));
+  requestAnimationFrame(frame);
+}
+
+document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+  const btn = e.target.closest('button'); if (!btn) return;
+  state[seg.dataset.k] = btn.dataset.v; for (const b of boards) b.hand = false; applyVariant();
+  if (innerWidth < 700) $('#ctl').removeAttribute('open');
+}));
+$('#replay').onclick = () => { for (const b of boards) b.hand = false; applyVariant(); };
+let rt = 0;
+function onResize() {
+  const wCh = Math.abs(innerWidth - laidOutWidth) > 1, hCh = Math.abs(innerHeight - VH) > 1;
+  if (!wCh && !hCh) return;
+  const torn = boards.map(b => b.torn && b.phase !== 'seek'), sy = scrollY, prog = sy / Math.max(1, WH - VH);
+  let anc = null, bd = 1e9; for (const b of boards) { const d = Math.abs(b.y + b.h / 2 - (sy + VH / 2)); if (d < bd) { bd = d; anc = { i: b.i, off: (b.y + b.h / 2 - sy) / VH }; } }
+  if (!(bd < VH)) anc = null;
+  if (!wCh && Math.abs(innerHeight - VH) < 120) { VH = innerHeight; return; }
+  layout(); build(); applyVariant();
+  boards.forEach((b, k) => { if (torn[k]) restoreTorn(b); });
+  const y = clampN(anc ? boards[anc.i].y + boards[anc.i].h / 2 - anc.off * VH : prog * (WH - VH), 0, Math.max(0, WH - VH));
+  scrollTo(0, y); camY = y; lastScrollT = 0;
+}
+addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(onResize, 150); });
+
+(() => {
+  try { if (new URLSearchParams(location.search).has('ctl')) $('#ctl').hidden = false; } catch {}
+  if (innerWidth < 700) $('#ctl').removeAttribute('open');
+  bakeGrain(); layout(); build(); applyVariant();
+  requestAnimationFrame(frame);
+  let ft = 0;
+  const refit = () => { clearTimeout(ft); ft = setTimeout(() => {
+    if (boards.some(b => b.torn || b.drag || b.phase === 'play' || b.phase === 'seek' || b.t > .5)) return;
+    boards.forEach(fillArt); applyVariant();
+  }, 60); };
+  try { document.fonts.addEventListener('loadingdone', refit); document.fonts.ready.then(refit); } catch {}
+  IDL.ready.then(refit);
+  const deep = IDL.deepFloor(); if (deep >= 0) setTimeout(() => liftGo(deep), 250);
+})();
+</script>
+<script type="module">
+const I = window.IDL;
+window.DEMOS = { ids: I.IDS, meta: I.meta, ready: I.ready, failed: I.failed,
+  ctl: i => (window.BB && window.BB.boards[i] && window.BB.boards[i].demo) || null,
+  state: () => (window.BB ? window.BB.boards.map(b => (b.el && b.el.querySelector('.dm-mount')?.dataset.state) || 'idle') : []) };
+</script>
+<script type="module">
+const plain = why => import('./fallback.js').then(m => m.show(why)).catch(() => {});
+let gl = false, ask = false;
+try { const c = document.createElement('canvas'), x = c.getContext('webgl2') || c.getContext('webgl'); gl = !!x; const l = x && x.getExtension('WEBGL_lose_context'); if (l) l.loseContext(); } catch {}
+try { ask = new URLSearchParams(location.search).has('plain'); } catch {}
+if (!gl || ask) plain(ask ? 'asked' : 'no-webgl');
+else {
+  const fromScene = s => /\/scene3d\.js|cdn\.jsdelivr\.net\/npm\/three@/.test(String(s || ''));
+  addEventListener('error', e => { if (fromScene(e.filename) || fromScene(e.error && e.error.stack)) plain('scene'); });
+  addEventListener('unhandledrejection', e => { if (fromScene(e.reason && e.reason.stack)) plain('scene'); });
+  import('./scene3d.js').catch(() => plain('scene'));
+}
+</script>
+<noscript><style>#nojs { position: fixed; inset: 0; z-index: 1000; overflow-y: auto; background: #0b0c10; color: #e9e6df; font: 17px/1.55 Archivo, "Helvetica Neue", Arial, sans-serif; }
+#nojs div { max-width: 44rem; margin: 0 auto; padding: 40px 16px; } #nojs h1 { font-size: 36px; line-height: 1.1; margin: 0 0 .3em; } #nojs a { color: #e9e6df; }</style>
+<main id="nojs"><div><h1>Ben Rippere</h1><p>AI Solutions Developer</p><p>I design around how decisions actually get made, by people and by models.</p>
+<p>Decisions get stuck. I build what unsticks them. The person still decides.</p>
+<p>This site draws its building with JavaScript. With it off, here is how to reach me: <a href="mailto:ben@riphere.com">ben@riphere.com</a> · <a href="assets/resume.pdf">résumé (PDF)</a></p></div></main></noscript>
