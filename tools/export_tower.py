@@ -12,15 +12,29 @@ nothing else, then checks the result before it replaces site/.
 Exit status: 0 = site/ written and clean; 1 = a check failed (the previous
 site/ is left as it was); 2 = usage or source problem.
 
+Transforms on copy (the source is never edited):
+  - comments are stripped from .html / .js / .css (tools/tower_strip.py: tokenizers, no minifying);
+  - index.html gets window.CASES = {slug: read minutes} for every work/<slug>/case.html in the source;
+  - work/<slug>/index.html is built from work/_template.html + that case.html (only when it exists);
+  - sitemap.xml and robots.txt are generated (sitemap lists / plus each built case file).
+
 Checks (any hit fails the export):
   1. employer    the employer's name (any case) in any exported file's bytes
                  or name. The one approved hit is assets/resume.pdf, which
                  is skipped.
-  2. placeholder the string PLACEHOLDER (case-sensitive) in any text file.
-  3. excluded    a file in the output that is not on the allowlist, sits on
+  2. placeholder in any text file: PLACEHOLDER, a "[N]" read time, "coming soon",
+                 "unfilled slot", "TODO" / "FIXME", or a template token "{{".
+  3. devhost     in any file (binary too): the dev box's name, a tailnet name
+                 (*.ts.net) or CGNAT address (100.64.0.0/10), localhost /
+                 127.0.0.1, or a local path (/mnt/, /home/).
+  4. excluded    a file in the output that is not on the allowlist, sits on
                  the denylist, or is a symlink.
-  4. reference   index.html points (src/href) at a local file that was not
-                 exported, so the page would 404 on it.
+  5. required    a file that must ship is missing (the page, its scripts,
+                 the headshots, the resume, the OG image, 404, robots, sitemap).
+  6. reference   an exported page or script points (src/href/url/"assets/...")
+                 at a local file that was not exported, so it would 404.
+  7. syntax      a stripped .js file (or inline script) fails `node --check`
+                 (skipped with a warning when node is not on PATH).
 
 Stdlib only.
 """
@@ -29,21 +43,35 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import gzip
+import html as htmllib
+import json
+import math
+import os
+import posixpath
 import re
 import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
+from urllib.parse import unquote
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tower_strip import JS_SCRIPT_TYPES, script_kind, strip_css, strip_html, strip_js  # noqa: E402
 
 DEFAULT_SRC = Path("/mnt/external/vault-content/drafts/portfolio-v3/billboard-poc")
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# (source path, exported path). Single files, copied verbatim.
+# (source path, exported path). Single files.
 ALLOW_FILES: list[tuple[str, str]] = [
     ("billboard3d.html", "index.html"),
     ("identity.css", "identity.css"),
     ("identity.js", "identity.js"),
     ("scene3d.js", "scene3d.js"),
     ("analytics.js", "analytics.js"),
+    ("fallback.js", "fallback.js"),
+    ("404.html", "404.html"),
+    ("favicon.svg", "favicon.svg"),
 ]
 # (source dir, glob on the file name, recursive?). Exported at the same path.
 ALLOW_TREES: list[tuple[str, str, bool]] = [
@@ -51,26 +79,83 @@ ALLOW_TREES: list[tuple[str, str, bool]] = [
     ("tex", "*", True),
     ("assets", "*", True),
 ]
+# Case files: work/<slug>/case.html in the source -> work/<slug>/index.html in the export, built from
+# work/_template.html. Slugs = the boards' slugs (billboard3d.html PROJECTS). A slug without case.html exports nothing.
+CASE_SLUGS = {"floor-tool": ("36", "Floor tool"), "novacrm": ("26", "NovaCRM"),
+              "prepost": ("18", "prepost"), "riphere-llc": ("08", "Riphere LLC")}
+WPM = 238  # silent reading, non-fiction (Brysbaert 2019)
+SITE_URL = "https://www.riphere.com"
 # What the output may contain, as path patterns (the allowlist seen from site/).
-ALLOWED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js",
-                  "analytics.js", "demos/*.js", "tex/**", "assets/**"]
+ALLOWED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js", "analytics.js", "fallback.js",
+                  "404.html", "favicon.svg", "robots.txt", "sitemap.xml",
+                  "demos/*.js", "tex/**", "assets/**", "work/*/index.html"]
+# Must be in every export (the founder billboard and every flyer lockup use the headshots).
+REQUIRED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js", "analytics.js", "fallback.js",
+                   "404.html", "favicon.svg", "robots.txt", "sitemap.xml",
+                   "assets/ben-headshot.jpg", "assets/ben-headshot-phone.jpg", "assets/resume.pdf", "assets/og.jpg",
+                   "demos/floortool.js", "demos/novacrm.js", "demos/prepost.js", "demos/riphere.js"]
 
 # Belt and braces: these never ship, whatever the allowlist says.
 # Matched case-insensitively against each path component.
 DENY_COMPONENTS = ["billboard.html", "versions", "caps", "grades", "wf", "harness",
                    "variants", "inspiration", "reviews*", "next.md", "context.md",
                    "sources.md", "preview.html", ".git", ".gitignore", "node_modules",
-                   ".ds_store", ".env*"]
+                   ".ds_store", ".env*", "readme*", "_template*", ".gitkeep", "zz-*", "*.mjs"]
 
 # The only file allowed to contain the employer's name (Ben approved the resume).
 EMPLOYER_ALLOWED = {"assets/resume.pdf"}
 # Split so this public repo does not carry the name its own check looks for.
 EMPLOYER_RE = re.compile(b"bet" + b"son", re.IGNORECASE)
 PLACEHOLDER = b"PLACEHOLDER"
+# Text-file checks: (label, pattern). Case-insensitive except where noted.
+SLOT_RES = [
+    ("placeholder", re.compile(b"PLACEHOLDER")),
+    ("placeholder", re.compile(rb"\[N\]")),
+    ("placeholder", re.compile(rb"coming soon", re.IGNORECASE)),
+    ("placeholder", re.compile(rb"unfilled slot", re.IGNORECASE)),
+    ("placeholder", re.compile(rb"\b(?:TODO|FIXME)\b")),
+    ("placeholder", re.compile(rb"\{\{")),
+]
+# All-file checks (binaries too): dev hosts, private addresses and local paths. Host names are split so
+# this public repo does not carry them in one piece. IPs: no digit, and no "digit." before; no digit and no
+# ".digit" after, so "ssh to 100.101.102.103." still matches while "1100.101.102.103" or "100.101.102.103.5" do not.
+_IP_B, _IP_A = rb"(?<!\d)(?<!\d\.)", rb"(?!\d)(?!\.\d)"
+DEVHOST_RES = [
+    re.compile(b"bender" + b"man", re.IGNORECASE),
+    re.compile(rb"\b" + b"spa" + rb"rk(?:-\d+)?\b", re.IGNORECASE),                 # the local-LLM box
+    re.compile(rb"[a-z0-9-]+\.ts\.net\b", re.IGNORECASE),                            # tailnet names
+    re.compile(_IP_B + rb"100\.(?:6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.\d{1,3}\.\d{1,3}" + _IP_A),  # tailnet / CGNAT
+    re.compile(rb"fd7a:115c:a1e0:", re.IGNORECASE),                                    # tailnet IPv6
+    re.compile(_IP_B + rb"(?:10\.\d{1,3}|192\.168|172\.(?:1[6-9]|2\d|3[01]))\.\d{1,3}\.\d{1,3}" + _IP_A),  # RFC 1918
+    re.compile(_IP_B + rb"(?:127\.0\.0\.1|0\.0\.0\.0)" + _IP_A),
+    re.compile(rb"\blocalhost\b|\[::1\]|(?<![\w:])::1(?![\w:])", re.IGNORECASE),
+    re.compile(rb"/mnt/|/home/|/Users/|[A-Za-z]:\\Users\\", re.IGNORECASE),
+]
+# The employer grep also runs on a normalised copy of each text file: HTML entities and \uXXXX / \xXX
+# escapes decoded, soft hyphens and zero-width characters removed, tags dropped.
+_ESC_RE = re.compile(r"\\u\{?([0-9a-fA-F]{2,6})\}?|\\x([0-9a-fA-F]{2})")
+_INVISIBLE_RE = re.compile("[\u00ad\u200b-\u200d\u2060\ufeff]")
+
+
+def normalised(data: bytes) -> bytes:
+    t = data.decode("utf-8", errors="replace")
+    t = _ESC_RE.sub(lambda m: chr(int(m.group(1) or m.group(2), 16)), t)
+    t = htmllib.unescape(t)
+    t = re.sub(r"<[^>]*>", "", t)
+    return _INVISIBLE_RE.sub("", t).encode("utf-8")
+
+
+# assets/** and tex/** may only carry these file types (no .bak, .orig, .psd, .txt notes)
+TREE_SUFFIXES = {"assets": {".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg", ".pdf"},
+                 "tex": {".jpg", ".jpeg", ".png", ".webp", ".ktx2"}}
+TREE_EXTRA = {"tex/CREDITS.md"}
 
 TEXT_SUFFIXES = {".html", ".css", ".js", ".mjs", ".json", ".md", ".txt", ".svg",
                  ".xml", ".webmanifest", ".map"}
-REF_RE = re.compile(r"""\b(?:src|href)\s*=\s*["']([^"']+)["']""")
+REF_RE = re.compile(r"""(?<![\w-])(?:src|href)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+SRCSET_RE = re.compile(r"""(?<![\w-])srcset\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+CSS_URL_RE = re.compile(r"""url\(\s*["']?([^"')]+)["']?\s*\)""")
+ASSET_RE = re.compile(r"""["'`](assets/[^"'`$\s]+|tex/[^"'`$\s]+|demos/[^"'`$\s]+\.js)["'`]""")
 
 
 def is_text(path: Path, data: bytes) -> bool:
@@ -102,7 +187,8 @@ def allowed_output(rel: str) -> bool:
         elif "/" in pat:
             head, name = pat.rsplit("/", 1)
             parent, _, base = rel.rpartition("/")
-            if parent == head and fnmatch.fnmatchcase(base, name):
+            # fnmatch's * also matches "/", so the folder depth must match too (work/*/index.html is one level)
+            if parent.count("/") == head.count("/") and fnmatch.fnmatchcase(parent, head) and fnmatch.fnmatchcase(base, name):
                 return True
         elif rel == pat:
             return True
@@ -133,6 +219,9 @@ def collect(src: Path) -> tuple[list[tuple[Path, str]], list[str]]:
                 continue
             if not p.is_file() or not fnmatch.fnmatchcase(p.name, pattern):
                 continue
+            if d in TREE_SUFFIXES and p.suffix.lower() not in TREE_SUFFIXES[d] and rel not in TREE_EXTRA:
+                problems.append(f"file type not allowed under {d}/: {rel}")
+                continue
             if denied(rel):
                 # e.g. .DS_Store under tex/: skipped here, reported in the manifest
                 print(f"  skip (denylist {denied(rel)}): {rel}")
@@ -148,6 +237,7 @@ def check(out: Path) -> tuple[list[tuple[str, int, int | None]], list[str]]:
     """Walk the exported tree. Return (manifest rows, failures)."""
     rows: list[tuple[str, int, int | None]] = []
     fails: list[str] = []
+    present: set[str] = set()
     for p in sorted(out.rglob("*")):
         rel = p.relative_to(out).as_posix()
         if p.is_symlink():
@@ -155,6 +245,7 @@ def check(out: Path) -> tuple[list[tuple[str, int, int | None]], list[str]]:
             continue
         if p.is_dir():
             continue
+        present.add(rel)
         hit = denied(rel)
         if hit:
             fails.append(f"excluded: {rel} is on the denylist ({hit})")
@@ -174,22 +265,177 @@ def check(out: Path) -> tuple[list[tuple[str, int, int | None]], list[str]]:
                     fails.append(f"employer: {where}: {snippet(line, EMPLOYER_RE) if text else 'raw bytes match'}")
                     if not text:
                         break
+        if text and rel not in EMPLOYER_ALLOWED and not EMPLOYER_RE.search(data) and EMPLOYER_RE.search(normalised(data)):
+            fails.append(f"employer: {rel}: hidden behind an escape, entity, soft hyphen or tag")
+        for rx in DEVHOST_RES:
+            if text:
+                for n, line in enumerate(data.split(b"\n"), 1):
+                    if rx.search(line):
+                        fails.append(f"devhost: {rel}:{n}: {snippet(line, rx)}")
+            elif rx.search(data):
+                fails.append(f"devhost: {rel} (binary): raw bytes match {rx.pattern!r}")
         if text:
-            for n, line in enumerate(data.split(b"\n"), 1):
-                if PLACEHOLDER in line:
-                    fails.append(f"placeholder: {rel}:{n}: {snippet(line, re.compile(re.escape(PLACEHOLDER)))}")
+            for label, rx in SLOT_RES:
+                for n, line in enumerate(data.split(b"\n"), 1):
+                    if rx.search(line):
+                        fails.append(f"{label}: {rel}:{n}: {snippet(line, rx)}")
 
-    index = out / "index.html"
-    if index.is_file():
-        html = index.read_text("utf-8", errors="replace")
-        for n, line in enumerate(html.split("\n"), 1):
-            for ref in REF_RE.findall(line):
+    for rel in REQUIRED_OUTPUT:
+        if rel not in present:
+            fails.append(f"required: {rel} is missing from the output")
+
+    # references: every exported page (src/href/srcset), stylesheet (url()) and script ("assets/..." strings)
+    for rel in sorted(present):
+        suf = Path(rel).suffix.lower()
+        if suf not in (".html", ".css", ".js"):
+            continue
+        txt = (out / rel).read_text("utf-8", errors="replace")
+        base = Path(rel).parent
+        for n, line in enumerate(txt.split("\n"), 1):
+            refs = []
+            if suf == ".html":
+                refs += REF_RE.findall(line)
+                for r in SRCSET_RE.findall(line):
+                    refs += [x.strip().split(" ")[0] for x in r.split(",") if x.strip()]
+            refs += CSS_URL_RE.findall(line) if suf in (".css", ".html") else []
+            refs += ASSET_RE.findall(line)
+            for ref in refs:
                 target = local_target(ref)
-                if target is not None and not (out / target).is_file():
-                    fails.append(f"reference: index.html:{n}: {ref} is not in the export")
-    else:
-        fails.append("excluded: index.html is missing from the output")
+                if target is None:
+                    continue
+                # root-relative refs resolve from site/; relative refs from the page's folder (scripts resolve
+                # against the page that loads them, which sits at the root)
+                rel_base = "" if ref.startswith("/") or suf == ".js" else base.as_posix()
+                path = posixpath.normpath(posixpath.join(rel_base, target))
+                if path == ".." or path.startswith("../"):
+                    fails.append(f"reference: {rel}:{n}: {ref} points outside the export")
+                elif path not in present:
+                    fails.append(f"reference: {rel}:{n}: {ref} is not in the export")
     return rows, fails
+
+
+def node_check(out: Path) -> list[str]:
+    """`node --check` every exported .js and every inline script of each .html. Returns failures."""
+    node = shutil.which("node")
+    if not node:
+        print("warning: node not on PATH; skipped the syntax check of stripped scripts", file=sys.stderr)
+        return []
+    fails: list[str] = []
+    with tempfile.TemporaryDirectory() as td:
+        jobs: list[tuple[str, str, bool]] = []
+        for p in sorted(out.rglob("*.js")):
+            t = p.read_text("utf-8")
+            jobs.append((p.relative_to(out).as_posix(), t, bool(re.search(r"^\s*(import|export)\b", t, re.M))))
+        for p in sorted(out.rglob("*.html")):
+            t = p.read_text("utf-8")
+            for k, m in enumerate(re.finditer(r"<script\b([^>]*)>(.*?)</script\s*>", t, re.S | re.I)):
+                attrs, body = m.group(1), m.group(2)
+                if "src=" in attrs or not body.strip():
+                    continue
+                kind = script_kind(attrs)
+                if kind not in JS_SCRIPT_TYPES:
+                    if kind in ("importmap", "application/ld+json"):
+                        try:
+                            json.loads(body)
+                        except ValueError as e:
+                            fails.append(f"syntax: {p.relative_to(out).as_posix()} <script type={kind}> #{k}: {e}")
+                    continue
+                jobs.append((f"{p.relative_to(out).as_posix()} <script> #{k}", body, kind == "module"))
+        for k, (name, body, module) in enumerate(jobs):
+            f = Path(td) / f"c{k}.{'mjs' if module else 'cjs'}"
+            f.write_text(body, "utf-8")
+            r = subprocess.run([node, "--check", str(f)], capture_output=True, text=True)
+            if r.returncode:
+                fails.append(f"syntax: {name}: {r.stderr.strip().splitlines()[-1] if r.stderr.strip() else 'node --check failed'}")
+    return fails
+
+
+def transform(src_path: Path, rel: str) -> bytes:
+    """Copy-time transform: comments out of .html / .js / .css. Everything else is copied byte for byte."""
+    data = src_path.read_bytes()
+    suf = Path(rel).suffix.lower()
+    if suf not in (".html", ".svg", ".js", ".css"):
+        return data
+    text = data.decode("utf-8")
+    text = strip_html(text) if suf in (".html", ".svg") else strip_js(text) if suf == ".js" else strip_css(text)
+    return text.encode("utf-8")
+
+
+def words(fragment: str) -> int:
+    text = re.sub(r"<(script|style)\b.*?</\1\s*>", " ", fragment, flags=re.S | re.I)
+    text = htmllib.unescape(re.sub(r"<[^>]+>", " ", text))
+    return len(re.findall(r"[\w’'-]+", text))
+
+
+def build_cases(src: Path, staging: Path) -> tuple[dict[str, int], list[str]]:
+    """Build work/<slug>/index.html for each case.html in the source. Returns ({slug: minutes}, problems).
+    The fragment's comments are stripped first, so nothing in a comment reaches the title, the meta
+    description, the page, or the word count."""
+    cases: dict[str, int] = {}
+    problems: list[str] = []
+    tpl_path = src / "work" / "_template.html"
+    for slug, (floor, label) in CASE_SLUGS.items():
+        frag_path = src / "work" / slug / "case.html"
+        if not frag_path.is_file():
+            continue
+        try:
+            if not tpl_path.is_file():
+                problems.append("work/_template.html is missing but a case file exists")
+                break
+            frag = strip_html(frag_path.read_text("utf-8"))
+            dek_rx = re.compile(r"""<p\b[^>]*class=["'][^"']*\bdek\b[^"']*["'][^>]*>(.*?)</p>""", re.S | re.I)
+            h1 = re.findall(r"<h1\b[^>]*>(.*?)</h1>", frag, re.S | re.I)
+            dek = dek_rx.findall(frag)
+            if len(h1) != 1 or len(dek) != 1:
+                problems.append(f"work/{slug}/case.html needs exactly one <h1> and one <p class=\"dek\"> (found {len(h1)} and {len(dek)})")
+                continue
+            plain = lambda h: " ".join(htmllib.unescape(re.sub(r"<[^>]+>", " ", h)).split())
+            title, desc = plain(h1[0]), plain(dek[0])
+            n = words(frag)
+            minutes = max(1, math.ceil(n / WPM))
+            dek_end = dek_rx.search(frag).end()
+            body = frag[:dek_end] + f'\n    <p class="min">{minutes} min read</p>' + frag[dek_end:]
+            crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "riphere.com", "item": SITE_URL + "/"},
+                {"@type": "ListItem", "position": 2, "name": title, "item": f"{SITE_URL}/work/{slug}/"}]}
+            esc = lambda v: htmllib.escape(v, quote=True)
+            values = {"title": esc(title), "description": esc(desc), "slug": slug, "floor": floor, "label": esc(label),
+                      "jsonld": json.dumps(crumbs, ensure_ascii=False).replace("</", "<\\/"), "body": body}
+            tpl = tpl_path.read_text("utf-8")
+            unknown = sorted(set(re.findall(r"\{\{(\w+)\}\}", tpl)) - set(values))
+            if unknown:
+                problems.append(f"work/_template.html: unknown token(s) {unknown}")
+                continue
+            # one pass over the template only, so text inside the case file is never treated as a token
+            page = re.sub(r"\{\{(\w+)\}\}", lambda m: values[m.group(1)], tpl)
+            dest = staging / "work" / slug / "index.html"
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(strip_html(page), "utf-8")
+            cases[slug] = minutes
+            print(f"  case file: work/{slug}/ ({n} words, {minutes} min)")
+        except (OSError, ValueError, UnicodeDecodeError) as e:
+            problems.append(f"work/{slug}/case.html: {e}")
+    return cases, problems
+
+
+CASES_RE = re.compile(r"<script>window\.CASES = \{\};</script>")
+
+
+def write_meta(staging: Path, cases: dict[str, int]) -> list[str]:
+    """window.CASES into index.html; robots.txt and sitemap.xml. Returns problems."""
+    problems: list[str] = []
+    index = staging / "index.html"
+    html = index.read_text("utf-8")
+    if len(CASES_RE.findall(html)) != 1:
+        problems.append("index.html: expected exactly one <script>window.CASES = {};</script> to fill")
+    else:
+        html = CASES_RE.sub(lambda m: f"<script>window.CASES = {json.dumps(cases, sort_keys=True)};</script>", html)
+        index.write_text(html, "utf-8")
+    (staging / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", "utf-8")
+    urls = [f"{SITE_URL}/"] + [f"{SITE_URL}/work/{slug}/" for slug in sorted(cases)]
+    (staging / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                                         + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls) + "</urlset>\n", "utf-8")
+    return problems
 
 
 def local_target(ref: str) -> str | None:
@@ -198,9 +444,12 @@ def local_target(ref: str) -> str | None:
         return None
     if re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", ref):
         return None
-    path = ref.split("#", 1)[0].split("?", 1)[0].lstrip("/")
-    if not path or path.endswith("/"):
+    path = unquote(ref.split("#", 1)[0].split("?", 1)[0])
+    path = path.lstrip("/") if path.startswith("/") else path
+    if not path:
         return None
+    if path.endswith("/"):
+        return path + "index.html" if path.startswith("work/") else None  # a case-file route must exist
     if not Path(path).suffix:
         return None  # a route such as /work/<slug>; not a file this script can vouch for
     return path
@@ -219,6 +468,8 @@ def safe_out(out: Path, src: Path) -> str | None:
         return "--out must not be the source tree, inside it, or above it"
     if out == REPO_ROOT or out in REPO_ROOT.parents:
         return "--out must not be this repo's root or above it"
+    if REPO_ROOT in out.parents and out != REPO_ROOT / "site":
+        return "--out inside this repo must be site/ (use a path outside the repo for a dry run)"
     if out.exists() and not out.is_dir():
         return "--out exists and is not a directory"
     if out.is_dir() and ((out / ".git").exists() or (out / "package.json").exists()):
@@ -254,11 +505,24 @@ def main() -> int:
     if staging.exists():
         shutil.rmtree(staging)
     try:
+        fails: list[str] = []
         for p, rel in plan:
             dest = staging / rel
             dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(p, dest)  # contents only: no mode bits, no mtimes
-        rows, fails = check(staging)
+            try:
+                dest.write_bytes(transform(p, rel))  # contents only: no mode bits, no mtimes
+            except (ValueError, UnicodeDecodeError) as e:
+                fails.append(f"strip: {rel}: {e}")
+        cases, probs = build_cases(src, staging)
+        fails += probs
+        if (staging / "index.html").is_file():
+            try:
+                fails += write_meta(staging, cases)
+            except (OSError, ValueError, UnicodeDecodeError) as e:
+                fails.append(f"meta: {e}")
+        print(f"  doors: {json.dumps(cases, sort_keys=True) if cases else 'none (no work/<slug>/case.html yet; every door hidden)'}")
+        rows, more = check(staging)
+        fails += more + node_check(staging)
 
         print(f"\nmanifest ({len(rows)} files)")
         print(f"  {'bytes':>10}  {'gzip -9':>9}  path")
@@ -277,9 +541,15 @@ def main() -> int:
                 print(f"  {f}", file=sys.stderr)
             return 1
 
+        # swap: old aside, new in, then drop the old (a crash in between leaves site.old, never a half-written site/)
+        old = out.with_name(out.name + ".old")
+        if old.exists():
+            shutil.rmtree(old)
         if out.exists():
-            shutil.rmtree(out)
-        staging.rename(out)
+            os.replace(out, old)
+        os.replace(staging, out)
+        if old.exists():
+            shutil.rmtree(old)
         print(f"\nOK: {len(rows)} files exported, all checks passed")
         return 0
     finally:

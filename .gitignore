@@ -3,6 +3,7 @@
 
 # export staging dir (tools/export_tower.py removes it itself)
 /site.staging/
+/site.old/
 
 # python
 __pycache__/
