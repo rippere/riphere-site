@@ -89,7 +89,7 @@ ALLOW_TREES: list[tuple[str, str, bool]] = [
 # Case files: work/<slug>/case.html in the source -> work/<slug>/index.html in the export, built from
 # work/_template.html. Slugs = the boards' slugs (billboard3d.html PROJECTS). A slug without case.html exports nothing.
 CASE_SLUGS = {"floor-tool": ("36", "Floor tool"), "novacrm": ("26", "NovaCRM"),
-              "prepost": ("18", "prepost"), "riphere-llc": ("08", "Riphere LLC")}
+              "prepost": ("18", "PrePost"), "riphere-llc": ("08", "Riphere LLC")}
 WPM = 238  # silent reading, non-fiction (Brysbaert 2019)
 SITE_URL = "https://www.riphere.com"
 # What the output may contain, as path patterns (the allowlist seen from site/).

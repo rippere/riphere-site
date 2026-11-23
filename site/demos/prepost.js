@@ -1,6 +1,6 @@
 const AD = '4 versions of one ad. 1 budget. Launch Monday.';
 export const meta = {
-  id: 'prepost', slug: 'prepost', title: 'prepost · for campaign managers',
+  id: 'prepost', slug: 'prepost', title: 'PrePost · for campaign managers',
   flyer: 'You have one budget for 4 versions of an ad, and it launches Monday.',
   lead: '64 real ad clips scored on a brain-response model I run myself',
   for: 'For campaign managers',
@@ -93,10 +93,10 @@ function mount(el, o = {}) {
 
   const svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${AD}" font-family="Archivo,sans-serif">`
     + `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" fill="${BG}" stroke="#3a3d45"/>`
-    + `<rect x="1" y="1" width="${W - 2}" height="14" fill="#16181e"/>` + m(8, 11.5, `prepost · <tspan fill="${INK}">for ${D ? 'campaign managers' : 'paid social'}</tspan>`) + m(W - 8, 11.5, 'demo', `fill="${INK}" ${end}`)
+    + `<rect x="1" y="1" width="${W - 2}" height="14" fill="#16181e"/>` + m(8, 11.5, `PrePost · <tspan fill="${INK}">for ${D ? 'campaign managers' : 'paid social'}</tspan>`) + m(W - 8, 11.5, 'demo', `fill="${INK}" ${end}`)
     + (D ? hl(12, 38, 24, AD) : hl(12, 33, 20, '4 versions of one ad. 1 budget.') + hl(12, 52, 20, 'Launch Monday.'))
     + `<g class="${O([0, 1, 9.6, .15], 1)}">${stage}</g>`
-    + (D ? C(m(12, 54, 'before: your 4 versions', `fill="${INK}"`), [0, 1, 3.4, 0]) + C(m(12, 54, `with prepost: <tspan fill="${IN2}">how strongly a brain model responds, per second</tspan>`, `fill="${INK}"`), [3.4, 1], 1)
+    + (D ? C(m(12, 54, 'before: your 4 versions', `fill="${INK}"`), [0, 1, 3.4, 0]) + C(m(12, 54, `with PrePost: <tspan fill="${IN2}">how strongly a brain model responds, per second</tspan>`, `fill="${INK}"`), [3.4, 1], 1)
       : C(m(sx1, my, 'dip = it sees a drift', end), [4.8, 1, 9.6, 0]))
     + C([0, 3].map((t, i) => m(X(t), rt, '0:0' + t, i ? 'text-anchor="middle"' : '')).join(''), [3.4, 1, 9.6, 0], D ? 1 : 0)
     + cp(D ? 'Only the first 3 seconds differ.' : 'Only 0:00–0:03 differs.', [0, 1, 1.8, 0])
