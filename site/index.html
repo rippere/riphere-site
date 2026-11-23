@@ -1280,16 +1280,28 @@ window.DEMOS = { ids: I.IDS, meta: I.meta, ready: I.ready, failed: I.failed,
 </script>
 <script type="module">
 const plain = why => import('./fallback.js').then(m => m.show(why)).catch(() => {});
-let gl = false, ask = false;
-try { const c = document.createElement('canvas'), x = c.getContext('webgl2') || c.getContext('webgl'); gl = !!x; const l = x && x.getExtension('WEBGL_lose_context'); if (l) l.loseContext(); } catch {}
+let ask = false;
 try { ask = new URLSearchParams(location.search).has('plain'); } catch {}
-if (!gl || ask) plain(ask ? 'asked' : 'no-webgl');
-else {
+const CTX = { alpha: true, depth: true, stencil: false, antialias: false, premultipliedAlpha: true, preserveDrawingBuffer: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false };
+const onMain = () => { try { const c = document.getElementById('scene'); return !!(c.getContext('webgl2', CTX) || c.getContext('webgl', CTX)); } catch { return false; } };
+const offMain = () => new Promise(res => {
+  try {
+    if (typeof Worker !== 'function' || typeof OffscreenCanvas !== 'function') return res(false);
+    const u = URL.createObjectURL(new Blob(["try{const c=new OffscreenCanvas(1,1);postMessage(!!(c.getContext('webgl2')||c.getContext('webgl')))}catch(e){postMessage(false)}"], { type: 'text/javascript' }));
+    const w = new Worker(u); let t = 0;
+    const end = v => { clearTimeout(t); try { w.terminate(); URL.revokeObjectURL(u); } catch {} res(v); };
+    w.onmessage = e => end(e.data === true); w.onerror = () => end(false); t = setTimeout(() => end(false), 5000);
+  } catch { res(false); }
+});
+const go = gl => {
+  if (!gl) return plain('no-webgl');
   const fromScene = s => /\/scene3d\.js|cdn\.jsdelivr\.net\/npm\/three@/.test(String(s || ''));
   addEventListener('error', e => { if (fromScene(e.filename) || fromScene(e.error && e.error.stack)) plain('scene'); });
   addEventListener('unhandledrejection', e => { if (fromScene(e.reason && e.reason.stack)) plain('scene'); });
   import('./scene3d.js').catch(() => plain('scene'));
-}
+};
+if (ask) plain('asked');
+else offMain().then(() => go(onMain()));
 </script>
 <noscript><style>#nojs { position: fixed; inset: 0; z-index: 1000; overflow-y: auto; background: #0b0c10; color: #e9e6df; font: 17px/1.55 Archivo, "Helvetica Neue", Arial, sans-serif; }
 #nojs div { max-width: 44rem; margin: 0 auto; padding: 40px 16px; } #nojs h1 { font-size: 36px; line-height: 1.1; margin: 0 0 .3em; } #nojs a { color: #e9e6df; }</style>

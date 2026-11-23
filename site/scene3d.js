@@ -48,9 +48,21 @@ const gradePass = new ShaderPass(Grade);
 composer.addPass(passH); composer.addPass(passB); composer.addPass(bloom); composer.addPass(new OutputPass()); composer.addPass(gradePass);
 
 let texOK = false; const LM = new THREE.LoadingManager(() => { texOK = true; G.compiled = false; });
-const TL = new THREE.TextureLoader(LM);
+const BMP = (async () => { try {
+  const c = document.createElement('canvas'); c.width = 1; c.height = 2; const o = c.getContext('2d'); o.fillStyle = '#f00'; o.fillRect(0, 0, 1, 1); o.fillStyle = '#00f'; o.fillRect(0, 1, 1, 1);
+  const b = await createImageBitmap(c, { imageOrientation: 'flipY' }), d = document.createElement('canvas'); d.width = 1; d.height = 2; const p = d.getContext('2d'); p.drawImage(b, 0, 0); if (b.close) b.close();
+  const px = p.getImageData(0, 0, 1, 1).data; return px[2] > 200 && px[0] < 50; } catch { return false; } })();
+const IL = new THREE.ImageLoader();
+function loadMap(t, url) {
+  LM.itemStart(url);
+  const done = img => { if (img) { t.image = img; t.needsUpdate = true; } LM.itemEnd(url); };
+  const viaImg = () => IL.load(url, done, undefined, () => { LM.itemError(url); done(null); });
+  BMP.then(ok => ok ? fetch(url, { priority: 'low' }).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
+    .then(b => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' }))
+    .then(b => { t.flipY = false; done(b); }, viaImg) : viaImg());
+}
 const maxAniso = R.capabilities.getMaxAnisotropy();
-const tex = (f, srgb) => { const t = TL.load('tex/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = Math.min(8, maxAniso); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
+const tex = (f, srgb) => { const t = new THREE.Texture(); loadMap(t, 'tex/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = Math.min(8, maxAniso); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
 const pbr = n => ({ map: tex(n + '_diff_1k.jpg', true), normalMap: tex(n + '_nor_1k.jpg'), roughnessMap: tex(n + '_rough_1k.jpg') });
 const T_SLAB = pbr('concrete_slab_wall_02'), T_PANEL = pbr('concrete'), T_PAVE = pbr('concrete_tiles_02'), T_ASPH = pbr('clean_asphalt');
 const pbrArm = (n, d, a) => { const arm = tex(`${n}_arm_${a}.jpg`); return { map: tex(`${n}_diff_${d}.jpg`, true), normalMap: tex(`${n}_nor_gl_${d}.jpg`), roughnessMap: arm, aoMap: arm }; };
@@ -58,13 +70,21 @@ const T_PCAST = pbrArm('concrete_wall_006', '1k', '1k'), T_BOARD = pbrArm('wood_
 const canvasTex = (c, srgb = true) => { const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(4, maxAniso); return t; };
 const mkC = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
 
-{
+const ENV_SRC = (() => {
   const c = mkC(512, 256), o = c.getContext('2d'), g = o.createLinearGradient(0, 0, 0, 256);
   g.addColorStop(0, '#040507'); g.addColorStop(.38, '#0c0c10'); g.addColorStop(.48, '#3a2a1e'); g.addColorStop(.52, '#2a1f18'); g.addColorStop(.6, '#120f0d'); g.addColorStop(1, '#0a0908');
   o.fillStyle = g; o.fillRect(0, 0, 512, 256);
   const r = mulberry(11); for (let i = 0; i < 900; i++) { const y = 128 + r() * 70, a = .2 + r() * .6; o.fillStyle = `rgba(255,${180 + r() * 60 | 0},${110 + r() * 80 | 0},${a})`; o.fillRect(r() * 512, y, 1 + r() * 2, 1); }
-  const t = canvasTex(c); t.mapping = THREE.EquirectangularReflectionMapping;
-  const pm = new THREE.PMREMGenerator(R), env = pm.fromEquirectangular(t).texture; pm.dispose();
+  const t = canvasTex(c); t.mapping = THREE.EquirectangularReflectionMapping; return t;
+})();
+const PM = { gen: null, rt: null };
+function envKick() {
+  try { const pm = new THREE.PMREMGenerator(R); pm.compileEquirectangularShader(); pm._setSize(ENV_SRC.image.width / 4); const rt = pm._allocateTargets(); pm._compileMaterial(pm._blurMaterial); PM.gen = pm; PM.rt = rt; }
+  catch { PM.gen = PM.rt = null; }
+}
+function envMake() {
+  if (sceneH.environment) return;
+  const pm = PM.gen || new THREE.PMREMGenerator(R), env = pm.fromEquirectangular(ENV_SRC, PM.rt).texture; pm.dispose(); PM.gen = PM.rt = null;
   sceneH.environment = env; sceneB.environment = env;
 }
 
@@ -841,6 +861,42 @@ function setCam(cam, ex, eyCss) {
   cam.position.set(ex, -eyCss, G.D); cam.quaternion.identity(); cam.updateMatrixWorld(true);
 }
 let sized = '', built = '', t0 = performance.now();
+function compileAll() {
+  envMake();
+  try { R.setRenderTarget(composer.renderTarget1); R.compile(sceneH, camH); R.compile(sceneB, camB); R.setRenderTarget(null); if (texOK) for (const t of SHARED_TEX) R.initTexture(t); L.lamp[1].shadow.needsUpdate = true; } catch {}
+}
+const WARM_MS = 3000; let warm = null;
+const warmOpen = now => { if (now - t0 >= WARM_MS || BB.canvas.classList.contains('in')) return false; try { return getComputedStyle(BB.canvas).opacity === '0'; } catch { return false; } };
+const unsent = t => t.version > 0 && R.properties.get(t).__version !== t.version;
+const gl = R.getContext(), FENCE = R.capabilities.isWebGL2 && typeof gl.fenceSync === 'function';
+const fence = () => { if (!FENCE) return null; const f = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0); gl.flush(); return f; };
+const POST_Q = new THREE.Mesh(new THREE.PlaneGeometry(2, 2));
+function compileList() {
+  const ms = []; R.setRenderTarget(composer.renderTarget1);
+  ms.push(...R.compile(sceneH, camH), ...R.compile(sceneB, camB));
+  for (const m of [bloom.materialHighPassFilter, ...bloom.separableBlurMaterials, bloom.compositeMaterial, bloom.blendMaterial]) { POST_Q.material = m; ms.push(...R.compile(POST_Q, camH)); }
+  R.setRenderTarget(null); POST_Q.material = gradePass.material; ms.push(...R.compile(POST_Q, camH));
+  return [...new Set(ms.map(m => R.properties.get(m).currentProgram).filter(Boolean))];
+}
+function warmStart() { warm = { stage: 0, fence: null, progs: [] }; }
+function warmStep() {
+  const w = warm;
+  try {
+    if (w.fence) { if (gl.getSyncParameter(w.fence, gl.SYNC_STATUS) !== gl.SIGNALED) return true; gl.deleteSync(w.fence); w.fence = null; }
+    if (w.stage === 0) { w.stage = 1; if (!sceneH.environment) { envKick(); w.fence = fence(); return true; } }
+    if (w.stage === 1) { envMake(); w.progs = compileList(); L.lamp[1].shadow.needsUpdate = true; w.stage = 2; w.fence = fence(); return true; }
+    const s = performance.now();
+    if (w.stage === 2) {
+      const p = w.progs; while (p.length) { if (!p[0].isReady()) return true; p.shift().getUniforms(); if (performance.now() - s > 4) return true; }
+      w.stage = 3;
+    }
+    if (w.stage === 3) {
+      for (const t of SHARED_TEX) if (unsent(t)) { R.initTexture(t); if (performance.now() - s > 4) return true; }
+      w.stage = 4; w.fence = fence(); return true;
+    }
+  } catch { warm = null; compileAll(); }
+  return false;
+}
 function frame(now, dt) {
   const W = BB.W, VH = BB.VH; if (!W || !VH || !BB.TOP.cv) return;
   const sk = W + 'x' + VH + '@' + PR();
@@ -875,7 +931,8 @@ function frame(now, dt) {
   }
   for (const f of live) f(t);
   if (!G.compiled) {
-    G.compiled = true; try { R.setRenderTarget(composer.renderTarget1); R.compile(sceneH, camH); R.compile(sceneB, camB); R.setRenderTarget(null);  if (texOK) for (const t of SHARED_TEX) R.initTexture(t); L.lamp[1].shadow.needsUpdate = true; } catch {} }
+    G.compiled = true; if (warmOpen(now)) warmStart(); else { warm = null; compileAll(); } }
+  if (warm) { if (warmOpen(now) && warmStep()) return; warm = null; envMake(); }
   composer.render(dt);
   if (!BB.canvas.classList.contains('in') && (texOK || now - t0 > 4000)) { if (G.texDrawn) BB.canvas.classList.add('in'); else G.texDrawn = 1; }
 }
