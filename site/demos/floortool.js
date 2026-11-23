@@ -24,7 +24,7 @@ export default {
     const F = (p, ...ws) => K(ws.map(([t, c]) => [t, p + ':' + c]));
     const T = (x, y, s, c, a = '') => `<text x="${x}" y="${y}" class="${c}"${a}>${s}</text>`;
     const RT = (x, y, w, h, a = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}"${a}/>`;
-    const [qs, q1, q2, bx, by, bw, bh, tx, ty, bs, ay, st, hx, hy, rise, cy, cs, lx, ly, ls] = ph
+    const [qs, q1, q2, bx, by, bw, bh, tx, ty, bs, ay, st, hx, hy, , cy, cs, lx, ly, ls] = ph
       ? [15, 39, 55, 12, 62, 164, 24, 22, 80, 17, 32, 'M20 75h122', 185, 127, 64, 144, 20, 249.3, 118, 11]
       : [18, 46, 66, 16, 78, 240, 38, 28, 106.5, 26, 48, 'M26 98.5h189', 265, 173, 80, 196, 24, 373, 164, 12];
     const [room, jamb, swing, dFr, dIn] = ph
@@ -35,25 +35,34 @@ export default {
     const sy = VH - 16, mb = VH - 4, kx = x0 + 41.1;
     let s = '';
     s += `<text class="ft-q ${V(1, 3.5, 7.5)}"><tspan x="${x0}" y="${q1}">How many arcade games</tspan><tspan x="${x0}" y="${q2}">fit in here?</tspan></text>`;
-    s += `<g data-hero class="${F('opacity', [0, 1], [3.5, .18], [7.5, 1], [8.5, .5])}">${RT(bx, by, bw, bh, ` fill="none" class="${F('stroke', [0, SIG], [3.5, IN2])}"`)}`
-      + T(tx, ty, 'I’ll get back to you.', 'ft-b ' + F('fill', [0, INK], [3.5, IN2], [7.5, INK], [8.5, IN2]))
-      + `<path d="${st}" stroke="${IN2}" class="${V(0, 8.5)}"/></g>`;
-    s += `<g class="${V(0, 7.5)}">${RT(bx, by + ay, bw, bh, ` fill="none" class="${K([[0, `stroke:${IN2};stroke-dasharray:3 3`], [8.5, `stroke:${INK};stroke-dasharray:none`]])}"`)}`
-      + T(tx, ty + ay, '30 games. Here’s why.', 'ft-b ' + F('fill', [0, IN2], [8.5, INK])) + '</g>';
+    s += `<g data-hero class="${F('opacity', [0, 1], [3.5, .18], [7.5, 1], [8.4, .5])}">${RT(bx, by, bw, bh, ` fill="none" class="${F('stroke', [0, SIG], [3.5, IN2])}"`)}`
+      + T(tx, ty, 'I’ll get back to you.', 'ft-b ' + F('fill', [0, INK], [3.5, IN2], [7.5, INK], [8.4, IN2]))
+      + `<path d="${st}" stroke="${INK}" stroke-width="2" pathLength="1" stroke-dasharray="1 1" class="${K([[0, 'stroke-dashoffset:1'], [7.7, 'stroke-dashoffset:1;animation-timing-function:cubic-bezier(.45,0,.55,1)'], [8.4, 'stroke-dashoffset:0']])}"/></g>`;
+    s += `<g class="${V(0, 8.5)}">${RT(bx, by + ay, bw, bh, ` fill="none" class="${K([[0, `stroke:${IN2};stroke-dasharray:3 3`], [9, `stroke:${INK};stroke-dasharray:none`]])}"`)}`
+      + T(tx, ty + ay, '30 games. Here’s why.', 'ft-b ' + F('fill', [0, IN2], [9, INK])) + '</g>';
     s += `<g fill="none" stroke="${IN2}" class="${K([[0, 'visibility:hidden;opacity:1'], [3.5, 'visibility:visible;opacity:1'], [7.5, 'visibility:visible;opacity:.5']])}">`
       + `<path d="${room}" stroke-width="1.4" stroke-linecap="square" class="${F('stroke', [0, INK], [7.5, IN2])}"/>${jamb}<path d="${swing}"/>`
       + `<path d="${dFr}" stroke-dasharray="2 2" class="${V(0, 3.5, 4.5)}"/>`
       + `<path d="${dIn}" class="${K([[0, 'visibility:hidden;stroke:' + SIG], [4.5, 'visibility:visible;stroke:' + SIG], [7.5, 'visibility:visible;stroke:' + IN2]])}"/>`
       + T(lx, ly, 'at the frame', 'ft-l ft-c2 ' + V(0, 3.5, 4.5), ' text-anchor="middle"') + T(lx, ly, 'inside', 'ft-l ft-ci ' + V(0, 4.5, 7.5), ' text-anchor="middle"') + '</g>';
-    [[1, 'Waiting on a CAD drawing.', 3.5], [0, 'The room, measured.', 3.5, 8.5], [0, 'The rep’s call.', 8.5]]
+    [[1, 'Waiting on a CAD drawing.', 3.5], [0, 'The room, measured.', 3.5, 9.6], [0, 'The rep’s call.', 9.6]]
       .forEach(([on, c, ...ts]) => s += T(x0, cy, c, 'ft-c ' + V(on, ...ts), ' data-cap'));
-    s += `<g data-hand class="${K([[0, `visibility:hidden;transform:translateY(${rise}px)`], [8.1, `visibility:visible;transform:translateY(${rise}px);animation-timing-function:cubic-bezier(.2,.7,.3,1)`], [8.5, 'visibility:visible;transform:none']])}">`
-      + `<circle cx="${hx}" cy="${hy}" r="4.5" fill="${INK}"/><circle cx="${hx}" cy="${hy}" r="8.5" fill="none" stroke="${INK}"/></g>`;
+    const EZ = ';animation-timing-function:cubic-bezier(.65,0,.35,1)', SW = ';animation-timing-function:cubic-bezier(.45,0,.55,1)';
+    const [Cx, Cy] = ph ? [139, 137] : [156, 188];
+    const [R, D, S0, S1, AN] = ph ? [[158, 74], [306, 114], [20, 75], [142, 75], [191, 106]]
+      : [[234, 97], [428, 150], [26, 98.5], [215, 98.5], [270, 145]];
+    const at = ([x, y], dy = 0) => `transform:translate(${x - Cx}px,${y - Cy + dy}px)`;
+    s += `<g class="${K([[0, at(R) + EZ], [.7, at(R, -4) + EZ], [1.4, at(R) + EZ], [2.1, at(R, -4) + EZ], [2.8, at(R)], [3.5, at(R) + EZ], [4.2, at(D) + EZ],
+        [4.8, at(D, -4) + EZ], [5.4, at(D)], [7.1, at(D) + EZ], [7.7, at(S0) + SW], [8.4, at(S1)], [8.55, at(S1) + EZ], [9, at(AN)], [9.5, at(AN) + EZ], [10, 'transform:none']])}">`
+      + `<circle cx="${Cx}" cy="${Cy}" r="8.5" fill="none" stroke="${INK}" stroke-width="1.6" class="${V(1, 10)}"/></g>`;
+    s += `<g data-hand class="${K([[0, 'visibility:hidden;transform:none'], [10, 'visibility:visible;transform:scale(1.15);animation-timing-function:ease-out'],
+        [10.12, 'visibility:visible;transform:scale(.78);animation-timing-function:cubic-bezier(.2,.7,.3,1)'], [10.4, 'visibility:visible;transform:none']])}" style="transform-box:fill-box;transform-origin:center">`
+      + `<circle cx="${Cx}" cy="${Cy}" r="4.5" fill="${INK}"/><circle cx="${Cx}" cy="${Cy}" r="8.5" fill="none" stroke="${INK}"/></g>`;
     const bar = (i, ...ws) => RT(x0 + i * 11, mb - 4, 8, 2, ` class="${F('fill', ...ws)}"`);
     s += RT(0, 0, VW, 16, ` fill="${BAR}"`) + T(x0, 12, ph ? 'floor tool · for the rep' : meta.title, 'ft-m ft-c2')
       + RT(0, sy, VW, 16, ` fill="${BAR}"`) + `<g data-beat>${bar(0, [0, INK], [3.5, LN])}${bar(1, [0, LN], [3.5, INK], [7.5, LN])}${bar(2, [0, LN], [7.5, INK])}`
       + T(x0 + 36, mb, 'stuck', 'ft-m ft-c2 ' + V(1, 3.5)) + T(x0 + 36, mb, 'unstuck', 'ft-m ft-c2 ' + V(0, 3.5, 7.5))
-      + `<g class="${V(0, 8.5)}"><circle cx="${kx}" cy="${mb - 3.5}" r="2.7" fill="${INK}"/><circle cx="${kx}" cy="${mb - 3.5}" r="5.1" fill="none" stroke="${INK}"/>`
+      + `<g class="${V(0, 10)}"><circle cx="${kx}" cy="${mb - 3.5}" r="2.7" fill="${INK}"/><circle cx="${kx}" cy="${mb - 3.5}" r="5.1" fill="none" stroke="${INK}"/>`
       + T(kx + 10.1, mb, 'a person decides', 'ft-m ft-c2') + '</g></g>' + T(VW - x0, mb, 'synthetic example', 'ft-m ft-c2', ' text-anchor="end"');
 
     const A = 'font-family:Archivo,sans-serif;font-weight:800;font-stretch:72%', JM = '"JetBrains Mono",ui-monospace,monospace';

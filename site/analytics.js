@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const KEY = 'phc_pdPhamimcmvy7aZQJJGfupfhTPM3eK7dRFJ5mrVmWro9';
+  const KEY = 'phc_BJQw6hEbF2xXY3JbA33zfjEeuvbhRHuqThWVtJvztSae';
   const HOST = 'https://us.i.posthog.com', SITE = 'riphere-v3';
   const PROD_HOSTS = ['riphere.com', 'www.riphere.com'];
   const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'], UTM_STORE = 'riphere_utm';

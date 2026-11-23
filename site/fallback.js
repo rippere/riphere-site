@@ -54,7 +54,8 @@ export async function show(why) {
       + row('Built', m.prov ? esc(m.prov) : '') + row('The call', m.call ? esc(m.call) : '')
       + row('Receipt', rc.text ? esc(rc.text) + (rc.status ? ` <span class="fine">(${esc(rc.status)})</span>` : '') : '')
       + row('Demo', m.caption ? `<span class="fine">${esc(m.caption)}</span>` : '')
-      + row('Case file', min ? `<a href="/work/${esc(slug)}/" data-case="${esc(id)}" data-floor="${esc(fl.code || '')}" data-placement="plain_case">Case file, ${min} min</a>` : '')
+      + row('See it', (Array.isArray(m.exits) ? m.exits : []).filter(x => x && x.href && x.label).map(x => `<a href="${esc(x.href)}" target="_blank" rel="noopener" data-exit="${esc(x.exit || '')}" data-placement="plain">${esc(x.label)}</a>`).join(' · '))
+      + row('Why', min ? `<a href="/work/${esc(slug)}/" data-case="${esc(id)}" data-floor="${esc(fl.code || '')}" data-placement="plain_case">Why I built it, ${min} min</a>` : '')
       + '</dl></section>';
   }).join('');
 

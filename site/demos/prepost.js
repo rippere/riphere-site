@@ -10,6 +10,7 @@ export const meta = {
   prov: 'I built it · used for a WSU class project',
   call: 'The campaign manager cuts the weak ad before the budget goes.',
   receipt: { text: '64 real ad clips scored on hardware I run', status: 'verified' },
+  exits: [{ label: 'Join the PrePost waitlist', href: 'https://prepost-clw.pages.dev/', exit: 'prepost_live' }, { label: 'Code', href: 'https://github.com/rippere/tribe-social', exit: 'github' }],
   poster: 'Act D still: tiles in lanes, fan inside the first 90 frames, braid after 0:03, red trim on C at 0:02 with the hand, slip with the tip, maker line'
 };
 let n = 0;

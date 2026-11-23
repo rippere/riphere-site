@@ -7,8 +7,8 @@ export const meta = {
   legend: '',
   prov: 'Riphere LLC · I founded it',
   call: 'The partner signs off on a cited answer. The files never left the office.',
-  receipt: { text: 'I formed it in Oct 2026. No signed clients yet', status: 'verified' },
-  poster: 'An attorney at a desk under a lamp, the pile of pages faded, has checked cited page 212, wired to the AI under the desk, with the hand mark: Your call. Formed Oct 2026, no signed clients yet.'
+  receipt: { text: 'I formed it in Oct 2026', status: 'verified' },
+  poster: 'An attorney at a desk under a lamp, the pile of pages faded, has checked cited page 212, wired to the AI under the desk, with the hand mark: Your call. Formed Oct 2026.'
 };
 const I = '#e9e6df', J = '#8d8f96', L = '#2a2d35', R = '#ff4b3a', N = '#05060a', SH = '#14161c', ST = '#16181e', T = 14;
 let U = 0;
@@ -73,7 +73,7 @@ function mount(el, { w, h, phone } = {}) {
       + p(ck, `class="${V(8.5)}" stroke="${I}" stroke-width="${kw}" stroke-linecap="round" stroke-linejoin="round"`))
     + `<g data-hand class="${kf([[0, `${o0};transform:translateY(${dy}px)`], [8.1, `${o1};transform:translateY(${dy}px)`, 'cubic-bezier(.2,.7,.3,1)'], [8.5, `${o1};transform:none`], [T, `${o1};transform:none`]])}"><circle cx="${hx}" cy="${hy}" r="4.5" fill="${I}"/><circle cx="${hx}" cy="${hy}" r="8.5" fill="none" stroke="${I}"/></g>`
     + [[0, 3.5, 'The attorney reads every page.'], [3.5, 8.5, 'Cited, and the files stay.'], [8.5, T, 'Your call.']].map(([a, b, t]) => tx(X0, ph ? 144 : 196, t, rz, 'g ' + V(a, b), 'data-cap')).join('')
-    + tx(X0, ph ? 158 : 214, 'Formed Oct 2026. No signed clients yet.', 10, V(11.5));
+    + tx(X0, ph ? 158 : 214, 'Formed Oct 2026.', 10, V(11.5));
 
   const bb = H - 4, mx = ox + X0 + 36, hk = mx + 5.1;
   const o = r(0, 0, W, H, `fill="${N}"`) + `<g transform="translate(${ox} ${oy})">${st}</g>`

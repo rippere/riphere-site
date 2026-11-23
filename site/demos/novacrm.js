@@ -7,7 +7,8 @@ export const meta = {
   legend: '',
   prov: 'I built it · my own product',
   call: 'The follow-up is already written. You just say yes.',
-  receipt: { text: 'The draft sends only when you approve.', status: 'from the code' },
+  receipt: { text: 'In use by a second department.', status: 'verified' },
+  exits: [{ label: 'See NovaCRM live', href: 'https://app.riphere.com/', exit: 'novacrm_live' }],
   poster: 'The prospect’s pilot-proposal row reads sent: a person approved the drafted follow-up.'
 };
 const I = '#e9e6df', I2 = '#8d8f96', N = '#05060a', L = '#2a2d35', R = '#ff4b3a', S = '#16181e';
@@ -38,7 +39,13 @@ export default {
     const dis = A([[0, 'opacity:0'], [7.5, 'opacity:1'], [8.5, 'opacity:.3']], rect(g.dx + .5, g.by + .5, g.dw, g.bh, 'none', I2) + `<path d="M${x0 - 4} ${y0 - 4}l8 8m0-8l-8 8" stroke="${I2}"/>`);
     const hx = g.bx + g.bw + 10, hy = g.by + g.bh + 10;
     const hand = `<circle cx="${hx}" cy="${hy}" r="4.5" fill="${I}"/><circle cx="${hx}" cy="${hy}" r="8.5" fill="none" stroke="${I}"/>`;
-    const handA = A([[0, `opacity:0;transform:translateY(${H - hy + 12}px)`], [8.1, `opacity:1;transform:translateY(${H - hy + 12}px);animation-timing-function:cubic-bezier(.2,.7,.3,1)`], [8.5, 'opacity:1;transform:translateY(0)']], hand, ' data-hand');
+    const EZ = ';animation-timing-function:cubic-bezier(.65,0,.35,1)', at = ([x, y], dy = 0) => `transform:translate(${x - hx}px,${y - hy + dy}px)`;
+    const [R0, D1, D2] = P ? [[311, 73], [274, 94], [274, 94]] : [[466, 91], [302, 120], [276, 140]];
+    const ghost = A([[0, at(R0) + EZ], [.7, at(R0, -4) + EZ], [1.4, at(R0) + EZ], [2.1, at(R0, -4) + EZ], [2.8, at(R0)], [3.5, at(R0) + EZ], [4.1, at(D1) + EZ],
+      [4.7, at(D1, -3) + EZ], [5.3, at(D1) + EZ], [5.8, at(D2) + EZ], [6.4, at(D2, -3) + EZ], [7, at(D2)], [7.5, at(D2) + EZ], [8.1, 'transform:none']],
+      A([[0, 'opacity:1'], [8.1, 'opacity:0']], `<circle cx="${hx}" cy="${hy}" r="8.5" fill="none" stroke="${I}" stroke-width="1.6"/>`));
+    const handA = ghost + A([[0, 'opacity:0;transform:none'], [8.1, 'opacity:1;transform:scale(1.15);animation-timing-function:ease-out'],
+      [8.22, 'opacity:1;transform:scale(.78);animation-timing-function:cubic-bezier(.2,.7,.3,1)'], [8.5, 'opacity:1;transform:none']], hand, ' data-hand style="transform-box:fill-box;transform-origin:center"');
     const lab = V([[0, 3.5]], T(g.x, g.ly, 'inbox', g.lz, 'q'));
     const list = A([[0, 'opacity:.35'], [3.5, 'opacity:.18']], bars);
     const cap = s => T(g.m, g.c, s, g.cz, 'g');

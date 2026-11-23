@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrePost: know where a draft loses people, before it posts · Ben Rippere</title>
+<meta name="description" content="A second-by-second read of creator video, built on a brain-response model, and tested in public before I trust it.">
+<link rel="canonical" href="https://www.riphere.com/work/prepost/">
+<meta name="theme-color" content="#05060a">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="riphere.com">
+<meta property="og:url" content="https://www.riphere.com/work/prepost/">
+<meta property="og:title" content="PrePost: know where a draft loses people, before it posts">
+<meta property="og:description" content="A second-by-second read of creator video, built on a brain-response model, and tested in public before I trust it.">
+<meta property="og:image" content="https://www.riphere.com/assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "riphere.com", "item": "https://www.riphere.com/"}, {"@type": "ListItem", "position": 2, "name": "PrePost: know where a draft loses people, before it posts", "item": "https://www.riphere.com/work/prepost/"}]}</script>
+<style>
+:root { color-scheme: dark; --ink: #e9e6df; --ink-2: #8d8f96; --line: #2a2d35; --signal: #ff4b3a; }
+html, body { margin: 0; background: #0b0c10; color: var(--ink); }
+body { font: 400 18px/1.6 "Archivo", "Helvetica Neue", Arial, sans-serif; }
+.cf { max-width: 42rem; margin: 0 auto; padding: 32px 16px 72px; box-sizing: border-box; }
+.cf-nav { display: flex; justify-content: space-between; gap: 1em; font: 700 13px/1.3 "Archivo", sans-serif; font-stretch: 115%; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 40px; }
+.cf-nav span { color: var(--ink-2); }
+.cf h1 { font-size: clamp(30px, 6vw, 44px); line-height: 1.08; font-stretch: 112%; margin: 0 0 .35em; }
+.cf h2 { font-size: 22px; line-height: 1.3; margin: 1.8em 0 .5em; }
+.cf p, .cf ul, .cf ol { margin: 0 0 1em; }
+.cf .dek { font-size: 21px; line-height: 1.45; color: #c9c6bf; }
+.cf .min { color: var(--ink-2); font-size: 14px; border-bottom: 1px solid var(--line); padding-bottom: 1.2em; margin-bottom: 1.6em; }
+.cf a { color: var(--ink); text-underline-offset: 3px; }
+.cf a:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.cf img { max-width: 100%; height: auto; }
+.cf-end { border-top: 1px solid var(--line); margin-top: 3em; padding-top: 1.2em; font-size: 15px; color: var(--ink-2); }
+</style>
+<main class="cf">
+  <nav class="cf-nav" aria-label="Back"><a href="/?case=prepost">← FL 18 · prepost</a><span>riphere.com</span></nav>
+  <article>
+<h1>PrePost: know where a draft loses people, before it posts</h1>
+<p class="dek">A second-by-second read of creator video, built on a brain-response model, and tested in public before I trust it.</p>
+    <p class="min">4 min read</p>
+
+<h2>Why I built it</h2>
+<p>I think it's fascinating to try to understand how people work. And in the attention economy we're in, having insight into how to make your own content perform better is a very marketable niche. PrePost started as me wanting to know that for my own videos.</p>
+
+<h2>Who it's for</h2>
+<p>People who approve or send back 20 or more creator videos a month: agency campaign managers, brand creator-program leads, the strategists picking which creator ads get budget.</p>
+<p>Today they watch the draft and go on feel. The note back to the creator is "it feels slow," which the creator can't act on, and the bar moves depending on who reviewed it. Guessing wrong costs money, impressions and impact.</p>
+
+<h2>What it does</h2>
+<p>PrePost turns that feeling into a timestamp. Instead of "it feels slow," the note reads "the predicted response sags at 0:04, tighten the open." Every draft on a campaign gets the same read, so approvals rest on one standard instead of whoever was reviewing that day.</p>
+<p>Under the hood it runs Meta's TRIBE v2 (<a href="https://arxiv.org/abs/2605.04326">d'Ascoli et al., 2026</a>), a model trained on brain scans of people watching and listening to media. Give it a new video and it predicts how an average viewer's brain would respond, second by second. PrePost maps that onto seven named brain areas and writes the result up in plain English first, with the science underneath.</p>
+<p>Why a model and not a scanner: it isn't only that I can't pay for scanning. The rigor, setting and support a feasible, defensible scan study needs is far beyond what a bachelor's degree holder studying this on his own can reach. That's not to say I haven't tried.</p>
+
+<h2>How I got here</h2>
+<p>My first attempt focused on neuroscience niche creators. I wanted to grade their content, see if I could replicate it, and find my own niche through that. What I got wrong: there was no control whatsoever, and I tried to predict virality, which is too multifaceted to explain with cortical regions alone.</p>
+<p>The part that took the longest was compiling the creators. I wanted to make content I would have wanted to watch, and trying to support my own biases through that research wasn't helping me in any way.</p>
+<p>What I changed because of it:</p>
+<ul>
+  <li><strong>The pass mark goes down before the results.</strong> I wanted some standard of reputability for deciding whether this is a model, or a venture, worth building on at all.</li>
+  <li><strong>More base videos over more impressions.</strong> Sampling error is important to get rid of in science.</li>
+  <li><strong>Anatomical brain areas.</strong> The scientific names give it credibility with people who know the field; the plain explanation comes after.</li>
+  <li><strong>The hook window.</strong> I moved it to seconds 4 to 8 on a bad piece of information, found out, and moved it back to the first 3 seconds before any data was collected.</li>
+</ul>
+
+<h2>Results</h2>
+<h3>The pilot: I set a bar and missed it</h3>
+<p>On May 10, 2026 I wrote the pass bar into the repo. The main bar: the composite score had to correlate with engagement at r above 0.4. The first result came back on May 13: r = 0.25 (p = 0.23, n = 24, engagement measured as likes per view). That's short of the bar, and it could have been chance.</p>
+<p>The pilot couldn't have answered the question anyway: its 24 videos came from 3 creators, so the real sample was closer to 3 than 24. That's why the next test is designed the way it is (below), and why PrePost is offered as a diagnostic, not a forecast.</p>
+
+<h3>The 64-clip run: early patterns, not findings</h3>
+<p>I then scored 64 published short-form video ads from YouTube Shorts on hardware I run myself: 64 of 64 scored, none failed, and a re-score from scratch came back bit-identical. What came out of it:</p>
+<ul>
+  <li><strong>One yardstick works across categories.</strong> Beauty, food, home and tech ads didn't need separate scales; category explained little of the spread.</li>
+  <li><strong>Creator-style beat polished.</strong> UGC-format ads scored above polished spots on the composite (p = 0.004).</li>
+  <li><strong>Human-made beat AI-made.</strong> Human-made ads drew a 15% stronger predicted whole-brain response than AI-made ones (p = 0.003, 21 human vs 40 AI).</li>
+</ul>
+<p>The caveats are real: a small sample shaped by YouTube search, human/AI labels that are judgements rather than disclosures, a prediction for a typical brain rather than real viewers, and no performance data yet. The human/AI gap is a group difference, not a detector; individual clips overlap a lot. Linking these scores to how ads actually perform is the next step.</p>
+
+<h2>What's next</h2>
+<p>The hook study is under way. Short videos that are identical except for their first 3 seconds run as paid ads, and the test asks whether the brain-response read predicts who keeps watching past second 3. The plan is written and public, and I'll publish the answer either way.</p>
+<p>TRIBE v2 is licensed CC BY-NC 4.0: non-commercial use only. I'm not going to sell PrePost. I know I can't make money off it in any way or train another model off it. It stays a research tool.</p>
+
+<h2>Try it</h2>
+<p>The waitlist exists because of the compute: I don't want people sending in videos and wasting my money. If you like it and want to try it, sign up and I'll choose who gets to run videos, starting with early adopters willing to give feedback.</p>
+<p><a href="https://prepost-clw.pages.dev/">Join the PrePost waitlist</a> · <a href="https://github.com/rippere/tribe-social">Code</a> · <a href="mailto:ben@riphere.com">ben@riphere.com</a></p>
+
+  </article>
+  <p class="cf-end"><a href="/?case=prepost">Back to FL 18</a> · <a href="mailto:ben@riphere.com">ben@riphere.com</a></p>
+</main>

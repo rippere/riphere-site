@@ -11,7 +11,7 @@
     { code: 'PH', label: 'B. Rippere', kind: 'about', href: '?floor=PH', final: '/about' },
     { code: '36', label: 'Floor tool', tag: 'employer', kind: 'case', href: '?case=floor-tool', final: '/work/floor-tool', board: 0 },
     { code: '26', label: 'NovaCRM', tag: 'own product', kind: 'case', href: '?case=novacrm', final: '/work/novacrm', board: 1 },
-    { code: '18', label: 'prepost', tag: 'own research', kind: 'case', href: '?case=prepost', final: '/work/prepost', board: 2 },
+    { code: '18', label: 'PrePost', tag: 'own research', kind: 'case', href: '?case=prepost', final: '/work/prepost', board: 2 },
     { code: '08', label: 'Riphere LLC', tag: 'the company', kind: 'case', href: '?case=riphere-llc', final: '/work/riphere-llc', board: 3 },
     { code: '07', label: 'Consulting', tag: 'Riphere LLC', kind: 'consulting', href: '?page=consulting', final: '/consulting' },
     { code: 'M', label: 'Résumé', tag: 'PDF', kind: 'resume', href: 'assets/resume.pdf', final: 'assets/resume.pdf', ext: true },
@@ -26,7 +26,7 @@
   const rowOpen = (F, k, style = '') => (F.inert ? `<a class="inert" aria-disabled="true"` : `<a href="${esc(F.href)}" data-href="${esc(F.final)}"${F.ext ? ' data-ext target="_blank" rel="noopener"' : ''}`)
     + ` data-k="${k}" data-code="${esc(F.code)}"${style ? ` style="${style}"` : ''}>`;
   const rowLabel = F => `${esc(F.label)}${tagHTML(F)}`;
-  const feltHead = '<h4>RIPHERE</h4><p class="fsub">work of Ben Rippere</p>';
+  const feltHead = '<h2>RIPHERE</h2><p class="fsub">work of Ben Rippere</p>';
 
   const meta = {}, mods = {}, failed = {};
   const ready = Promise.all(IDS.map(id => import(`./demos/${id}.js`).then(
@@ -102,11 +102,13 @@
     const phone = phoneNow(), m = M(b), min = caseMin(b.slug), href = esc(`/work/${b.slug}/`);
     const { dw, dh } = paneDims(cw, ch, phone, fs), title = esc((m && m.title) || b.name);
     const rc = m && m.receipt;
+    const xs = (m && Array.isArray(m.exits) ? m.exits : []).filter(x => x && x.href && x.label), x0 = xs[0];
+    const xHTML = xs.map((x, i) => `<a class="door x${i ? ' alt' : ''}" href="${esc(x.href)}" target="_blank" rel="noopener" data-exit="${esc(x.exit || '')}" data-placement="case_exit" data-on>${esc(x.label)} \u2197</a>`).join('');
     const hold = failed[b.id] ? 'not landed' : 'loads on tear';
     const pending = !(b.id in meta) ? ' data-pending="1"' : '';
     return `<div class="case${phone ? ' stack' : ''}"${pending} style="--dw:${dw}px;--dh:${dh}px">`
-      + `<div class="cs-pane">${min ? `<a class="demo" href="${href}" aria-label="${title}: the demo; opens the case file">` : `<div class="demo" role="img" aria-label="${title}: the demo">`}`
-      + `<div class="dm-mount" data-demo="${esc(b.id)}" style="width:${dw}px;height:${dh}px"><span class="dm-hold">demos/${esc(b.id)}.js · ${hold}</span></div>${min ? '</a>' : '</div>'}`
+      + `<div class="cs-pane">${x0 ? `<a class="demo" href="${esc(x0.href)}" target="_blank" rel="noopener" data-exit="${esc(x0.exit || '')}" data-placement="case_pane" aria-label="${title}: the demo; opens ${esc(x0.label)}">` : min ? `<a class="demo" href="${href}" aria-label="${title}: the demo; opens why I built it">` : `<div class="demo" role="img" aria-label="${title}: the demo">`}`
+      + `<div class="dm-mount" data-demo="${esc(b.id)}" style="width:${dw}px;height:${dh}px"><span class="dm-hold">demos/${esc(b.id)}.js · ${hold}</span></div>${min || x0 ? '</a>' : '</div>'}`
       + `<p class="dm-cap">${m && m.caption ? esc(m.caption) + (m.legend ? '<span class="dm-lg">' + esc(m.legend).replace(/\{hand\}|●/g, HAND) + '</span>' : '') : ph('under-pane caption from meta.caption')}</p></div>`
       + `<div class="cf">${m && m.lead ? `<div class="lead" data-on>${esc(m.lead)}</div>` : ''}<div class="cf-a"><div class="cf-tb" data-on><span class="cf-k">MY WORK</span><span class="cf-v">FL ${esc(b.code)}</span></div>`
       + `<div class="for" data-on>${m && m.for ? esc(m.for) : ph('FOR: who uses it, from meta.for')}</div>`
@@ -115,9 +117,9 @@
       + `<div class="cf-b"><div class="k" data-on>The call</div>${m && m.call ? `<div class="call" data-on>${esc(m.call)}</div>` : `<div class="call tbd" data-on data-missing="the call, from meta.call" hidden></div>`}`
       + `<div class="k" data-on>Receipt <span class="tag">${esc(rc && rc.status ? rc.status : 'unverified')}</span></div>`
       + `<div class="rc" data-on>${rc && rc.text ? esc(rc.text) : ph('receipt from meta.receipt')}</div></div>`
-      + (min ? `<div class="cf-c"><a class="door" href="${href}" data-on>Case file, ${min} min</a></div>` : '') + `</div></div>`;
+      + (min || xs.length ? `<div class="cf-c">${xHTML}${min ? `<a class="door${xs.length ? ' alt' : ''}" href="${href}" data-on>Why I built it, ${min} min</a>` : ''}</div>` : '') + `</div></div>`;
   }
-  const HOLD = { floortool: .2752, prepost: .218 };
+  const HOLD = { floortool: .2752 };
   function fitCase(b, art) {
     const c = art && art.querySelector('.case'); if (!c) return;
     const mount = c.querySelector('.dm-mount'), cf = c.querySelector('.cf'), cap = c.querySelector('.dm-cap'), pane = c.querySelector('.cs-pane');

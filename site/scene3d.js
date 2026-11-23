@@ -54,7 +54,7 @@ const tex = (f, srgb) => { const t = TL.load('tex/' + f); t.wrapS = t.wrapT = TH
 const pbr = n => ({ map: tex(n + '_diff_1k.jpg', true), normalMap: tex(n + '_nor_1k.jpg'), roughnessMap: tex(n + '_rough_1k.jpg') });
 const T_SLAB = pbr('concrete_slab_wall_02'), T_PANEL = pbr('concrete'), T_PAVE = pbr('concrete_tiles_02'), T_ASPH = pbr('clean_asphalt');
 const pbrArm = (n, d, a) => { const arm = tex(`${n}_arm_${a}.jpg`); return { map: tex(`${n}_diff_${d}.jpg`, true), normalMap: tex(`${n}_nor_gl_${d}.jpg`), roughnessMap: arm, aoMap: arm }; };
-const T_PCAST = pbrArm('concrete_wall_006', '2k', '1k'), T_BOARD = pbrArm('wood_textured_concrete', '1k', '1k'), T_BUSH = pbrArm('brushed_concrete_04', '1k', '1k');
+const T_PCAST = pbrArm('concrete_wall_006', '1k', '1k'), T_BOARD = pbrArm('wood_textured_concrete', '1k', '1k'), T_BUSH = pbrArm('brushed_concrete_04', '1k', '1k');
 const canvasTex = (c, srgb = true) => { const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = Math.min(4, maxAniso); return t; };
 const mkC = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
 
@@ -113,13 +113,13 @@ const M_GLASS = (() => {
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvWin = aWin; vUv2 = uv;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D uAtlas; varying vec4 vWin; varying vec2 vUv2;')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-      { vec3 vd = normalize(vViewPosition); vec2 par = clamp(vd.xy / max(.25, vd.z), -1.5, 1.5) * .09; // the room sits ~2 m behind the glass: it slides against the frame
+      { vec3 vd = normalize(vViewPosition); vec2 par = clamp(vd.xy / max(.25, vd.z), -1.5, 1.5) * .09;
         vec2 ruv = clamp(vUv2 - par, .02, .98);
         vec2 cell = vec2(mod(vWin.x, 4.), floor(vWin.x / 4.)); vec2 auv = vec2((cell.x + ruv.x) / 4., 1. - (cell.y + 1. - ruv.y) / 2.);
         vec3 room = texture2D(uAtlas, auv).rgb;
-        float head = mix(.5, 1., smoothstep(.99, .8, vUv2.y)) * mix(.7, 1., smoothstep(0., .12, min(vUv2.x, 1. - vUv2.x))); // the splayed reveal shades the edges of the opening
+        float head = mix(.5, 1., smoothstep(.99, .8, vUv2.y)) * mix(.7, 1., smoothstep(0., .12, min(vUv2.x, 1. - vUv2.x)));
         totalEmissiveRadiance += room * vWin.y * head;
-        if (vWin.y < .01) { // dark rooms: blinds or a curtain catching the street glow, else a faint reflection of the lit sky over the city
+        if (vWin.y < .01) {
           float k = fract(vWin.z * 7.31 + vWin.x * .17), sl = step(.45, fract(vUv2.y * 46.)), drop = step(1. - vUv2.y, .35 + .6 * fract(vWin.z * 3.7));
           vec3 bl = vec3(.05, .043, .034) * (.6 + .4 * sl) * drop * mix(.5, 1., vUv2.y);
           vec3 cu = vec3(.04, .03, .022) * (.75 + .25 * sin(vUv2.x * 60. + vWin.z * 9.));
@@ -291,7 +291,7 @@ const StreakShader = {
   uniform float uTime, uM, uCycle, uPxK, uWid, uSw, uMin; uniform float uStop[${NSTOP}]; uniform float uQ[${NSTOP}]; uniform float uPh[${NSTOP}];
   varying float vX; varying float vS; varying vec4 vR; varying float vB; varying float vDepth; varying float vThin; varying float vF;
   float bunch(float s) { float b = 0.;
-    for (int i = 0; i < ${NSTOP}; i++) { float d = (uStop[i] - s) / uM; if (d < -8. || d > 140.) continue; // metres behind the stop line
+    for (int i = 0; i < ${NSTOP}; i++) { float d = (uStop[i] - s) / uM; if (d < -8. || d > 140.) continue;
       float ph = fract((uTime + uPh[i]) / uCycle), grow = ph < .55 ? max(0., 1. - ph / .2) : (ph - .55) / .45;
       float q = uQ[i] * (.35 + .65 * grow);
       b += smoothstep(-6., 1., d) * (1. - smoothstep(q * .55, q, d)) * (.6 + .4 * grow) + .7 * exp(-d * d / 30.) * step(-4., d); }
@@ -300,9 +300,9 @@ const StreakShader = {
     vec4 a = modelViewMatrix * vec4(position, 1.), b = modelViewMatrix * vec4(aNext, 1.);
     vec3 d = normalize(b.xyz - a.xyz); vec3 side = normalize(cross(d, normalize(a.xyz)));
     float B = bunch(aS); vB = B;
-    float w = aR.z * uM * (1. + uSw * B);                     // world width (px); swells in queues
-    float px = w * uPxK / max(1., -a.z);                       // on-screen width
-    vThin = clamp(px / uMin, .08, 1.); w *= 1. / vThin;         // never thinner than uMin px; dim instead (energy kept)
+    float w = aR.z * uM * (1. + uSw * B);
+    float px = w * uPxK / max(1., -a.z);
+    vThin = clamp(px / uMin, .08, 1.); w *= 1. / vThin;
     a.xyz += side * aSide * w * uWid;
     vX = aSide * uWid; vS = aS; vR = aR; vDepth = -a.z; vF = aF;
     gl_Position = projectionMatrix * a; }`,
@@ -313,8 +313,8 @@ const StreakShader = {
   void main() {
     float sm = vS / uM, sd = vR.x * 17.31;
     float flow = smoothstep(.18, .5, vn(sm * .021 + sd - uTime * .06)) * (.45 + .9 * vn(sm * .13 + sd * 3.1)) * (.75 + .5 * vn(sm * .6 + sd));
-    flow *= mix(1., smoothstep(.2, .34, vn(sm * .17 + sd * 7.)), uGap);                 // gaps between cars
-    float I = (flow + vB * uBB) * (.75 + .25 * vn(sm * 2.3 + sd * 5.)) * vF * mix(1., uFar, smoothstep(150., 1400., vDepth / uM)); // far lines thin out instead of piling into a wash
+    flow *= mix(1., smoothstep(.2, .34, vn(sm * .17 + sd * 7.)), uGap);
+    float I = (flow + vB * uBB) * (.75 + .25 * vn(sm * 2.3 + sd * 5.)) * vF * mix(1., uFar, smoothstep(150., 1400., vDepth / uM));
     float core = exp(-vX * vX * 3.2), glow = exp(-vX * vX * .9) * uGlow;
     vec3 red = mix(vec3(1., .07, .025), vec3(1., .32, .14), core * (.4 + .3 * min(vB, 1.)));
     vec3 white = vec3(1., .84, .62) * .55;
@@ -360,16 +360,16 @@ const BldShader = {
     vec3 base = vC.rgb * (.45 + .9 * tx);
     vec3 col;
     if (top) col = base * .035;
-    else if (vC.a > 3.5) { // solids: 4 plain concrete (pilasters, ledges, plant, masts), 5 floodlit crown, 6 timber tank
+    else if (vC.a > 3.5) {
       vec3 up = vec3(1., .62, .34) * .5 * exp(-hm / 14.);
       col = base * (.05 + .025 * max(n.y, 0.) + up) * (vC.a > 5.5 ? .8 : 1.);
-      if (vC.a > 4.5 && vC.a < 5.5) col = base * vec3(1., .74, .48) * (.12 + 1.1 * exp(-max(0., hm - vB.y) / 3.5)) * (.55 + .45 * smoothstep(.2, .45, abs(fract(u / 1.6) - .5) * 2.)); // lamps at the lantern's foot wash its fins upward
+      if (vC.a > 4.5 && vC.a < 5.5) col = base * vec3(1., .74, .48) * (.12 + 1.1 * exp(-max(0., hm - vB.y) / 3.5)) * (.55 + .45 * smoothstep(.2, .45, abs(fract(u / 1.6) - .5) * 2.));
     }
     else {
       float fh = vB.y, bw = vB.z, st = vC.a, fl = floor(hm / fh), fv = fract(hm / fh), by = floor(u / bw), fu = fract(u / bw);
       vec4 wr = st < .5 ? vec4(.1, .9, .36, .94) : st < 1.5 ? vec4(-.1, 1.1, .46, .86) : st < 2.5 ? vec4(.32, .68, .36, .8) : vec4(.2, .8, .22, .8);
       float inW = step(wr.x, fu) * step(fu, wr.y) * step(wr.z, fv) * step(fv, wr.w);
-      inW *= smoothstep(.06, .4, abs(dot(n, normalize(cameraPosition - vWP)))); // deep reveals hide the glass at grazing angles
+      inW *= smoothstep(.06, .4, abs(dot(n, normalize(cameraPosition - vWP))));
       vec3 up = vec3(1., .62, .34) * .5 * exp(-hm / 14.);
       float strk = mix(1., .8 + .2 * h1(vec3(floor(u * 2.5), vB.x, face)), smoothstep(.0, .3, fv));
       vec3 conc = base * (.05 + .025 * max(n.y, 0.) + up) * strk;
@@ -380,7 +380,7 @@ const BldShader = {
       vec3 glass = vec3(.006, .007, .01) + vec3(.02, .014, .01) * (1. - fv) + up * .05;
       vec3 wcol = lit > .5 ? lc * (.3 + .7 * head) : glass;
       col = mix(conc, wcol, inW * step(5., hm));
-      if (hm < 5.) { // storefronts: half lit warm
+      if (hm < 5.) {
         float sf = step(.12, fu) * step(fu, .94) * step(.3, hm) * step(hm, 4.1), on = step(h1(vec3(by, face, vB.x) + 11.), .55);
         vec3 sfc = vec3(1., .72, .44) * (.6 + 1.3 * h1(vec3(by, face, vB.x) + 5.)) * on + vec3(.008) * (1. - on);
         col = mix(conc * 1.6, sfc, sf);
@@ -396,9 +396,9 @@ const M_SKY = new THREE.ShaderMaterial({ uniforms: {}, depthWrite: false, side: 
   vertexShader: 'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }',
   fragmentShader: `varying vec3 vD; float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
-  void main(){ vec3 d = normalize(vD); float e = d.y; vec3 zen = vec3(.004, .005, .008), hor = vec3(.06, .04, .028); // per-pixel dir: no dome facets
+  void main(){ vec3 d = normalize(vD); float e = d.y; vec3 zen = vec3(.004, .005, .008), hor = vec3(.06, .04, .028);
     vec3 c = mix(hor, zen, smoothstep(-.02, .32, e));
-    float cl = n2(d.xz / max(.08, e + .1) * 1.6 + 3.) * n2(d.xz / max(.08, e + .1) * 4.2); // low cloud deck lit from below by sodium
+    float cl = n2(d.xz / max(.08, e + .1) * 1.6 + 3.) * n2(d.xz / max(.08, e + .1) * 4.2);
     c += vec3(.05, .03, .018) * cl * smoothstep(.45, .02, e) * smoothstep(-.02, .05, e);
     c += vec3(.09, .055, .03) * exp(-abs(e) * 18.);
     gl_FragColor = vec4(c, 1.); }` }); SHARED.add(M_SKY);

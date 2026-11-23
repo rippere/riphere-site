@@ -22,6 +22,7 @@
 <meta name="twitter:image" content="https://www.riphere.com/assets/og.jpg">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "@id": "https://www.riphere.com/#person", "name": "Ben Rippere", "url": "https://www.riphere.com/", "jobTitle": "AI Solutions Developer", "email": "ben@riphere.com", "image": "https://www.riphere.com/assets/ben-headshot.jpg", "sameAs": ["https://github.com/rippere", "https://www.linkedin.com/in/benjamin-rippere/", "https://x.com/rrippere"]}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><g fill='%23e9e6df' stroke='%2305060a' stroke-width='1.5' stroke-linejoin='round'><path d='M3 4H10.2L20.7 28H3Z'/><path d='M13.2 6H29.5V30H23.7Z'/></g></svg>"> 
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png"> 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/ben-headshot-phone.jpg" media="(max-width: 699px)" fetchpriority="high">
@@ -198,7 +199,7 @@ header#tb { padding-left: 10px; }
   box-shadow: 0 0 0 5px #3b3024, 0 0 0 6px #110d09, 0 16px 34px #000d, inset 0 0 24px #000;
   font: 700 var(--fs) / var(--fr) var(--grot); font-stretch: 68%; text-transform: uppercase; letter-spacing: .09em; color: #ebe6dc; }
 .felt::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(90% 60% at 50% -10%, #ffd9aa22, transparent 70%); }
-.felt h4 { margin: 0; font: inherit; text-align: center; letter-spacing: .32em; }
+.felt h2 { margin: 0; font: inherit; text-align: center; letter-spacing: .32em; }
 .felt a { all: unset; box-sizing: border-box; display: flex; align-items: baseline; width: 100%; cursor: pointer; line-height: var(--fr); transform: translateY(var(--o)) rotate(var(--r)); }
 .felt a:hover, .felt a:focus-visible { color: #fff; text-shadow: 0 0 8px #ffffff80; }
 .felt .ld { flex: 1; min-width: .6em; margin: 0 .35em; border-bottom: 2px dotted #ebe6dc40; transform: translateY(-.28em); }
@@ -234,7 +235,6 @@ header#tb { padding-left: 10px; }
 <section id="fl07" class="fl07" hidden aria-labelledby="fl07-h">
   <div class="f7-tb"><h2 class="f7-h" id="fl07-h"><span class="f7-k">07</span> <span class="f7-k">CONSULTING</span></h2></div>
   <p class="f7-co">Riphere LLC</p>
-  <p class="f7-go"><a href="?case=riphere-llc" data-href="/work/riphere-llc">Read the Riphere LLC case on FL 08</a></p>
   <p class="f7-ml">Contact: <a href="mailto:ben@riphere.com?subject=Project%20%C2%B7%20from%20FL%2007">ben@riphere.com</a></p>
 </section>
 <nav id="lift" aria-label="Floors"></nav>
@@ -249,7 +249,7 @@ header#tb { padding-left: 10px; }
   </div>
 </details>
 
-<script>window.CASES = {};</script> 
+<script>window.CASES = {"novacrm": 3, "prepost": 4};</script> 
 <script src="identity.js"></script>
 <script>
 const $ = s => document.querySelector(s);
@@ -276,7 +276,7 @@ const PROJECTS = [
   { id: 'floortool', slug: 'floor-tool', code: '36', name: 'Floor tool', art: { kind: 'case', prov: 'Floor tool \u00b7 operator floor-planning tool' } },
   { id: 'novacrm', slug: 'novacrm', code: '26', name: 'NovaCRM', art: { kind: 'case', prov: 'NovaCRM \u00b7 own project' } },
   { id: 'prepost', slug: 'prepost', code: '18', name: 'prepost', art: { kind: 'case', prov: 'prepost \u00b7 research' } },
-  { id: 'riphere', slug: 'riphere-llc', code: '08', name: 'Riphere LLC', art: { kind: 'case', prov: 'Riphere LLC \u00b7 formed Oct 2026, no signed clients yet' } },
+  { id: 'riphere', slug: 'riphere-llc', code: '08', name: 'Riphere LLC', art: { kind: 'case', prov: 'Riphere LLC \u00b7 formed Oct 2026' } },
 ];
 const boards = PROJECTS.map((p, i) => ({ ...p, i, x: 0, y: 0, w: 0, h: 0, el: null, anims: [], torn: false, dur: 0 }));
 const TOP = { x: 0, y: 0, w: 0, h: 0, el: null, cv: null, ctx: null, lit: 1, dimCv: null, litCv: null };
@@ -400,11 +400,11 @@ function layout() {
   TOP.w = phone ? Math.min(780, facadeW - 32) : Math.min(1060, Math.round(facadeW * .86)); TOP.h = Math.round(phone ? TOP.w * .74 : TOP.w / 2.3); TOP.x = Math.round((facadeW - TOP.w) / 2); TOP.y = Math.round(phone ? Math.max(VH * .12, 132) : VH * .14);
   const base = phone ? W - 16 : facadeW - 24, capH = VH * .72, gut = phone ? 8 : 12;
   const ph = w => (w - 16) * 9 / 16 + 330;
-  const dims = phone ? [[base, ph(base)], [base, ph(base)], [base, ph(base)], [base, ph(base) + 16]]
-    : [[base, base / 2.16], [base * .95, base * .95 / 2.1], [base, base / 2.16], [base, Math.min(VH * .66, base / 2.02)]];
+  const dims = phone ? [[base, ph(base)], [base, ph(base)], [base, ph(base) + 120], [base, ph(base) + 16]]
+    : [[base, base / 2.16], [base * .95, base * .95 / 2.1], [base, Math.min(VH * .84, base / 1.72)], [base, Math.min(VH * .66, base / 2.02)]];
   const gaps = [1, .85, 1.1], stag = phone ? [0, 0, 0, 0] : [-.7, 1, -.45, 0];
   let by = Math.max(TOP.y + TOP.h + (phone ? 84 : 110), VH * (phone ? .6 : .78));
-  boards.forEach((b, i) => { let [w, h] = dims[i % 4]; if (h > capH) { w *= capH / h; h = capH; } b.w = Math.round(w); b.h = Math.round(h);
+  boards.forEach((b, i) => { let [w, h] = dims[i % 4]; const cap = i % 4 === 2 ? VH * (phone ? .9 : .86) : capH; if (h > cap) { w *= cap / h; h = cap; } b.w = Math.round(w); b.h = Math.round(h);
     b.x = Math.round(clampN((facadeW - b.w) / 2 + stag[i % 4] * facadeW * .1, gut, Math.max(gut, facadeW - b.w - gut))); b.y = Math.round(by); by += b.h + VH * (gaps[i] || 0); });
   const lastB = boards[boards.length - 1];
   FINAL_Y = Math.round(lastB.y + lastB.h + VH * .22);
@@ -930,7 +930,7 @@ function rigBoard(b) {
   b.anims.forEach(a => a.cancel()); b.anims = [];
   Object.assign(b, { torn: false, phase: 'idle', done: false, dwell: 0, t: 0, v: 0, lastT: 0, evt: false, frozen: false, drag: null, peak: 0, hs: 0 });
   b.tabbed = state.tear === 'seq' && b.i === 3;
-  b.el.classList.remove('tearing', 'torn'); b.el.style.zIndex = '';
+  b.el.classList.remove('tearing', 'torn', 'open'); b.el.style.zIndex = '';
   if (state.boards === 'led') { const set = u => { if (u) b.el.style.setProperty('--led', `url("${u}")`); }; set(ledImage(IDL.ledLines(b), set)); }
   const panel = b.el.querySelector('.panel'); panel.querySelectorAll('.rig').forEach(n => n.remove());
   const host = panel.querySelector('.pieces'); host.innerHTML = ''; host.style.visibility = ''; b.host = host;
@@ -990,14 +990,14 @@ function commitTear(b, cam = true) {
   b.hand = true;
   if (b.phase === 'play' || b.done) return;
   b.torn = true; b.phase = 'play'; b.drag = null; b.host.style.visibility = ''; b.hs = b.t >= b.relT ? -1 : 0;
-  b.el.classList.add('tearing'); const tab = b.el.querySelector('.riptab'); if (tab) tab.style.visibility = 'hidden';
+  b.el.classList.add('tearing', 'open'); const tab = b.el.querySelector('.riptab'); if (tab) tab.style.visibility = 'hidden';
   for (const a of b.anims) { a.currentTime = b.t; a.play(); }
   if (cam) camCommit(b);
 }
 function finishTear(b) {
   b.phase = 'done'; b.done = true; b.torn = true; b.t = b.lastT = b.dur;
   for (const a of b.anims) { a.pause(); a.currentTime = b.dur; }
-  b.el.classList.remove('tearing'); b.el.classList.add('torn'); b.host.style.visibility = 'hidden';
+  b.el.classList.remove('tearing'); b.el.classList.add('torn', 'open'); b.host.style.visibility = 'hidden';
 }
 function fireTorn(b) { if (b.evt) return; b.evt = true; try { window.dispatchEvent(new CustomEvent('board-torn', { detail: { i: b.i, variant: b.variant } })); } catch {} }
 
@@ -1100,6 +1100,7 @@ function updateBoards() {
     b.torn = t >= b.relT;
     b.host.style.visibility = end ? 'hidden' : '';
     b.el.classList.toggle('torn', end); if (end) b.el.classList.remove('tearing');
+    b.el.classList.toggle('open', b.torn);
     if (b.torn) fireTorn(b);
     if (prev < b.relT && t >= b.relT && !b.drag) CFX.shakeT = now;
     const tab = b.el.querySelector('.riptab'); if (tab) tab.style.visibility = t > .5 && !b.drag ? 'hidden' : '';
