@@ -40,10 +40,13 @@ Root directory to `legacy-next`, build command `npm run build`, output `out`.
 
 ## What the export ships (S3, 2026-11-22)
 
-`tools/export_tower.py` copies the allowlist, strips comments on copy (`tools/tower_strip.py`), and adds:
+`tools/export_tower.py` copies the allowlist, strips comments on copy (`tools/tower_strip.py`; JS, CSS, HTML, and the
+`//` / `/* */` comments inside GLSL template literals such as the shaders in `scene3d.js`), and adds:
 `404.html` (Pages serves it for any unmatched path), `robots.txt`, `sitemap.xml`, `favicon.svg`, `assets/og.jpg`
 (1200x630, the first screen; re-shoot with `harness/og.mjs` in the source tree), and `fallback.js` (the plain
 text version of the floors, shown when WebGL is missing, three.js fails to load, or the URL has `?plain`).
+`apple-touch-icon.png` at the root is optional: copied when the source tree has it (it must be a PNG), and from
+then on required in that export; absent, the export does not fail.
 
 **Case files.** Each board's door appears only when `work/<slug>/case.html` exists in the source tree
 (slugs: `floor-tool`, `novacrm`, `prepost`, `riphere-llc`). The export then builds `site/work/<slug>/index.html`,

@@ -5,7 +5,8 @@ Each stripper is a small tokenizer, not a regex, so strings, template literals a
 verbatim. A removed block comment becomes a newline if it spanned lines (keeps automatic semicolon insertion
 as it was), else a space. Nothing else changes: no minifying, no reformatting.
 
-    strip_js(text)   // and /* */ outside strings, templates and regex literals
+    strip_js(text)   // and /* */ outside strings, templates and regex literals; inside a template literal
+                     that is GLSL (see is_glsl), its shader comments too (strip_glsl_segments)
     strip_css(text)  /* */ outside strings
     strip_html(text) <!-- --> in markup; <script> bodies through strip_js (except JSON / import maps),
                      <style> bodies through strip_css
@@ -31,8 +32,10 @@ def _gap(comment: str) -> str:
 def strip_js(src: str) -> str:
     out: list[str] = []
     i, n = 0, len(src)
-    # stack of brace depths, one per open template literal whose ${ ... } we are inside
-    tpl: list[int] = []
+    # stack of (brace depth, template id), one per open template literal whose ${ ... } we are inside
+    tpl: list[tuple[int, int]] = []
+    # per template id: its text segments as [index into out, ends with the closing backtick?]
+    segs: list[list[list]] = []
     depth = 0
     parens: list[bool] = []      # one per open "(": was it opened by if / while / for / with?
     ctrl_close = False           # the last significant code char was the ")" of such a paren
@@ -64,18 +67,21 @@ def strip_js(src: str) -> str:
             return True  # a keyword, not a property such as o.in or o.return
         return False
 
-    def read_template(j: int) -> int:
-        """Copy template text from j (just after ` or }) to the closing ` or to ${; return the new index."""
+    def read_template(j: int, tid: int) -> int:
+        """Copy template text from j (just after ` or }) to the closing ` or to ${; return the new index.
+        The text is emitted as one chunk (recorded in segs[tid]) so a GLSL template can be rewritten later."""
         nonlocal depth
-        while j < n:
-            c = src[j]
+        k = j
+        while k < n:
+            c = src[k]
             if c == "\\":
-                out.append(src[j:j + 2]); j += 2; continue
-            if c == "`":
-                out.append(c); return j + 1
-            if c == "$" and j + 1 < n and src[j + 1] == "{":
-                out.append("${"); tpl.append(depth); depth += 1; return j + 2
-            out.append(c); j += 1
+                k += 2; continue
+            if c == "`" or (c == "$" and k + 1 < n and src[k + 1] == "{"):
+                segs[tid].append([len(out), c == "`"]); out.append(src[j:k])
+                if c == "`":
+                    out.append(c); return k + 1
+                out.append("${"); tpl.append((depth, tid)); depth += 1; return k + 2
+            k += 1
         raise ValueError("unterminated template literal")
 
     while i < n:
@@ -91,7 +97,7 @@ def strip_js(src: str) -> str:
                 j += 1
             out.append(src[i:j + 1]); ctrl_close = False; i = j + 1; continue
         if c == "`":
-            out.append("`"); ctrl_close = False; i = read_template(i + 1); continue
+            out.append("`"); ctrl_close = False; segs.append([]); i = read_template(i + 1, len(segs) - 1); continue
         if c == "/" and nxt == "/":
             j = src.find("\n", i)
             j = n if j < 0 else j
@@ -129,8 +135,8 @@ def strip_js(src: str) -> str:
             depth += 1
         elif c == "}":
             depth -= 1
-            if tpl and depth == tpl[-1]:
-                tpl.pop(); out.append("}"); ctrl_close = False; i = read_template(i + 1); continue
+            if tpl and depth == tpl[-1][0]:
+                tid = tpl.pop()[1]; out.append("}"); ctrl_close = False; i = read_template(i + 1, tid); continue
         if c == "(":
             # a control paren: "if (" etc., but not a property such as o.if(
             m = re.search(r"(\.\s*)?([A-Za-z_$][\w$]*)\s*$", last_sig())
@@ -140,7 +146,72 @@ def strip_js(src: str) -> str:
         out.append(c); i += 1
     if tpl:
         raise ValueError("unterminated ${ in template literal")
+    for parts in segs:
+        if is_glsl("".join(out[k] for k, _ in parts)):
+            for (k, _), text in zip(parts, strip_glsl_segments([(out[k], last) for k, last in parts])):
+                out[k] = text
     return "".join(out)
+
+
+# A template literal is treated as shader source only when its text looks like GLSL. Anything else (CSS font
+# strings, rgba(...), URLs with "//") is left exactly as written.
+_GLSL_RE = re.compile(r"\bgl_(?:Position|FragColor|FragCoord|FragData|PointSize|PointCoord)\b|\bvoid\s+main\s*\("
+                      r"|^\s*#\s*(?:include|define|ifdef|ifndef|endif|pragma|version)\b"
+                      r"|\b(?:uniform|varying|attribute|precision)\s+(?:lowp\s+|mediump\s+|highp\s+)?"
+                      r"(?:float|int|bool|[biu]?vec[234]|mat[234]|sampler2D|samplerCube)\b", re.M)
+
+
+def is_glsl(text: str) -> bool:
+    return bool(_GLSL_RE.search(text))
+
+
+def strip_glsl_segments(parts: list[tuple[str, bool]]) -> list[str]:
+    """Strip // and /* */ comments from the text segments of one GLSL template literal.
+
+    parts = [(raw template text between ` / } and ${ / `, does it end at the closing backtick?)]. GLSL has no
+    string literals, so every // or /* in the text starts a comment. A comment is left verbatim (never half
+    removed) when it cannot be removed without touching JavaScript: it runs into a ${ ... } (the interpolation
+    would go with it; its tail in the next segment is then copied verbatim too), or it holds a backslash (a
+    template escape such as \n would end the GLSL line early, and a GLSL line continuation would extend it).
+    A removed // comment takes the spaces before it; one alone on its line takes the whole line. A removed
+    /* */ becomes a newline if it spanned lines, else a space; one alone on its lines takes them."""
+    res: list[str] = []
+    carry = ""  # "//" or "/*" when a verbatim comment runs on into the next segment
+    for text, closes in parts:
+        o, i, m = "", 0, len(text)
+        if carry:  # finish the verbatim comment first
+            j = text.find("\n" if carry == "//" else "*/")
+            if j < 0:
+                res.append(text); continue  # still inside it (another ${ ... } follows, or the template ends)
+            j = j if carry == "//" else j + 2
+            o, i, carry = text[:j], j, ""
+        while i < m:
+            if text.startswith("//", i):
+                j = text.find("\n", i)
+                end = m if j < 0 else j
+                if (j < 0 and not closes) or "\\" in text[i:end]:
+                    o += text[i:end]; i = end
+                    carry = "//" if j < 0 else ""
+                    continue
+                own = o.rfind("\n") >= 0 and not o[o.rfind("\n") + 1:].strip()
+                o = o.rstrip(" \t")
+                i = end + 1 if own and j >= 0 else end  # alone on its line: the line goes
+                continue
+            if text.startswith("/*", i):
+                j = text.find("*/", i + 2)
+                if j < 0 or "\\" in text[i:j]:
+                    end = m if j < 0 else j + 2
+                    o += text[i:end]; i = end
+                    carry = "/*" if j < 0 else ""
+                    continue
+                k = j + 2
+                own = o.rfind("\n") >= 0 and not o[o.rfind("\n") + 1:].strip()
+                if own and k < m and text[k] == "\n":
+                    o = o.rstrip(" \t"); i = k + 1; continue
+                o += _gap(text[i:k]); i = k; continue
+            o += text[i]; i += 1
+        res.append(o)
+    return res
 
 
 def strip_css(src: str) -> str:
