@@ -30,7 +30,9 @@ Checks (any hit fails the export):
   4. excluded    a file in the output that is not on the allowlist, sits on
                  the denylist, or is a symlink.
   5. required    a file that must ship is missing (the page, its scripts,
-                 the headshots, the resume, the OG image, 404, robots, sitemap).
+                 the headshots, the resume, the OG image, 404, robots, sitemap;
+                 plus each OPTIONAL_FILES entry the source has, e.g.
+                 apple-touch-icon.png).
   6. reference   an exported page or script points (src/href/url/"assets/...")
                  at a local file that was not exported, so it would 404.
   7. syntax      a stripped .js file (or inline script) fails `node --check`
@@ -73,6 +75,11 @@ ALLOW_FILES: list[tuple[str, str]] = [
     ("404.html", "404.html"),
     ("favicon.svg", "favicon.svg"),
 ]
+# (source path, exported path, file signature). Copied when the source has them; once present they are
+# required in that export (a source file that fails to arrive fails it). Absent from the source: not an error.
+OPTIONAL_FILES: list[tuple[str, str, bytes]] = [
+    ("apple-touch-icon.png", "apple-touch-icon.png", b"\x89PNG\r\n\x1a\n"),
+]
 # (source dir, glob on the file name, recursive?). Exported at the same path.
 ALLOW_TREES: list[tuple[str, str, bool]] = [
     ("demos", "*.js", False),
@@ -87,7 +94,7 @@ WPM = 238  # silent reading, non-fiction (Brysbaert 2019)
 SITE_URL = "https://www.riphere.com"
 # What the output may contain, as path patterns (the allowlist seen from site/).
 ALLOWED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js", "analytics.js", "fallback.js",
-                  "404.html", "favicon.svg", "robots.txt", "sitemap.xml",
+                  "404.html", "favicon.svg", "apple-touch-icon.png", "robots.txt", "sitemap.xml",
                   "demos/*.js", "tex/**", "assets/**", "work/*/index.html"]
 # Must be in every export (the founder billboard and every flyer lockup use the headshots).
 REQUIRED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js", "analytics.js", "fallback.js",
@@ -195,6 +202,11 @@ def allowed_output(rel: str) -> bool:
     return False
 
 
+def optional_present(src: Path) -> list[str]:
+    """Exported paths of the OPTIONAL_FILES the source has (each then becomes required in the export)."""
+    return [d for s, d, _ in OPTIONAL_FILES if (src / s).is_symlink() or (src / s).exists()]
+
+
 def collect(src: Path) -> tuple[list[tuple[Path, str]], list[str]]:
     """Return ([(source file, exported rel path)], problems)."""
     plan: list[tuple[Path, str]] = []
@@ -203,6 +215,16 @@ def collect(src: Path) -> tuple[list[tuple[Path, str]], list[str]]:
         p = src / s
         if p.is_symlink() or not p.is_file():
             problems.append(f"missing source file: {s}")
+        else:
+            plan.append((p, d))
+    for s, d, magic in OPTIONAL_FILES:
+        p = src / s
+        if not p.is_symlink() and not p.exists():
+            continue  # optional: not there yet
+        if p.is_symlink() or not p.is_file():
+            problems.append(f"optional source file is a symlink or not a file: {s}")
+        elif not p.read_bytes().startswith(magic):
+            problems.append(f"optional source file is not the expected type: {s}")
         else:
             plan.append((p, d))
     for d, pattern, recursive in ALLOW_TREES:
@@ -233,8 +255,9 @@ def collect(src: Path) -> tuple[list[tuple[Path, str]], list[str]]:
     return plan, problems
 
 
-def check(out: Path) -> tuple[list[tuple[str, int, int | None]], list[str]]:
-    """Walk the exported tree. Return (manifest rows, failures)."""
+def check(out: Path, extra_required: list[str] | tuple[str, ...] = ()) -> tuple[list[tuple[str, int, int | None]], list[str]]:
+    """Walk the exported tree. Return (manifest rows, failures). extra_required: paths that must be present
+    too (the OPTIONAL_FILES this source has)."""
     rows: list[tuple[str, int, int | None]] = []
     fails: list[str] = []
     present: set[str] = set()
@@ -280,7 +303,7 @@ def check(out: Path) -> tuple[list[tuple[str, int, int | None]], list[str]]:
                     if rx.search(line):
                         fails.append(f"{label}: {rel}:{n}: {snippet(line, rx)}")
 
-    for rel in REQUIRED_OUTPUT:
+    for rel in [*REQUIRED_OUTPUT, *extra_required]:
         if rel not in present:
             fails.append(f"required: {rel} is missing from the output")
 
@@ -521,7 +544,7 @@ def main() -> int:
             except (OSError, ValueError, UnicodeDecodeError) as e:
                 fails.append(f"meta: {e}")
         print(f"  doors: {json.dumps(cases, sort_keys=True) if cases else 'none (no work/<slug>/case.html yet; every door hidden)'}")
-        rows, more = check(staging)
+        rows, more = check(staging, optional_present(src))
         fails += more + node_check(staging)
 
         print(f"\nmanifest ({len(rows)} files)")

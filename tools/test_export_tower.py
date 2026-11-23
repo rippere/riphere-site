@@ -7,13 +7,14 @@ from __future__ import annotations
 import shutil
 import subprocess
 import sys
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import export_tower as E  # noqa: E402
-from tower_strip import strip_css, strip_html, strip_js  # noqa: E402
+from tower_strip import is_glsl, strip_css, strip_glsl_segments, strip_html, strip_js  # noqa: E402
 
 NODE = shutil.which("node")
 HOST = "bender" + "man"  # split, like the export script, so this repo does not carry the name in one piece
@@ -23,10 +24,10 @@ def devhost(b: bytes) -> bool:
     return any(rx.search(b) for rx in E.DEVHOST_RES)
 
 
-def js_ok(src: str) -> bool:
+def js_ok(src: str, module: bool = False) -> bool:
     if not NODE:
         return True
-    with tempfile.NamedTemporaryFile("w", suffix=".cjs", delete=False) as f:
+    with tempfile.NamedTemporaryFile("w", suffix=".mjs" if module else ".cjs", delete=False) as f:
         f.write(src)
     return subprocess.run([NODE, "--check", f.name], capture_output=True).returncode == 0
 
@@ -122,6 +123,95 @@ class StripJS(unittest.TestCase):  # review MEDIUM 5
             self.assertEqual(got, want, src)
             self.assertTrue(js_ok(got), got)
             self.assertEqual(strip_js(got), got)
+
+
+class StripGLSL(unittest.TestCase):  # shader comments inside template literals
+    def check(self, src: str, want: str):
+        got = strip_js(src)
+        self.assertEqual(got, want, src)
+        self.assertTrue(js_ok(got), got)
+        self.assertEqual(strip_js(got), got)
+
+    def test_shader_comments_go(self):
+        self.check("const F = `uniform float uA; // why\n  // own line\n  void main(){ float x = 1.; /* blk */ gl_FragColor = vec4(x); }\n  /* own\n  block */\n`;\n",
+                   "const F = `uniform float uA;\n  void main(){ float x = 1.;   gl_FragColor = vec4(x); }\n`;\n")
+        # three.js chunk injection: the template is GLSL by its #include line
+        self.check("s = s.replace('#include <x>', `#include <x>\n  { vec3 a = b; // note\n  }`);\n",
+                   "s = s.replace('#include <x>', `#include <x>\n  { vec3 a = b;\n  }`);\n")
+        # comments after an interpolation, and a comment that ends the template
+        self.check("const V = `void main(){\n  for (int i = 0; i < ${N}; i++) { x(); } // per stop\n  y(); } // end`;\n",
+                   "const V = `void main(){\n  for (int i = 0; i < ${N}; i++) { x(); }\n  y(); }`;\n")
+
+    def test_non_glsl_templates_untouched(self):
+        for src in ["const u = `https://x.y/${p} // not a comment`;\n", "o.font = `800 ${fs}px Archivo /* x */, sans-serif`;\n",
+                    "const c = `rgba(255,${g},0,${a})`; // c\n"]:
+            self.assertFalse(is_glsl(src))
+            self.assertEqual(strip_js(src), src.replace(" // c", ""))
+
+    def test_unsafe_comments_left_verbatim(self):
+        # a comment running into ${ ... } keeps the interpolation (and the comment); its tail is not rescanned
+        src = "const F = `void main(){ a; // n = ${n} /* x */ more\n  b; /* k ${m} // y */ c; }`;\n"
+        self.check(src, src)
+        # a backslash in the comment: \n would end the GLSL line inside the comment, so nothing is removed
+        src = "const F = `void main(){ a; // x\\n b; }\n`;\n"
+        self.check(src, src)
+        self.assertEqual(strip_glsl_segments([("x /* a ", False), (" b // c */ d // e", True)]), ["x /* a ", " b // c */ d"])
+        self.assertEqual(strip_glsl_segments([("x; // a ", False), (" b /* c */\n y; // z\n", True)]), ["x; // a ", " b /* c */\n y;\n"])
+
+    def test_nested_templates(self):
+        self.check("const F = `void main(){ ${ok ? `vec3 c; // in` : ''} // out\n}`;\n",
+                   "const F = `void main(){ ${ok ? `vec3 c; // in` : ''}\n}`;\n")
+
+    @unittest.skipUnless((E.DEFAULT_SRC / "scene3d.js").is_file(), "private source tree not on this machine")
+    def test_real_scene_has_no_shader_comments_left(self):
+        got = strip_js((E.DEFAULT_SRC / "scene3d.js").read_text("utf-8"))
+        self.assertTrue(js_ok(got, module=True))
+        for t in re.findall(r"`[^`]*`", got):
+            if is_glsl(t):
+                self.assertNotRegex(t, r"//|/\*", t[:120])
+
+
+class AppleTouchIcon(unittest.TestCase):
+    PNG = b"\x89PNG\r\n\x1a\n" + b"\0" * 32
+
+    def setUp(self):
+        self.td = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.td)
+
+    def icon_problems(self):
+        plan, probs = E.collect(self.td)
+        return [d for _, d in plan if d == "apple-touch-icon.png"], [p for p in probs if "apple-touch-icon" in p]
+
+    def test_allowed_at_the_root_only(self):
+        self.assertTrue(E.allowed_output("apple-touch-icon.png"))
+        self.assertFalse(E.allowed_output("assets2/apple-touch-icon.png"))
+        self.assertFalse(E.allowed_output("apple-touch-icon.jpg"))
+
+    def test_absent_is_fine(self):
+        self.assertEqual(self.icon_problems(), ([], []))
+        self.assertEqual(E.optional_present(self.td), [])
+
+    def test_present_is_copied_and_required(self):
+        (self.td / "apple-touch-icon.png").write_bytes(self.PNG)
+        self.assertEqual(self.icon_problems(), (["apple-touch-icon.png"], []))
+        self.assertEqual(E.optional_present(self.td), ["apple-touch-icon.png"])
+        out = self.td / "out"
+        out.mkdir()
+        fails = [f for f in E.check(out, E.optional_present(self.td))[1] if "apple-touch-icon" in f]
+        self.assertEqual(fails, ["required: apple-touch-icon.png is missing from the output"])
+        (out / "apple-touch-icon.png").write_bytes(self.PNG)
+        self.assertEqual([f for f in E.check(out, ["apple-touch-icon.png"])[1] if "apple-touch-icon" in f], [])
+        self.assertEqual(E.transform(self.td / "apple-touch-icon.png", "apple-touch-icon.png"), self.PNG)
+
+    def test_wrong_type_or_symlink_fails(self):
+        (self.td / "apple-touch-icon.png").write_bytes(b"<svg/>")
+        self.assertIn("not the expected type", self.icon_problems()[1][0])
+        (self.td / "apple-touch-icon.png").unlink()
+        (self.td / "real.png").write_bytes(self.PNG)
+        (self.td / "apple-touch-icon.png").symlink_to(self.td / "real.png")
+        self.assertIn("symlink", self.icon_problems()[1][0])
 
 
 class StripHTML(unittest.TestCase):  # review MEDIUM 4 + LOW
