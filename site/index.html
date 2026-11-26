@@ -1311,7 +1311,10 @@ const go = gl => {
   addEventListener('unhandledrejection', e => { if (fromScene(e.reason && e.reason.stack)) plain('scene'); });
   import('./scene3d.js').then(() => { if (!want3d) watch(); }, () => plain('scene'));
 };
+const INAPP = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Barcelona|musical_ly|BytedanceWebview|TikTok|LinkedInApp|Snapchat|Twitter for/i;
+let inApp = false; try { inApp = INAPP.test(navigator.userAgent || ''); } catch {}
 if (ask) plain('asked');
+else if (inApp && !want3d) plain('in-app');
 else offMain().then(() => go(onMain()));
 </script>
 <noscript id="nojs"><style>

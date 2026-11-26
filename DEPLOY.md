@@ -1,5 +1,29 @@
 # Deploy
 
+## Environments: dev and prod
+
+| Env  | Branch | URL                                       | Analytics |
+| ---- | ------ | ----------------------------------------- | --------- |
+| dev  | `dev`  | https://dev.riphere-site.pages.dev        | off (PostHog runs only on riphere.com; add `?ph=1` to test) |
+| prod | `main` | https://www.riphere.com (apex 301 → www)  | on        |
+
+Every change goes to `dev` first, gets checked there (phone included), then `main` is fast-forwarded to it.
+`dev` is a Cloudflare Pages preview branch, so its URL is a stable branch alias and Pages serves it with
+`X-Robots-Tag: noindex`; it never touches production.
+
+```sh
+# 1. export the private source tree into site/ on dev (exit 0 required), commit, push
+git switch dev
+python3 tools/export_tower.py --src <source worktree>
+git add -A site tools && git commit -m "site: re-export from SOURCE <sha> (...)" && git push origin dev
+# 2. check https://dev.riphere-site.pages.dev (wfr4 d1600 + p390, phone, ?ph=1 for PostHog)
+# 3. promote: fast-forward only, so prod is exactly what was checked on dev
+git fetch origin && git push origin origin/dev:main
+```
+
+If `main` ever gets a commit `dev` does not have, the promote push is rejected: merge `main` into `dev`, re-check dev, promote.
+Rollback is unchanged (below).
+
 riphere.com is served by Cloudflare Pages (project `riphere-site`, built from `rippere/riphere-site`,
 production branch `main`). The tower is plain static files, so Pages has nothing to build.
 

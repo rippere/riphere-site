@@ -27,7 +27,7 @@ from tower_strip import strip_html
 
 TEXT_PATH = "text/index.html"
 FLOOR_ORDER = ["PH", "36", "26", "18", "08", "07", "M", "L"]
-WHY_KEYS = {"soft-gl", "slow", "no-webgl", "scene", "asked"}
+WHY_KEYS = {"soft-gl", "in-app", "slow", "no-webgl", "scene", "asked"}
 
 esc = lambda v: htmllib.escape(str(v), quote=True)  # noqa: E731
 plain_text = lambda h: " ".join(htmllib.unescape(re.sub(r"<[^>]+>", " ", h)).split())  # noqa: E731

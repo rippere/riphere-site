@@ -202,7 +202,7 @@ html, body { margin: 0; background: #0b0c10; color: #e9e6df; }
 </main>
 <script>
 (() => { try {
-  const W = {"soft-gl": "This browser draws 3D in software, without the graphics card, so the building would barely move. You're reading the text version instead.", "slow": "The building was drawing too slowly on this device, so you're reading the text version instead.", "no-webgl": "This browser can't draw the 3D building, so you're reading the text version instead.", "scene": "The 3D building didn't load, so you're reading the text version instead.", "asked": "You asked for the text version."}, A = "Show the 3D version anyway";
+  const W = {"soft-gl": "This browser draws 3D in software, without the graphics card, so the building would barely move. You're reading the text version instead.", "in-app": "You opened this inside an app, and its built-in browser can't run the 3D building well, so you're reading the text version. For the 3D version, open riphere.com in Safari or Chrome.", "slow": "The building was drawing too slowly on this device, so you're reading the text version instead.", "no-webgl": "This browser can't draw the 3D building, so you're reading the text version instead.", "scene": "The 3D building didn't load, so you're reading the text version instead.", "asked": "You asked for the text version."}, A = "Show the 3D version anyway";
   const why = new URLSearchParams(location.search).get('why');
   if (!Object.prototype.hasOwnProperty.call(W, why)) return;
   const n = document.getElementById('tv-note'), t = document.getElementById('tv-why'), a = document.getElementById('tv-3d');
