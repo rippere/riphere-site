@@ -81,6 +81,8 @@ body { font: 400 18px/1.6 "Archivo", "Helvetica Neue", Arial, sans-serif; }
 
 <h2>What's next</h2>
 <p>Next is automating the count end to end, and taking the gameroom twin past its pilot.</p>
+<p>Some of the company's apps have since been built by describing them to an AI app builder, including a version of the twin. I run the path those apps take to production. The rule I set: the builder is a sandbox, and a change reaches the company's own repo and cloud only as a pull request I approve. A review harness I built compares each export with the repo, matches each change to the request behind it, checks it against risk rules and never approves anything itself.</p>
+<p>Nobody is changing those apps right now, so the work is designing the path, not containing damage. Next, written house rules go into the existing apps before any more building. I'm also tightening what coworkers who don't code can send in, and making sure every request ends approved or denied, with the reason sent back to whoever asked. The twin goes first; a few of the company's other apps will eventually need the same path, and we're still identifying which ones together. Each piece of the harness starts with a check I've reviewed before it's built, and anything a check can't judge, I sign off by hand.</p>
 
 <h2>Ask me about it</h2>
 <p>The floor tool runs behind company sign-in, so there's no public version to try. If you'd like to talk through how it works: <a href="mailto:ben@riphere.com?subject=Floor%20tool%20%C2%B7%20from%20the%20case%20file">ben@riphere.com</a></p>
