@@ -16,8 +16,11 @@ Transforms on copy (the source is never edited):
   - comments are stripped from .html / .js / .css (tools/tower_strip.py: tokenizers, no minifying);
   - index.html gets window.CASES = {slug: read minutes} for every work/<slug>/case.html in the source;
   - work/<slug>/index.html is built from work/_template.html + that case.html (only when it exists);
-  - sitemap.xml and robots.txt are generated (sitemap lists / plus each built case file);
-  - the dev tear controls (<details id="ctl">, shown in the source with ?ctl) are removed from index.html.
+  - sitemap.xml and robots.txt are generated (sitemap lists / plus each built case file and /text/);
+  - the dev tear controls (<details id="ctl">, shown in the source with ?ctl) are removed from index.html;
+  - text/index.html, the text version, is built from the demo meta, the case files, identity.js and the page's plates
+    (tools/text_version.py), and the same body replaces index.html's <noscript id="nojs"> (what a reader with
+    JavaScript off, a crawler or an AI tool that does not run scripts gets from /).
 
 Checks (any hit fails the export):
   1. employer    the employer's name (any case) in any exported file's bytes
@@ -38,6 +41,10 @@ Checks (any hit fails the export):
                  at a local file that was not exported, so it would 404.
   7. syntax      a stripped .js file (or inline script) fails `node --check`
                  (skipped with a warning when node is not on PATH).
+  8. text        the text version cannot be built: a source it reads is missing or changed shape, a case
+                 file's call / receipt differs from its board's meta, a text.json "about" line is not word
+                 for word in its case file, or llms.txt does not quote each receipt and link each page.
+                 Needs node (fails closed without it).
   9. devpanel    the dev tear controls' markup or text in an exported page.
 
 Stdlib only.
@@ -62,6 +69,7 @@ from urllib.parse import unquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from tower_strip import JS_SCRIPT_TYPES, script_kind, strip_css, strip_html, strip_js  # noqa: E402
+from text_version import TEXT_PATH, build_text  # noqa: E402
 
 DEFAULT_SRC = Path("/mnt/external/vault-content/drafts/portfolio-v3/billboard-poc")
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -76,6 +84,7 @@ ALLOW_FILES: list[tuple[str, str]] = [
     ("fallback.js", "fallback.js"),
     ("404.html", "404.html"),
     ("favicon.svg", "favicon.svg"),
+    ("llms.txt", "llms.txt"),  # llmstxt.org summary for AI tools; copied byte for byte, checked by text_version.check_llms
 ]
 # (source path, exported path, file signature). Copied when the source has them; once present they are
 # required in that export (a source file that fails to arrive fails it). Absent from the source: not an error.
@@ -96,11 +105,11 @@ WPM = 238  # silent reading, non-fiction (Brysbaert 2019)
 SITE_URL = "https://www.riphere.com"
 # What the output may contain, as path patterns (the allowlist seen from site/).
 ALLOWED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js", "analytics.js", "fallback.js",
-                  "404.html", "favicon.svg", "apple-touch-icon.png", "robots.txt", "sitemap.xml",
-                  "demos/*.js", "tex/**", "assets/**", "work/*/index.html"]
+                  "404.html", "favicon.svg", "apple-touch-icon.png", "robots.txt", "sitemap.xml", "llms.txt",
+                  "demos/*.js", "tex/**", "assets/**", "work/*/index.html", TEXT_PATH]
 # Must be in every export (the founder billboard and every flyer lockup use the headshots).
 REQUIRED_OUTPUT = ["index.html", "identity.css", "identity.js", "scene3d.js", "analytics.js", "fallback.js",
-                   "404.html", "favicon.svg", "robots.txt", "sitemap.xml",
+                   "404.html", "favicon.svg", "robots.txt", "sitemap.xml", "llms.txt", TEXT_PATH,
                    "assets/ben-headshot.jpg", "assets/ben-headshot-phone.jpg", "assets/resume.pdf", "assets/og.jpg",
                    "demos/floortool.js", "demos/novacrm.js", "demos/prepost.js", "demos/riphere.js"]
 
@@ -467,8 +476,8 @@ def strip_dev_panel(staging: Path) -> list[str]:
     return []
 
 
-def write_meta(staging: Path, cases: dict[str, int]) -> list[str]:
-    """window.CASES into index.html; robots.txt and sitemap.xml. Returns problems."""
+def write_meta(staging: Path, cases: dict[str, int], text: bool = False) -> list[str]:
+    """window.CASES into index.html; robots.txt and sitemap.xml (/text/ too when it was built). Returns problems."""
     problems: list[str] = []
     index = staging / "index.html"
     html = index.read_text("utf-8")
@@ -478,7 +487,7 @@ def write_meta(staging: Path, cases: dict[str, int]) -> list[str]:
         html = CASES_RE.sub(lambda m: f"<script>window.CASES = {json.dumps(cases, sort_keys=True)};</script>", html)
         index.write_text(html, "utf-8")
     (staging / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", "utf-8")
-    urls = [f"{SITE_URL}/"] + [f"{SITE_URL}/work/{slug}/" for slug in sorted(cases)]
+    urls = [f"{SITE_URL}/"] + ([f"{SITE_URL}/text/"] if text else []) + [f"{SITE_URL}/work/{slug}/" for slug in sorted(cases)]
     (staging / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                          + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls) + "</urlset>\n", "utf-8")
     return problems
@@ -495,7 +504,7 @@ def local_target(ref: str) -> str | None:
     if not path:
         return None
     if path.endswith("/"):
-        return path + "index.html" if path.startswith("work/") else None  # a case-file route must exist
+        return path + "index.html" if path.startswith(("work/", "text/")) else None  # a case-file / text route must exist
     if not Path(path).suffix:
         return None  # a route such as /work/<slug>; not a file this script can vouch for
     return path
@@ -561,10 +570,13 @@ def main() -> int:
                 fails.append(f"strip: {rel}: {e}")
         cases, probs = build_cases(src, staging)
         fails += probs
+        text = False
         if (staging / "index.html").is_file():
             try:
                 fails += strip_dev_panel(staging)
-                fails += write_meta(staging, cases)
+                text, probs = build_text(src, staging, cases, SITE_URL)
+                fails += probs
+                fails += write_meta(staging, cases, text)
             except (OSError, ValueError, UnicodeDecodeError) as e:
                 fails.append(f"meta: {e}")
         print(f"  doors: {json.dumps(cases, sort_keys=True) if cases else 'none (no work/<slug>/case.html yet; every door hidden)'}")
