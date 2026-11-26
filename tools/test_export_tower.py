@@ -238,5 +238,33 @@ class OutGuard(unittest.TestCase):  # review MEDIUM 7
         self.assertIsNotNone(E.safe_out(E.REPO_ROOT, src))
 
 
+class DevPanel(unittest.TestCase):  # 11-25: the #ctl dev tear controls never ship
+    PANEL = '<details id="ctl" open hidden>\n  <summary>Dev</summary><div class="seg" data-k="tear"><button>Peel</button></div>\n  <button id="replay">Re-hang the ads</button>\n</details>\n'
+
+    def test_removed_from_index_and_fails_when_absent(self):
+        td = Path(tempfile.mkdtemp())
+        try:
+            (td / "index.html").write_text('<nav id="lift"></nav>\n' + self.PANEL + '<script>$("#ctl")?.removeAttribute("open")</script>')
+            self.assertEqual(E.strip_dev_panel(td), [])
+            html = (td / "index.html").read_text()
+            self.assertNotIn("Re-hang", html)
+            self.assertIn('$("#ctl")', html)  # the guarded script reference stays
+            self.assertTrue(E.strip_dev_panel(td))  # a second pass finds none: fail closed
+        finally:
+            shutil.rmtree(td)
+
+    def test_check_fails_on_panel_markup_or_text(self):
+        td = Path(tempfile.mkdtemp())
+        try:
+            (td / "index.html").write_text(self.PANEL)
+            (td / "work" / "x").mkdir(parents=True)
+            (td / "work" / "x" / "index.html").write_text("<p>Re-hang the ads</p>")
+            fails = [f for f in E.check(td)[1] if f.startswith("devpanel")]
+            self.assertTrue(any(f.startswith("devpanel: index.html") for f in fails), fails)
+            self.assertTrue(any("work/x/index.html" in f for f in fails), fails)
+        finally:
+            shutil.rmtree(td)
+
+
 if __name__ == "__main__":
     unittest.main()

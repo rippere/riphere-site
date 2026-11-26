@@ -16,7 +16,8 @@ Transforms on copy (the source is never edited):
   - comments are stripped from .html / .js / .css (tools/tower_strip.py: tokenizers, no minifying);
   - index.html gets window.CASES = {slug: read minutes} for every work/<slug>/case.html in the source;
   - work/<slug>/index.html is built from work/_template.html + that case.html (only when it exists);
-  - sitemap.xml and robots.txt are generated (sitemap lists / plus each built case file).
+  - sitemap.xml and robots.txt are generated (sitemap lists / plus each built case file);
+  - the dev tear controls (<details id="ctl">, shown in the source with ?ctl) are removed from index.html.
 
 Checks (any hit fails the export):
   1. employer    the employer's name (any case) in any exported file's bytes
@@ -37,6 +38,7 @@ Checks (any hit fails the export):
                  at a local file that was not exported, so it would 404.
   7. syntax      a stripped .js file (or inline script) fails `node --check`
                  (skipped with a warning when node is not on PATH).
+  9. devpanel    the dev tear controls' markup or text in an exported page.
 
 Stdlib only.
 """
@@ -156,6 +158,12 @@ def normalised(data: bytes) -> bytes:
 TREE_SUFFIXES = {"assets": {".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg", ".pdf"},
                  "tex": {".jpg", ".jpeg", ".png", ".webp", ".ktx2"}}
 TREE_EXTRA = {"tex/CREDITS.md"}
+
+# The dev tear controls (billboard3d.html <details id="ctl">): removed from index.html on export; any of these in an
+# exported page fails it.
+CTL_RE = re.compile(r'<details id="ctl"[^>]*>.*?</details>[ \t]*\n?', re.S)
+DEVPANEL_RES = [re.compile(rb'<details\b[^>]*\bid=["\']?ctl\b', re.I), re.compile(rb"Re-hang the ads"),
+                re.compile(rb'class="seg" data-k="(?:tear|boards|timing)"')]
 
 TEXT_SUFFIXES = {".html", ".css", ".js", ".mjs", ".json", ".md", ".txt", ".svg",
                  ".xml", ".webmanifest", ".map"}
@@ -297,6 +305,11 @@ def check(out: Path, extra_required: list[str] | tuple[str, ...] = ()) -> tuple[
                         fails.append(f"devhost: {rel}:{n}: {snippet(line, rx)}")
             elif rx.search(data):
                 fails.append(f"devhost: {rel} (binary): raw bytes match {rx.pattern!r}")
+        if text and rel.endswith(".html"):
+            for rx in DEVPANEL_RES:
+                for n, line in enumerate(data.split(b"\n"), 1):
+                    if rx.search(line):
+                        fails.append(f"devpanel: {rel}:{n}: {snippet(line, rx)}")
         if text:
             for label, rx in SLOT_RES:
                 for n, line in enumerate(data.split(b"\n"), 1):
@@ -444,6 +457,16 @@ def build_cases(src: Path, staging: Path) -> tuple[dict[str, int], list[str]]:
 CASES_RE = re.compile(r"<script>window\.CASES = \{\};</script>")
 
 
+def strip_dev_panel(staging: Path) -> list[str]:
+    """Remove the dev tear controls from index.html (the source keeps them for ?ctl). Returns problems."""
+    index = staging / "index.html"
+    html = index.read_text("utf-8")
+    if len(CTL_RE.findall(html)) != 1:
+        return ['index.html: expected exactly one <details id="ctl"> (the dev tear controls) to remove']
+    index.write_text(CTL_RE.sub("", html), "utf-8")
+    return []
+
+
 def write_meta(staging: Path, cases: dict[str, int]) -> list[str]:
     """window.CASES into index.html; robots.txt and sitemap.xml. Returns problems."""
     problems: list[str] = []
@@ -540,6 +563,7 @@ def main() -> int:
         fails += probs
         if (staging / "index.html").is_file():
             try:
+                fails += strip_dev_panel(staging)
                 fails += write_meta(staging, cases)
             except (OSError, ValueError, UnicodeDecodeError) as e:
                 fails.append(f"meta: {e}")
