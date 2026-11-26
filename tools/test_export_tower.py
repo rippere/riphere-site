@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import export_tower as E  # noqa: E402
+import text_version as T  # noqa: E402
 from tower_strip import is_glsl, strip_css, strip_glsl_segments, strip_html, strip_js  # noqa: E402
 
 NODE = shutil.which("node")
@@ -236,6 +237,118 @@ class OutGuard(unittest.TestCase):  # review MEDIUM 7
         self.assertIsNotNone(E.safe_out(E.REPO_ROOT / "tools", src))
         self.assertIsNotNone(E.safe_out(E.REPO_ROOT / "legacy-next" / "out", src))
         self.assertIsNotNone(E.safe_out(E.REPO_ROOT, src))
+
+
+class DevPanel(unittest.TestCase):  # 11-25: the #ctl dev tear controls never ship
+    PANEL = '<details id="ctl" open hidden>\n  <summary>Dev</summary><div class="seg" data-k="tear"><button>Peel</button></div>\n  <button id="replay">Re-hang the ads</button>\n</details>\n'
+
+    def test_removed_from_index_and_fails_when_absent(self):
+        td = Path(tempfile.mkdtemp())
+        try:
+            (td / "index.html").write_text('<nav id="lift"></nav>\n' + self.PANEL + '<script>$("#ctl")?.removeAttribute("open")</script>')
+            self.assertEqual(E.strip_dev_panel(td), [])
+            html = (td / "index.html").read_text()
+            self.assertNotIn("Re-hang", html)
+            self.assertIn('$("#ctl")', html)  # the guarded script reference stays
+            self.assertTrue(E.strip_dev_panel(td))  # a second pass finds none: fail closed
+        finally:
+            shutil.rmtree(td)
+
+    def test_check_fails_on_panel_markup_or_text(self):
+        td = Path(tempfile.mkdtemp())
+        try:
+            (td / "index.html").write_text(self.PANEL)
+            (td / "work" / "x").mkdir(parents=True)
+            (td / "work" / "x" / "index.html").write_text("<p>Re-hang the ads</p>")
+            fails = [f for f in E.check(td)[1] if f.startswith("devpanel")]
+            self.assertTrue(any(f.startswith("devpanel: index.html") for f in fails), fails)
+            self.assertTrue(any("work/x/index.html" in f for f in fails), fails)
+        finally:
+            shutil.rmtree(td)
+
+
+class TextVersion(unittest.TestCase):  # 11-25: /text/ and the no-JS home page
+    def test_text_route_is_checked(self):
+        self.assertEqual(E.local_target("/text/"), "text/index.html")
+        self.assertEqual(E.local_target("/text/#fl-26"), "text/index.html")
+        self.assertIsNone(E.local_target("/about/"))
+        self.assertTrue(E.allowed_output("text/index.html") and E.allowed_output("llms.txt"))
+        self.assertFalse(E.allowed_output("text/other.html"))
+
+    def test_js_unquote(self):
+        self.assertEqual(T.js_unquote(r"it\'s \u00e9 \u{1F600} a\\b"), "it's \u00e9 \U0001F600 a\\b")
+
+    def case_dir(self, body: str) -> Path:
+        td = Path(tempfile.mkdtemp())
+        (td / "work" / "x").mkdir(parents=True)
+        (td / "work" / "x" / "case.html").write_text(
+            '<h1>X</h1><p class="call"><span class="ck">The call</span> Say yes.</p><p class="dek">Dek.</p>' + body)
+        return td
+
+    def test_sections_and_heading_demotion(self):
+        td = self.case_dir('<h2>Why</h2><p>skip</p><p class="lbl">THE PROBLEM</p><h2>Who</h2><p>P1</p>'
+                           '<p class="lbl">MY WORK</p><h2>What</h2><p>W1</p><h2>How</h2><p>not this</p>'
+                           '<p class="lbl">RECEIPT</p><h2>Results</h2><ul><li>R <span class="tag">verified</span></li></ul><h3>Pilot</h3><p>n</p><h2>Next</h2><p>no</p>')
+        try:
+            c = T.read_case(td, "x")
+            self.assertEqual(c["problem"], "<p>P1</p>")
+            self.assertEqual(c["work"], "<p>W1</p>")
+            self.assertIn("<h4>Pilot</h4>", c["receipt"])
+            self.assertNotIn("Next", c["receipt"])
+            self.assertEqual(c["call"], "Say yes.")
+        finally:
+            shutil.rmtree(td)
+
+    def test_missing_label_fails_closed(self):
+        td = self.case_dir('<p class="lbl">THE PROBLEM</p><h2>Who</h2><p>P1</p>')
+        try:
+            with self.assertRaises(T.TextProblem):
+                T.read_case(td, "x")
+        finally:
+            shutil.rmtree(td)
+
+    def test_about_lines_must_be_word_for_word(self):
+        td = Path(tempfile.mkdtemp())
+        try:
+            copy = {"title": "t", "description": "d", "through": "x", "intro": "i", "nojs": "n", "to3d": "3", "anyway": "a",
+                    "why": {k: k for k in T.WHY_KEYS}, "about": [{"from": "work/x/case.html", "text": "I built it."}]}
+            (td / "text.json").write_text(__import__("json").dumps(copy))
+            T.read_copy(td, {"x": {"frag": "<p>I <em>built</em> it.</p>"}})
+            with self.assertRaises(T.TextProblem):
+                T.read_copy(td, {"x": {"frag": "<p>I made it.</p>"}})
+        finally:
+            shutil.rmtree(td)
+
+    def test_llms_txt_quotes_each_receipt(self):
+        td = Path(tempfile.mkdtemp())
+        try:
+            meta = {"a": {"receipt": {"text": "Used by two teams."}}}
+            (td / "llms.txt").write_text("# Ben\n\nReceipt: Used by two teams. https://s/work/a/ https://s/text/\n")
+            self.assertEqual(T.check_llms(td, meta, ["a"], "https://s"), [])
+            (td / "llms.txt").write_text("# Ben\n\nReceipt: Used by 2 teams. https://s/work/a/\n<!-- note -->\n")
+            probs = T.check_llms(td, meta, ["a"], "https://s")
+            self.assertEqual(len(probs), 3, probs)
+        finally:
+            shutil.rmtree(td)
+
+    @unittest.skipUnless(NODE and (E.DEFAULT_SRC / "text.json").is_file(), "private source tree or node not on this machine")
+    def test_real_source_builds(self):
+        st = Path(tempfile.mkdtemp())
+        try:
+            (st / "index.html").write_text('<p>x</p><noscript id="nojs"><p>old</p></noscript>')
+            built, probs = T.build_text(E.DEFAULT_SRC, st, {"floor-tool": 5, "novacrm": 3, "prepost": 5, "riphere-llc": 5}, E.SITE_URL)
+            self.assertTrue(built, probs)
+            self.assertEqual(probs, [])
+            page, index = (st / "text" / "index.html").read_text(), (st / "index.html").read_text()
+            for slug in E.CASE_SLUGS:
+                self.assertIn(f'href="/work/{slug}/"', page)
+                self.assertIn(f'href="/work/{slug}/"', index)
+            self.assertIn('<link rel="canonical" href="https://www.riphere.com/text/">', page)
+            self.assertEqual(page.count("<h1>"), 1)
+            self.assertNotIn("<p>old</p>", index)
+            self.assertEqual(index.count('<span class="tag">verified</span>'), 4)
+        finally:
+            shutil.rmtree(st)
 
 
 if __name__ == "__main__":

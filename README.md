@@ -24,8 +24,10 @@ python3 tools/export_tower.py --out /tmp/x    # dry run into a scratch dir
 python3 tools/export_tower.py --src <path>    # another copy of the source tree
 ```
 
-What is copied: the page (`index.html`), `identity.css`, `identity.js`, `scene3d.js`, `analytics.js`,
-`demos/*.js`, `tex/**` and `assets/**`. Nothing else.
+What is copied: the page (`index.html`), `identity.css`, `identity.js`, `scene3d.js`, `analytics.js`, `fallback.js`,
+`404.html`, `favicon.svg`, `llms.txt`, `demos/*.js`, `tex/**` and `assets/**`. Nothing else. Built at export:
+`work/<slug>/index.html` (case files), `text/index.html` (the text version; its body also fills `index.html`'s
+`<noscript>`), `robots.txt` and `sitemap.xml`. See DEPLOY.md, "What the export ships".
 
 The export fails (exit 1, `site/` left as it was) if:
 
