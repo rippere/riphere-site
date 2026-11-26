@@ -376,5 +376,6 @@ def build_text(src: Path, staging: Path, minutes: dict[str, int], site_url: str)
         return True, check_llms(src, meta, slugs, site_url)
     except TextProblem as e:
         return False, [f"text version: {e}"]
-    except (OSError, ValueError, UnicodeDecodeError, subprocess.SubprocessError) as e:
+    # KeyError / TypeError / AttributeError: a text.json or source of the wrong shape; a fail line, not a traceback
+    except (OSError, ValueError, UnicodeDecodeError, subprocess.SubprocessError, KeyError, TypeError, AttributeError) as e:
         return False, [f"text version: {type(e).__name__}: {e}"]
