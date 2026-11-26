@@ -6,11 +6,17 @@
   const mailto = subject => `mailto:${MAIL}?subject=${encodeURIComponent(subject)}`;
   const HAND = '<svg class="hand" viewBox="-9.5 -9.5 19 19" aria-hidden="true"><circle r="4.5"/><circle r="8.5"/></svg>';
   const FOOTER = 'This scene is a composite.';
+  const STUCK = {
+    floortool: 'On the other end: the CAD team. Each rough count landed on them on top of the drawing work only they can do.',
+    novacrm: 'The inbox, the Slack threads and the deal notes all live in different places, and none of them tap you on the shoulder.',
+    prepost: 'The note back to the creator is \u201cit feels slow,\u201d which the creator can\'t act on.',
+    riphere: 'In California workers\' comp, the average medical-legal evaluation that billed for extra record review covered about 1,100 pages. (CHSWC 2025)',
+  };
 
   const FLOORS = [
     { code: 'PH', label: 'B. Rippere', kind: 'about', href: '?floor=PH', final: '/about' },
     { code: '36', label: 'Floor tool', tag: 'employer', kind: 'case', href: '?case=floor-tool', final: '/work/floor-tool', board: 0 },
-    { code: '26', label: 'NovaCRM', tag: 'own product', kind: 'case', href: '?case=novacrm', final: '/work/novacrm', board: 1 },
+    { code: '26', label: 'NovaCRM', tag: 'own build', kind: 'case', href: '?case=novacrm', final: '/work/novacrm', board: 1 },
     { code: '18', label: 'PrePost', tag: 'own research', kind: 'case', href: '?case=prepost', final: '/work/prepost', board: 2 },
     { code: '08', label: 'Riphere LLC', tag: 'the company', kind: 'case', href: '?case=riphere-llc', final: '/work/riphere-llc', board: 3 },
     { code: '07', label: 'Consulting', tag: 'Riphere LLC', kind: 'consulting', href: '?page=consulting', final: '/consulting' },
@@ -63,10 +69,10 @@
     const body = line ? `<p class="fy-q">${q(line)}</p>`
       : `<p class="fy-q fy-ph" data-missing="demos/${esc(b.id)}.js meta.flyer" hidden></p>`;
     const art = ART[b.id] ? `<div class="fy-art" aria-hidden="true"><svg viewBox="0 0 300 200">${ART[b.id]}</svg></div>` : '';
+    const st = STUCK[b.id] ? `<p class="fy-st">${esc(STUCK[b.id])}</p>` : '', cr = m && m.prov ? `<div class="fy-cr">${esc(m.prov)}</div>` : '';
     return `<div class="face paper flyer${line ? '' : ' is-ph'}" data-flyer="${esc(b.id)}"><div class="fy-wall" aria-hidden="true"></div><div class="fy-sheet">`
-      + `<div class="fy-tb"><span class="fy-k">THE PROBLEM</span><span class="fy-v">FL ${esc(b.code)}</span></div>${art}${body}`
-      + `<div class="fy-ft">${FOOTER}</div><div class="fy-sig"><div class="fy-cta">My answer is under this sheet.</div>`
-      + `<img class="fy-hd" src="assets/ben-headshot-phone.jpg" width="480" height="585" alt="" decoding="async">`
+      + `<div class="fy-tb"><span class="fy-k">THE PROBLEM</span><span class="fy-v">FL ${esc(b.code)}</span></div>${art}${body}${st}`
+      + `<div class="fy-ft">${FOOTER}</div><div class="fy-sig"><div class="fy-cta">My answer is under this sheet.</div>${cr}`
       + `<div class="fy-id"><span class="fy-nm">${esc(FOUNDER.name)}</span><span class="fy-mu"><span class="fy-mk">RIPHERE</span><span class="fy-url">${esc(FOUNDER.url)}</span></span></div></div></div></div>`;
   }
   function ledLines(b) {
@@ -77,9 +83,11 @@
   }
   function fitSentence(faceEl) {
     const q = faceEl.querySelector('.fy-q'), tb = faceEl.querySelector('.fy-tb'), sheet = faceEl.querySelector('.fy-sheet'); if (!q || !sheet) return;
-    q.style.fontSize = '';
+    const st = faceEl.querySelector('.fy-st'), sig = faceEl.querySelector('.fy-sig'), cr = faceEl.querySelector('.fy-cr'), art = faceEl.querySelector('.fy-art');
+    q.style.fontSize = ''; if (cr) cr.hidden = false;
     const end = sheet.clientHeight - parseFloat(getComputedStyle(sheet).paddingBottom);
-    const over = () => q.offsetTop + q.offsetHeight > end + 1 || (tb && q.offsetTop < tb.offsetTop + tb.offsetHeight + 2) || q.scrollWidth > q.clientWidth + 1;
+    if (cr && sig && art && phoneNow() && sig.offsetTop < art.offsetTop + art.offsetHeight + 4) cr.hidden = true;
+    const over = () => q.offsetTop + q.offsetHeight > (st ? st.offsetTop - 6 : end + 1) || (tb && q.offsetTop < tb.offsetTop + tb.offsetHeight + 2) || q.scrollWidth > q.clientWidth + 1;
     let fs = parseFloat(getComputedStyle(q).fontSize) || 24; const min = phoneNow() ? 15 : 18;
     for (let k = 0; k < 30 && over() && fs > min; k++) { fs *= .96; q.style.fontSize = fs.toFixed(1) + 'px'; }
   }
@@ -116,11 +124,18 @@
       + `<div class="prov" data-on>${esc((m && m.prov) || b.art.prov)}</div></div>`
       + `<div class="cf-b"><div class="k" data-on>The call</div>${m && m.call ? `<div class="call" data-on>${esc(m.call)}</div>` : `<div class="call tbd" data-on data-missing="the call, from meta.call" hidden></div>`}`
       + `<div class="k" data-on>Receipt <span class="tag">${esc(rc && rc.status ? rc.status : 'unverified')}</span></div>`
-      + `<div class="rc" data-on>${rc && rc.text ? esc(rc.text) : ph('receipt from meta.receipt')}</div></div>`
+      + `<div class="rc${rc && rc.text && rc.text.length > 90 ? ' lg' : ''}" data-on>${rc && rc.text ? esc(rc.text) : ph('receipt from meta.receipt')}</div></div>`
       + (min || xs.length ? `<div class="cf-c">${xHTML}${min ? `<a class="door${xs.length ? ' alt' : ''}" href="${href}" data-on>Why I built it, ${min} min</a>` : ''}</div>` : '') + `</div></div>`;
   }
   const HOLD = { floortool: .2752 };
-  function fitCase(b, art) {
+  function fitCase(b, art) { fitCase0(b, art); alignPane(art); }
+  function alignPane(art) {
+    const c = art && art.querySelector('.case'), pane = c && c.querySelector('.cs-pane'), t = c && c.querySelector('.cf-tb'), mount = c && c.querySelector('.dm-mount');
+    if (!pane || !t || !mount) return; pane.style.justifyContent = pane.style.paddingTop = ''; if (c.classList.contains('stack')) return;
+    const sc = c.getBoundingClientRect().height / c.clientHeight || 1, top = (t.getBoundingClientRect().top - c.getBoundingClientRect().top) / sc;
+    if ((mount.getBoundingClientRect().top - t.getBoundingClientRect().top) / sc > 4 && top + (pane.lastElementChild.getBoundingClientRect().bottom - pane.firstElementChild.getBoundingClientRect().top) / sc <= c.clientHeight - 8) { pane.style.justifyContent = 'flex-start'; pane.style.paddingTop = Math.round(top) + 'px'; }
+  }
+  function fitCase0(b, art) {
     const c = art && art.querySelector('.case'); if (!c) return;
     const mount = c.querySelector('.dm-mount'), cf = c.querySelector('.cf'), cap = c.querySelector('.dm-cap'), pane = c.querySelector('.cs-pane');
     if (!mount || !cf || !cap || !pane) return;

@@ -28,6 +28,11 @@ body { font: 400 18px/1.6 "Archivo", "Helvetica Neue", Arial, sans-serif; }
 .cf h2 { font-size: 22px; line-height: 1.3; margin: 1.8em 0 .5em; }
 .cf p, .cf ul, .cf ol { margin: 0 0 1em; }
 .cf .dek { font-size: 21px; line-height: 1.45; color: #c9c6bf; }
+.cf .call { margin: 0 0 1em; font: 800 24px/1.15 "Archivo", sans-serif; font-stretch: 75%; }
+.cf .call .ck { display: block; margin-bottom: .35em; font: 700 13px/1.3 "Archivo", sans-serif; font-stretch: 115%; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); }
+.cf .lbl { display: table; margin: 2.6em 0 0; border: 1.5px solid var(--ink); padding: .4em .6em .34em; font: 700 13px/1 "Archivo", sans-serif; font-stretch: 115%; letter-spacing: .01em; text-transform: uppercase; }
+.cf .lbl + h2 { margin-top: .55em; }
+.cf .tag { display: inline-block; margin-left: .35em; border: 1px solid #5b5e66; padding: 0 .4em; font: 400 14px/1.5 ui-monospace, "SFMono-Regular", Menlo, monospace; color: var(--ink-2); vertical-align: .08em; }
 .cf .min { color: var(--ink-2); font-size: 14px; border-bottom: 1px solid var(--line); padding-bottom: 1.2em; margin-bottom: 1.6em; }
 .cf a { color: var(--ink); text-underline-offset: 3px; }
 .cf a:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
@@ -38,6 +43,7 @@ body { font: 400 18px/1.6 "Archivo", "Helvetica Neue", Arial, sans-serif; }
   <nav class="cf-nav" aria-label="Back"><a href="/?case=floor-tool">← FL 36 · Floor tool</a><span>riphere.com</span></nav>
   <article>
 <h1>Floor tool: the rep answers on the spot</h1>
+<p class="call"><span class="ck">The call</span> The rep answers on the spot, not “I’ll get back to you.”</p>
 <p class="dek">A floor-planning tool that turns a measured room into a graded game count, built as an employee of an arcade-equipment distributor.</p>
     <p class="min">5 min read</p>
 
@@ -46,12 +52,14 @@ body { font: 400 18px/1.6 "Archivo", "Helvetica Neue", Arial, sans-serif; }
 <p>My first plan was big. A 3D twin of each customer's game room, built on a physics simulator and 3D modeling software, showing live revenue and preventative-maintenance timers. Under it, a simulated-annealing optimizer to arrange the floor for the best egress paths and revenue flow. My eyes were bigger than my stomach. The live data was going to come from processes and standards I'd assumed were in place, and in a long-established business much of that knowledge lived in drawings, files and people's experience, not in feeds a twin could read. It might have been a great solve for a company. It wasn't the right solve for this one, not yet.</p>
 <p>What I learned: solve for what's needed, not for what I imagine is needed. And what was needed was simple. Every deal starts with one question: how many games fit in this room?</p>
 
+<p class="lbl">THE PROBLEM</p>
 <h2>Who it's for</h2>
 <p>Two groups, on either end of one question.</p>
 <p>The sales rep, talking with a customer about a room. The customer asks how many games fit, and often doesn't have every detail of the room to hand. The answer used to be "I'll get back to you." The count went into the loop with the person in charge of the architectural plans, and the rep kept checking in until it came back. It was a major pain point.</p>
 <p>The CAD team, on the other end of every one of those requests. Each rough count landed on them on top of the drawing work only they can do.</p>
 <p>Now, with the room's measurements, or a drawing of the room with its scale, the rep makes the count and gets things going. It gives them power in the conversation that isn't only about getting people to buy. The CAD team has a lot less on its shoulders, sales doesn't wait on them, and the queue is much shorter, if there is one at all. People are excited about this tool, and they like using it.</p>
 
+<p class="lbl">MY WORK</p>
 <h2>What it does</h2>
 <p>The count used to be made by hand in CAD: a usable area drawn over the plan, divided by a fixed rule of thumb. The floor tool makes the same count in a browser, from whatever the room arrives as: a CAD file, a PDF, a napkin sketch or an email.</p>
 <ul>
@@ -72,9 +80,10 @@ body { font: 400 18px/1.6 "Archivo", "Helvetica Neue", Arial, sans-serif; }
   <li><strong>The optimizer, parked.</strong> I started with a constraint solver, had the design adversarially reviewed on purpose, and the review showed it wouldn't scale. So I moved to a technique from warehouse slotting: simulated annealing over the order games get placed in. It's built and tested, and it stays switched off until there are real installed floors to optimize against.</li>
 </ul>
 
+<p class="lbl">RECEIPT</p>
 <h2>Results</h2>
 <ul>
-  <li><strong>Used by the sales and CAD teams.</strong></li>
+  <li><strong>Used by the sales and CAD teams.</strong> <span class="tag">verified</span></li>
   <li><strong>Runs on the company's own cloud,</strong> behind company sign-in, with each release pinned to an exact build.</li>
   <li><strong>The gameroom twin is piloting.</strong></li>
 </ul>

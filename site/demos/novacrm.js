@@ -5,7 +5,7 @@ export const meta = {
   what: 'It drafts your follow-ups, then waits for your yes.',
   caption: 'Sample data, not a customer. Approve & Send is the shipped Slack button.',
   legend: '',
-  prov: 'I built it · my own product',
+  prov: 'I built it',
   call: 'The follow-up is already written. You just say yes.',
   receipt: { text: 'In use by a second department.', status: 'verified' },
   exits: [{ label: 'See NovaCRM live', href: 'https://app.riphere.com/', exit: 'novacrm_live' }],

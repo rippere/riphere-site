@@ -249,7 +249,7 @@ header#tb { padding-left: 10px; }
   </div>
 </details>
 
-<script>window.CASES = {"floor-tool": 5, "novacrm": 3, "prepost": 4, "riphere-llc": 4};</script> 
+<script>window.CASES = {"floor-tool": 5, "novacrm": 3, "prepost": 5, "riphere-llc": 5};</script> 
 <script src="identity.js"></script>
 <script>
 const $ = s => document.querySelector(s);
@@ -403,11 +403,11 @@ function layout() {
   TOP.w = phone ? Math.min(780, facadeW - 32) : Math.min(1060, Math.round(facadeW * .86)); TOP.h = Math.round(phone ? TOP.w * .74 : TOP.w / 2.3); TOP.x = Math.round((facadeW - TOP.w) / 2); TOP.y = Math.round(phone ? Math.max(VH * .12, 132) : VH * .14);
   const base = phone ? W - 16 : facadeW - 24, capH = VH * .72, gut = phone ? 8 : 12;
   const ph = w => (w - 16) * 9 / 16 + 330;
-  const dims = phone ? [[base, ph(base)], [base, ph(base)], [base, ph(base) + 120], [base, ph(base) + 16]]
+  const dims = phone ? [[base, ph(base)], [base, ph(base)], [base, ph(base) + 120], [base, ph(base) + 96]]
     : [[base, base / 2.16], [base * .95, base * .95 / 2.1], [base, Math.min(VH * .84, base / 1.72)], [base, Math.min(VH * .66, base / 2.02)]];
   const gaps = [1, .85, 1.1], stag = phone ? [0, 0, 0, 0] : [-.7, 1, -.45, 0];
   let by = Math.max(TOP.y + TOP.h + (phone ? 84 : 110), VH * (phone ? .6 : .78));
-  boards.forEach((b, i) => { let [w, h] = dims[i % 4]; const cap = i % 4 === 2 ? VH * (phone ? .9 : .86) : capH; if (h > cap) { w *= cap / h; h = cap; } b.w = Math.round(w); b.h = Math.round(h);
+  boards.forEach((b, i) => { let [w, h] = dims[i % 4]; const cap = i % 4 === 2 || phone && i % 4 === 3 ? VH * (phone ? .9 : .86) : capH; if (h > cap) { w *= cap / h; h = cap; } b.w = Math.round(w); b.h = Math.round(h);
     b.x = Math.round(clampN((facadeW - b.w) / 2 + stag[i % 4] * facadeW * .1, gut, Math.max(gut, facadeW - b.w - gut))); b.y = Math.round(by); by += b.h + VH * (gaps[i] || 0); });
   const lastB = boards[boards.length - 1];
   FINAL_Y = Math.round(lastB.y + lastB.h + VH * .22);

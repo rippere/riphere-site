@@ -7,7 +7,7 @@ export const meta = {
   legend: '',
   prov: 'Riphere LLC · I founded it',
   call: 'The partner signs off on a cited answer. The files never left the office.',
-  receipt: { text: 'I formed it in Oct 2026', status: 'verified' },
+  receipt: { text: "The demo's first stage is built and committed (November 19, 2026): document intake with OCR and page-cited answers, covered by 33 tests, with a live evaluation that passed 9 of 9 questions on my own hardware.", status: 'verified' },
   exits: [{ label: 'Get in touch', href: 'mailto:ben@riphere.com?subject=Project%20%C2%B7%20from%20FL%2008', exit: 'riphere_mail' }],
   poster: 'An attorney at a desk under a lamp, the pile of pages faded, has checked cited page 212, wired to the AI under the desk, with the hand mark: Your call. Formed Oct 2026.'
 };
