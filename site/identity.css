@@ -361,6 +361,9 @@ body:has(#ph-plate:not([hidden])) #hint { visibility: hidden; }
   clip-path: polygon(-.258em 0, 100% 0, 100% 100%, .358em 100%);
   transform: translate(.07em, .09em) rotate(1.6deg); transform-origin: 0 100%; }
 
+.fy-mk::before { padding-right: .44em; clip-path: polygon(0 0, calc(100% - .616em) 0, 100% 100%, 0 100%); }
+.fy-mk::after { padding-left: .5em; margin-left: -.566em; clip-path: polygon(0 0, 100% 0, 100% 100%, .616em 100%); transform: translate(.02em, .06em) rotate(.6deg); }
+
 .op-plate { display: none; }
 .board.top .housing { inset: -13px -13px -52px; }
 .board.top .catwalk { bottom: -65px; }

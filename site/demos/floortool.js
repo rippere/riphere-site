@@ -7,7 +7,7 @@ export const meta = {
   legend: '',
   prov: 'I built it as an employee · an arcade-equipment distributor',
   call: 'The rep answers on the spot, not “I’ll get back to you.”',
-  receipt: { text: 'It opens from a file and runs offline', status: 'unverified' },
+  receipt: { text: 'Used by the sales and CAD teams.', status: 'verified' },
   poster: 'The arcade owner’s question; the rep’s “I’ll get back to you.” struck and dimmed; under it the answer “30 games. Here’s why.” with the hand mark at its lower right; the traced room dimmed beside it, its door measured inside; caption “The rep’s call.”',
 };
 

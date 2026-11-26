@@ -8,6 +8,7 @@ export const meta = {
   prov: 'Riphere LLC · I founded it',
   call: 'The partner signs off on a cited answer. The files never left the office.',
   receipt: { text: 'I formed it in Oct 2026', status: 'verified' },
+  exits: [{ label: 'Get in touch', href: 'mailto:ben@riphere.com?subject=Project%20%C2%B7%20from%20FL%2008', exit: 'riphere_mail' }],
   poster: 'An attorney at a desk under a lamp, the pile of pages faded, has checked cited page 212, wired to the AI under the desk, with the hand mark: Your call. Formed Oct 2026.'
 };
 const I = '#e9e6df', J = '#8d8f96', L = '#2a2d35', R = '#ff4b3a', N = '#05060a', SH = '#14161c', ST = '#16181e', T = 14;
