@@ -1,0 +1,18 @@
+# Ben Rippere
+
+> Ben Rippere is an AI Solutions Developer and the founder of Riphere LLC. He builds tools that unstick a decision, and a person still makes the call. His site, riphere.com, shows four projects, one per floor.
+
+He is studying for a B.S. in Psychology with a minor in Entrepreneurship, graduating May 2027.
+
+## Projects
+
+- [Floor tool](https://www.riphere.com/work/floor-tool/): For an arcade-game sales rep. It turns a measured room into a game count, graded, with its reasons, so the rep answers on the spot. Built as an employee of an arcade-equipment distributor. Receipt (verified): "Used by the sales and CAD teams."
+- [NovaCRM](https://www.riphere.com/work/novacrm/): For a founder who sells. It drafts your follow-ups, then waits for your yes. Receipt (verified): "In use by a second department."
+- [PrePost](https://www.riphere.com/work/prepost/): For campaign managers. A model reads an ad second by second. It runs on Meta's TRIBE v2. Receipt (verified): "64 published ad clips scored on hardware I run"
+- [Riphere LLC](https://www.riphere.com/work/riphere-llc/): For a small law or clinical practice. Private AI that stays on your premises. Receipt (verified): "The demo's first stage is built and committed (November 19, 2026): document intake with OCR and page-cited answers, covered by 33 tests, with a live evaluation that passed 9 of 9 questions on my own hardware."
+
+## Contact
+
+- Email: ben@riphere.com
+- [Résumé (PDF)](https://www.riphere.com/assets/resume.pdf)
+- [riphere.com as text](https://www.riphere.com/text/): every floor on one page.
